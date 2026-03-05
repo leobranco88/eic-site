@@ -449,47 +449,54 @@ async function load(){
 }
 
 function normalizarLeads(arr){
-  return arr.map(l=>({
-    id:          String(l.ID||l.id||Date.now()),
-    data:        l['Data']||l.data||'',
-    nome:        l['Nome']||l.nome||'',
-    idade:       l['Idade']||l.idade||'',
-    grupo:       l['Grupo']||l.grupo||'',
-    nivel:       l['Nível']||l.nivel||'',
-    irmao:       l['Irmão']||l.irmao||'',
-    responsavel: l['Responsável']||l.responsavel||'',
-    whatsapp:    l['WhatsApp']||l.whatsapp||'',
-    email:       l['E-mail']||l.email||'',
-    origem:      l['Como Soube']||l.origem||'',
-    dias:        l['Dias']||l.dias||'',
-    horarios:    l['Horários']||l.horarios||'',
-    flexibilidade:l['Flexibilidade']||l.flexibilidade||'',
-    obs:         l['Observações']||l.obs||'',
-    status:      l['Status']||l.status||'Novo lead',
-    professor:   l['Professor']||l.professor||'',
-    sala:        l['Sala']||l.sala||'',
-    horconf:     l['Horário Confirmado']||l.horconf||'',
-    obs_internas:l['Obs. Internas']||l.obs_internas||'',
-    turmaId:     l.turmaId||l['TurmaID']||null,
-  }));
+  return arr.filter(l=>l).map(l=>{
+    // Pega qualquer variante da chave (português ou inglês)
+    const g = (keys) => { for(const k of keys){ if(l[k]!==undefined&&l[k]!=='') return l[k]; } return ''; };
+    return {
+      id:          String(g(['ID','id'])||Date.now()),
+      data:        g(['Data','data']),
+      nome:        g(['Nome','nome']),
+      idade:       g(['Idade','idade']),
+      grupo:       g(['Grupo','grupo']),
+      nivel:       g(['Nível','nivel','Nivel']),
+      irmao:       g(['Irmão','irmao','Irmao']),
+      responsavel: g(['Responsável','responsavel','Responsavel']),
+      whatsapp:    g(['WhatsApp','whatsapp']),
+      email:       g(['E-mail','email']),
+      origem:      g(['Como Soube','origem']),
+      dias:        g(['Dias','dias']),
+      horarios:    g(['Horários','horarios','Horarios']),
+      flexibilidade:g(['Flexibilidade','flexibilidade']),
+      obs:         g(['Observações','obs','Observacoes']),
+      status:      g(['Status','status'])||'Novo lead',
+      professor:   g(['Professor','professor']),
+      sala:        g(['Sala','sala']),
+      horconf:     g(['Horário Confirmado','horconf']),
+      obs_internas:g(['Obs. Internas','obs_internas']),
+      turmaId:     g(['TurmaID','turmaId'])||null,
+    };
+  }).filter(l=>l.nome); // remove linhas vazias
 }
 
 function normalizarTurmas(arr){
-  return arr.map(t=>({
-    id:        String(t['ID']||t.id||Date.now()),
-    nome:      t['Nome']||t.nome||'',
-    grupo:     t['Grupo']||t.grupo||'',
-    dias:      t['Dias']||t.dias||'',
-    horario:   t['Horário']||t.horario||'',
-    sala:      t['Sala']||t.sala||'',
-    professor: t['Professor']||t.professor||'',
-    status:    t['Status']||t.status||'Formando',
-    min:       parseInt(t['Mín']||t.min||4),
-    max:       parseInt(t['Máx']||t.max||8),
-    inicio:    t['Início']||t.inicio||'',
-    fim:       t['Fim']||t.fim||'',
-    obs:       t['Observações']||t.obs||'',
-  }));
+  return arr.filter(t=>t).map(t=>{
+    const g = (keys) => { for(const k of keys){ if(t[k]!==undefined&&t[k]!=='') return t[k]; } return ''; };
+    return {
+      id:        String(g(['ID','id'])||Date.now()),
+      nome:      g(['Nome','nome']),
+      grupo:     g(['Grupo','grupo']),
+      dias:      g(['Dias','dias']),
+      horario:   g(['Horário','horario','Horario']),
+      sala:      g(['Sala','sala']),
+      professor: g(['Professor','professor']),
+      status:    g(['Status','status'])||'Formando',
+      min:       parseInt(g(['Mín','min','Min'])||4),
+      max:       parseInt(g(['Máx','max','Max'])||8),
+      inicio:    g(['Início','inicio','Inicio']),
+      fim:       g(['Fim','fim']),
+      obs:       g(['Observações','obs']),
+    };
+  }).filter(t=>t.nome);
 }
 function save(){
   localStorage.setItem('eic_leads',JSON.stringify(leads));
