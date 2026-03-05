@@ -1,6 +1,4 @@
 {
-  "cleanUrls": true,
-  "trailingSlash": false,
   "routes": [
     { "src": "/leads", "dest": "/leads-eic.html" },
     { "src": "/cadastro", "dest": "/cadastro.html" },
