@@ -4,6 +4,6 @@
   "routes": [
     { "src": "/leads", "dest": "/leads-eic.html" },
     { "src": "/cadastro", "dest": "/cadastro.html" },
-    { "src": "/", "dest": "/eic-landing (6).html" }
+    { "src": "/", "dest": "/index.html" }
   ]
 }
