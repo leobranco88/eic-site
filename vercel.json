@@ -2,7 +2,7 @@
   "routes": [
     { "src": "/leads", "dest": "/leads-eic.html" },
     { "src": "/cadastro", "dest": "/cadastro.html" },
-    { "src": "/placement", "dest": "/placement__1_.html" },
+    { "src": "/placement", "dest": "/placement.html" },
     { "src": "/", "dest": "/index.html" }
   ]
 }
