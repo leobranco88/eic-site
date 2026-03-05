@@ -450,32 +450,31 @@ async function load(){
 
 function normalizarLeads(arr){
   return arr.filter(l=>l).map(l=>{
-    // Pega qualquer variante da chave (português ou inglês)
-    const g = (keys) => { for(const k of keys){ if(l[k]!==undefined&&l[k]!=='') return l[k]; } return ''; };
+    const g = (keys) => { for(const k of keys){ if(l[k]!==undefined&&l[k]!==''&&l[k]!==null) return String(l[k]); } return ''; };
     return {
-      id:          String(g(['ID','id'])||Date.now()),
-      data:        g(['Data','data']),
-      nome:        g(['Nome','nome']),
-      idade:       g(['Idade','idade']),
-      grupo:       g(['Grupo','grupo']),
-      nivel:       g(['Nível','nivel','Nivel']),
-      irmao:       g(['Irmão','irmao','Irmao']),
-      responsavel: g(['Responsável','responsavel','Responsavel']),
-      whatsapp:    g(['WhatsApp','whatsapp']),
-      email:       g(['E-mail','email']),
-      origem:      g(['Como Soube','origem']),
-      dias:        g(['Dias','dias']),
-      horarios:    g(['Horários','horarios','Horarios']),
+      id:           g(['ID','id']),
+      data:         g(['Data','data']),
+      nome:         g(['Nome','nome']),
+      idade:        g(['Idade','idade']),
+      grupo:        g(['Grupo','grupo']),
+      nivel:        g(['Nível','Nivel','nivel']),
+      irmao:        g(['Irmão Interessado','Irmão','irmao']),
+      responsavel:  g(['Responsável','Responsavel','responsavel']),
+      whatsapp:     g(['WhatsApp','whatsapp']),
+      email:        g(['E-mail','email']),
+      origem:       g(['Como Soube','origem']),
+      dias:         g(['Dias Disponíveis','Dias','dias']),
+      horarios:     g(['Horários','Horarios','horarios']),
       flexibilidade:g(['Flexibilidade','flexibilidade']),
-      obs:         g(['Observações','obs','Observacoes']),
-      status:      g(['Status','status'])||'Novo lead',
-      professor:   g(['Professor','professor']),
-      sala:        g(['Sala','sala']),
-      horconf:     g(['Horário Confirmado','horconf']),
-      obs_internas:g(['Obs. Internas','obs_internas']),
-      turmaId:     g(['TurmaID','turmaId'])||null,
+      obs:          g(['Observações','Observacoes','obs']),
+      status:       g(['Status','status'])||'Novo lead',
+      professor:    g(['Professor','professor']),
+      sala:         g(['Sala','sala']),
+      horconf:      g(['Horário Confirmado','horconf']),
+      obs_internas: g(['Obs. Internas','obs_internas']),
+      turmaId:      g(['TurmaID','turmaId'])||null,
     };
-  }).filter(l=>l.nome); // remove linhas vazias
+  }).filter(l=>l.nome);
 }
 
 function normalizarTurmas(arr){
