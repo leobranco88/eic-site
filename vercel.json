@@ -8,6 +8,8 @@
     { "src": "/parceria-empresas",  "dest": "/eic-parceria-empresas.html" },
     { "src": "/gerador-propostas",  "dest": "/eic-gerador-propostas.html" },
     { "src": "/interesse-empresas", "dest": "/eic-interesse-empresas.html" },
+    { "src": "/matricula",          "dest": "/eic-interesse-matricula.html" },
+    { "src": "/painel-leads",       "dest": "/eic-painel-leads.html" },
     { "src": "/(.*)",               "dest": "/index.html" }
   ]
 }
