@@ -3,7 +3,7 @@
   "trailingSlash": false,
   "routes": [
     { "src": "/leads", "dest": "/leads-eic.html" },
-    { "src": "/cadastro", "dest": "/cadastro-alunos (6).html" },
+    { "src": "/cadastro", "dest": "/cadastro.html" },
     { "src": "/", "dest": "/eic-landing (6).html" }
   ]
 }
