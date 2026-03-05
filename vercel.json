@@ -1,0 +1,9 @@
+{
+  "cleanUrls": true,
+  "trailingSlash": false,
+  "routes": [
+    { "src": "/leads", "dest": "/leads.html" },
+    { "src": "/cadastro", "dest": "/cadastro.html" },
+    { "src": "/", "dest": "/index.html" }
+  ]
+}
