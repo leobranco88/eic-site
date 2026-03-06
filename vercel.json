@@ -1,6 +1,10 @@
 {
+    "functions": {
+        "api/generate.js": {
+            "runtime": "edge"
+        }
+    },
     "routes": [
-        { "src": "/api/generate",         "dest": "/api/generate.js" },
         { "src": "/atividade",            "dest": "/atividade.html" },
         { "src": "/atividade.html",       "dest": "/atividade.html" },
         { "src": "/leads",                "dest": "/leads-eic.html" },
