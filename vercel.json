@@ -11,6 +11,7 @@
     { "src": "/matricula",           "dest": "/eic-interesse-matricula.html" },
     { "src": "/painel-leads",        "dest": "/eic-painel-leads.html" },
     { "src": "/hub",                 "dest": "/hub.html" },
+    { "src": "/ferramentas",         "dest": "/ferramentas.html" },
     { "src": "/(.*)",                "dest": "/index.html" }
   ]
 }
