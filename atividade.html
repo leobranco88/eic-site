@@ -23,7 +23,6 @@
 * { box-sizing: border-box; margin: 0; padding: 0; }
 body { font-family: 'Inter', sans-serif; background: var(--gray); color: var(--text); min-height: 100vh; font-size: 14px; }
 
-/* HEADER */
 .header {
   display: flex; align-items: center; justify-content: space-between;
   padding: 14px 40px; background: var(--teal);
@@ -35,10 +34,8 @@ body { font-family: 'Inter', sans-serif; background: var(--gray); color: var(--t
 .logo-text { font-size: 11px; font-weight: 700; letter-spacing: 0.2em; text-transform: uppercase; color: white; }
 .header-title { font-family: 'Lora', serif; font-size: 14px; color: rgba(255,255,255,0.55); font-style: italic; }
 
-/* LAYOUT */
 .main { display: grid; grid-template-columns: 400px 1fr; min-height: calc(100vh - 53px); }
 
-/* FORM PANEL */
 .panel-form { padding: 32px 28px; border-right: 1px solid var(--border); overflow-y: auto; background: var(--white); }
 .panel-title { font-family: 'Lora', serif; font-size: 26px; font-weight: 600; line-height: 1.25; margin-bottom: 5px; color: var(--teal); }
 .panel-title span { color: var(--orange); font-style: italic; }
@@ -55,7 +52,6 @@ body { font-family: 'Inter', sans-serif; background: var(--gray); color: var(--t
 .fse option { background: white; }
 .fr { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
 
-/* VOCAB TAG INPUT */
 .vocab-wrap {
   background: white; border: 1.5px solid var(--border); border-radius: 7px;
   padding: 6px 8px; display: flex; flex-wrap: wrap; gap: 5px; cursor: text;
@@ -100,7 +96,6 @@ body { font-family: 'Inter', sans-serif; background: var(--gray); color: var(--t
 .btn-gen:hover { background: var(--orange-dark); }
 .btn-gen:disabled { opacity: 0.5; cursor: not-allowed; box-shadow: none; }
 
-/* PREVIEW */
 .panel-preview { background: var(--gray); display: flex; flex-direction: column; }
 .preview-top {
   padding: 14px 26px; border-bottom: 1px solid var(--border);
@@ -122,20 +117,21 @@ body { font-family: 'Inter', sans-serif; background: var(--gray); color: var(--t
 
 .preview-body { flex: 1; overflow-y: auto; padding: 22px 26px; }
 
-/* EMPTY */
 .empty { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; text-align: center; opacity: 0.45; }
 .empty-icon { font-size: 34px; margin-bottom: 12px; }
 .empty-title { font-family: 'Lora', serif; font-size: 18px; margin-bottom: 5px; color: var(--teal); }
 .empty-text { font-size: 12.5px; color: var(--text-muted); line-height: 1.6; }
 
-/* LOADING */
 .loading { display: none; flex-direction: column; align-items: center; justify-content: center; height: 100%; text-align: center; }
 .spinner { width: 32px; height: 32px; border: 2.5px solid var(--border); border-top-color: var(--orange); border-radius: 50%; animation: spin 0.8s linear infinite; margin-bottom: 14px; }
 @keyframes spin { to { transform: rotate(360deg); } }
 .loading-msg strong { color: var(--teal); display: block; font-size: 15px; margin-bottom: 5px; font-family: 'Lora', serif; }
 .loading-msg { font-size: 12.5px; color: var(--text-muted); line-height: 1.7; }
+.loading-steps { margin-top: 12px; font-size: 11px; color: var(--text-muted); }
+.loading-step { padding: 3px 0; transition: color 0.3s; }
+.loading-step.done { color: var(--teal); }
+.loading-step.active { color: var(--orange); font-weight: 600; }
 
-/* ACTIVITY CARD */
 .act-card { background: white; border-radius: 12px; border: 1px solid var(--border); overflow: hidden; box-shadow: 0 2px 16px rgba(27,79,94,0.07); }
 .act-head { background: linear-gradient(135deg, var(--teal) 0%, var(--teal-dark) 100%); padding: 20px 24px; }
 .act-meta { font-size: 10px; letter-spacing: 0.15em; text-transform: uppercase; opacity: 0.65; color: white; margin-bottom: 4px; }
@@ -143,24 +139,19 @@ body { font-family: 'Inter', sans-serif; background: var(--gray); color: var(--t
 .act-sub { font-size: 12px; opacity: 0.75; color: white; margin-top: 3px; }
 .act-body { padding: 22px 24px; }
 
-/* VOCAB DISPLAY (inside activity) */
 .vocab-display { display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 18px; padding-bottom: 16px; border-bottom: 1px solid var(--border); }
 .vocab-badge { background: var(--teal-pale); border: 1px solid var(--border); border-radius: 100px; padding: 3px 11px; font-size: 11.5px; font-weight: 600; color: var(--teal); }
 
-/* SHARE */
 .share-box { display: flex; align-items: center; gap: 9px; background: var(--teal-pale); border: 1.5px solid var(--border); border-radius: 8px; padding: 10px 13px; margin-bottom: 18px; }
 .share-link { flex: 1; font-size: 11px; color: var(--teal); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-weight: 500; }
 .btn-copy { background: var(--teal); color: white; border: none; border-radius: 6px; padding: 5px 11px; font-size: 11px; cursor: pointer; font-family: 'Inter', sans-serif; font-weight: 600; white-space: nowrap; }
 
-/* SECTION */
 .sec { margin-bottom: 22px; }
 .sec-title { font-size: 10px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: var(--teal); margin-bottom: 11px; display: flex; align-items: center; gap: 7px; }
 .sec-title::after { content: ''; flex: 1; height: 1.5px; background: var(--border); }
 
-/* READING */
 .reading-text { font-size: 13.5px; line-height: 1.85; color: var(--text); background: var(--teal-pale); border-radius: 9px; padding: 15px 17px; border-left: 3px solid var(--teal); }
 
-/* COMPREHENSION */
 .cq-item { margin-bottom: 12px; padding: 13px 15px; background: var(--gray); border-radius: 8px; border: 1px solid var(--border); }
 .cq-q { font-size: 13px; font-weight: 600; margin-bottom: 7px; line-height: 1.5; }
 .cq-input { width: 100%; background: white; border: 1.5px solid var(--border); border-radius: 6px; color: var(--text); font-family: 'Inter', sans-serif; font-size: 13px; padding: 8px 11px; outline: none; transition: border-color 0.2s; }
@@ -169,14 +160,12 @@ body { font-family: 'Inter', sans-serif; background: var(--gray); color: var(--t
 .cq-reveal:hover { text-decoration: underline; }
 .cq-answer { font-size: 12px; color: #2E7D32; margin-top: 6px; display: none; padding: 6px 10px; background: #E8F5E9; border-radius: 5px; border-left: 3px solid #4CAF50; }
 
-/* OPEN QUESTIONS */
 .oq-item { margin-bottom: 12px; padding: 13px 15px; background: var(--gray); border-radius: 8px; border: 1px solid var(--border); }
 .oq-q { font-size: 13px; font-weight: 600; margin-bottom: 4px; line-height: 1.5; }
 .oq-hint { font-size: 11px; color: var(--text-muted); margin-bottom: 7px; font-style: italic; }
 .oq-textarea { width: 100%; background: white; border: 1.5px solid var(--border); border-radius: 6px; color: var(--text); font-family: 'Inter', sans-serif; font-size: 13px; padding: 8px 11px; outline: none; resize: vertical; min-height: 68px; transition: border-color 0.2s; line-height: 1.6; }
 .oq-textarea:focus { border-color: var(--teal); }
 
-/* GRAMMAR MC */
 .gmc-item { margin-bottom: 10px; background: var(--gray); border-radius: 8px; padding: 12px 14px; border: 1px solid var(--border); }
 .gmc-q { font-size: 13px; font-weight: 600; margin-bottom: 8px; line-height: 1.5; }
 .gmc-opts { display: flex; flex-direction: column; gap: 4px; }
@@ -186,7 +175,6 @@ body { font-family: 'Inter', sans-serif; background: var(--gray); color: var(--t
 .gmc-opt.correct { color: #2E7D32; font-weight: 500; }
 .gmc-opt.wrong { color: #C62828; }
 
-/* FILL IN THE BLANKS */
 .fill-item { font-size: 13.5px; line-height: 2.6; color: var(--text); }
 .fill-blank { display: inline-block; min-width: 100px; border: none; border-bottom: 2px solid var(--teal); background: transparent; color: var(--teal); font-family: 'Inter', sans-serif; font-size: 13.5px; padding: 0 5px; outline: none; text-align: center; transition: all 0.2s; }
 .fill-blank:focus { background: var(--teal-pale); border-radius: 4px 4px 0 0; }
@@ -194,18 +182,31 @@ body { font-family: 'Inter', sans-serif; background: var(--gray); color: var(--t
 .btn-reveal { background: white; border: 1.5px solid var(--border); color: var(--text); border-radius: 7px; padding: 7px 14px; font-family: 'Inter', sans-serif; font-size: 12px; font-weight: 600; cursor: pointer; transition: all 0.15s; margin-top: 8px; }
 .btn-reveal:hover { border-color: var(--teal); color: var(--teal); }
 
-/* SCORE */
 .score-bar { display: none; background: var(--teal-pale); border-radius: 9px; padding: 12px 16px; margin-top: 14px; text-align: center; border: 1.5px solid var(--border); }
 .score-num { font-family: 'Lora', serif; font-size: 28px; font-weight: 600; color: var(--teal); }
 .score-lbl { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
 
-/* SUBMIT */
 .btn-submit { width: 100%; background: var(--orange); color: white; border: none; border-radius: 8px; padding: 13px; font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 700; cursor: pointer; transition: background 0.2s; align-items: center; justify-content: center; gap: 8px; margin-top: 22px; box-shadow: 0 4px 14px rgba(232,68,26,0.25); display: none; }
 .btn-submit:hover { background: var(--orange-dark); }
 .submit-success { display: none; text-align: center; padding: 18px; background: #E8F5E9; border-radius: 9px; border: 1.5px solid #4CAF50; margin-top: 18px; }
 .submit-success-icon { font-size: 28px; margin-bottom: 6px; }
 .submit-success-title { font-family: 'Lora', serif; font-size: 17px; color: #2E7D32; font-weight: 600; margin-bottom: 3px; }
 .submit-success-text { font-size: 12.5px; color: #388E3C; }
+
+/* API KEY MODAL */
+.modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 200; align-items: center; justify-content: center; }
+.modal-overlay.open { display: flex; }
+.modal { background: white; border-radius: 14px; padding: 28px; max-width: 420px; width: 90%; box-shadow: 0 20px 60px rgba(0,0,0,0.2); }
+.modal-title { font-family: 'Lora', serif; font-size: 20px; color: var(--teal); margin-bottom: 6px; }
+.modal-sub { font-size: 12.5px; color: var(--text-muted); line-height: 1.6; margin-bottom: 18px; }
+.modal-input { width: 100%; background: var(--gray); border: 1.5px solid var(--border); border-radius: 7px; color: var(--text); font-family: 'Inter', sans-serif; font-size: 13px; padding: 10px 12px; outline: none; transition: border-color 0.2s; margin-bottom: 10px; }
+.modal-input:focus { border-color: var(--teal); background: white; }
+.modal-note { font-size: 11px; color: var(--text-muted); line-height: 1.6; margin-bottom: 16px; }
+.modal-note a { color: var(--teal); }
+.modal-btns { display: flex; gap: 8px; }
+.btn-modal-save { flex: 1; background: var(--orange); color: white; border: none; border-radius: 8px; padding: 11px; font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 600; cursor: pointer; }
+.btn-modal-save:hover { background: var(--orange-dark); }
+.btn-modal-cancel { background: var(--gray); color: var(--text); border: 1.5px solid var(--border); border-radius: 8px; padding: 11px 16px; font-family: 'Inter', sans-serif; font-size: 13px; cursor: pointer; }
 
 @media (max-width: 860px) {
   .main { grid-template-columns: 1fr; }
@@ -219,18 +220,33 @@ body { font-family: 'Inter', sans-serif; background: var(--gray); color: var(--t
 </head>
 <body>
 
+<!-- API KEY MODAL -->
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal">
+    <div class="modal-title">Configurar chave da API</div>
+    <div class="modal-sub">Para gerar atividades com IA, insira sua chave da API da Anthropic. Ela é salva apenas neste navegador.</div>
+    <input type="password" class="modal-input" id="apiKeyInput" placeholder="sk-ant-...">
+    <div class="modal-note">
+      Obtenha sua chave em <a href="https://console.anthropic.com" target="_blank">console.anthropic.com</a>.<br>
+      A chave é armazenada localmente no seu navegador e nunca enviada a servidores externos.
+    </div>
+    <div class="modal-btns">
+      <button class="btn-modal-cancel" onclick="closeModal()">Cancelar</button>
+      <button class="btn-modal-save" onclick="saveApiKey()">Salvar e continuar</button>
+    </div>
+  </div>
+</div>
+
 <header class="header">
   <a href="/" class="logo">
     <div class="logo-dot"></div>
     <span class="logo-text">EIC</span>
   </a>
   <span class="header-title">Gerador de Atividades</span>
-  <div style="width:60px"></div>
+  <button onclick="openModal()" style="background:rgba(255,255,255,0.12);border:1px solid rgba(255,255,255,0.2);color:white;border-radius:6px;padding:5px 11px;font-size:11px;cursor:pointer;font-family:'Inter',sans-serif;">⚙ API Key</button>
 </header>
 
 <div class="main" id="mainLayout">
-
-  <!-- FORM -->
   <div class="panel-form" id="panelForm">
     <h1 class="panel-title">Gerar <span>atividade</span></h1>
     <p class="panel-sub">Preencha os dados da aula e gere uma atividade personalizada para o aluno.</p>
@@ -287,7 +303,6 @@ body { font-family: 'Inter', sans-serif; background: var(--gray); color: var(--t
     </button>
   </div>
 
-  <!-- PREVIEW -->
   <div class="panel-preview">
     <div class="preview-top" id="previewTop">
       <span class="preview-label">Prévia da atividade</span>
@@ -310,7 +325,16 @@ body { font-family: 'Inter', sans-serif; background: var(--gray); color: var(--t
       </div>
       <div class="loading" id="loadingState">
         <div class="spinner"></div>
-        <div class="loading-msg"><strong>Gerando atividade...</strong>Criando exercícios personalizados.</div>
+        <div class="loading-msg">
+          <strong>Gerando atividade com IA...</strong>
+          Criando exercícios personalizados para o aluno.
+        </div>
+        <div class="loading-steps">
+          <div class="loading-step" id="step1">⏳ Conectando à API...</div>
+          <div class="loading-step" id="step2">⏳ Criando texto de leitura...</div>
+          <div class="loading-step" id="step3">⏳ Gerando exercícios...</div>
+          <div class="loading-step" id="step4">⏳ Finalizando atividade...</div>
+        </div>
       </div>
       <div id="actWrap"></div>
     </div>
@@ -320,23 +344,34 @@ body { font-family: 'Inter', sans-serif; background: var(--gray); color: var(--t
 <script>
 var SUPABASE_URL = 'https://wcydnkqnoqabkflzaujj.supabase.co';
 var SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndjeWRua3Fub3FhYmtmbHphdWpqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDExMzk1MTMsImV4cCI6MjA1NjcxNTUxM30.5WMSMJqMwt5yQjKYPpTAb6gYol_PvwG35HDJriOEVa4';
+
 var vocabWords = [];
 var currentActivity = null;
 var currentShareId = null;
+
+// ── API KEY MANAGEMENT ──
+function getApiKey() { return localStorage.getItem('eic_anthropic_key') || ''; }
+function openModal() {
+  document.getElementById('apiKeyInput').value = getApiKey();
+  document.getElementById('modalOverlay').classList.add('open');
+}
+function closeModal() { document.getElementById('modalOverlay').classList.remove('open'); }
+function saveApiKey() {
+  var key = document.getElementById('apiKeyInput').value.trim();
+  if (!key.startsWith('sk-ant-')) { alert('Chave inválida. Deve começar com sk-ant-'); return; }
+  localStorage.setItem('eic_anthropic_key', key);
+  closeModal();
+}
 
 // ── VOCAB TAG INPUT ──
 document.getElementById('vocabInput').addEventListener('keydown', function(e) {
   if (e.key === 'Enter' || e.key === ',') {
     e.preventDefault();
     var word = this.value.trim().replace(/,/g,'');
-    if (word && vocabWords.indexOf(word) === -1) {
-      vocabWords.push(word);
-      renderTags();
-    }
+    if (word && vocabWords.indexOf(word) === -1) { vocabWords.push(word); renderTags(); }
     this.value = '';
   } else if (e.key === 'Backspace' && this.value === '' && vocabWords.length) {
-    vocabWords.pop();
-    renderTags();
+    vocabWords.pop(); renderTags();
   }
 });
 
@@ -353,12 +388,7 @@ function renderTags() {
   wrap.appendChild(input);
   input.focus();
 }
-
-function removeWord(i) {
-  vocabWords.splice(i, 1);
-  renderTags();
-}
-
+function removeWord(i) { vocabWords.splice(i, 1); renderTags(); }
 function toggleChip(el) { el.classList.toggle('active'); }
 function getActiveTypes() {
   var t = [];
@@ -367,7 +397,16 @@ function getActiveTypes() {
 }
 function esc(s){ return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
 
-// ── GENERATE ──
+function setStep(n) {
+  for (var i = 1; i <= 4; i++) {
+    var el = document.getElementById('step'+i);
+    if (!el) continue;
+    if (i < n) el.innerHTML = '✅ ' + el.innerHTML.replace(/^[^a-zA-Z]+/, '');
+    else if (i === n) { el.classList.add('active'); el.innerHTML = '🔄 ' + el.innerHTML.replace(/^[^a-zA-Z]+/, ''); }
+  }
+}
+
+// ── MAIN GENERATE ──
 function generateActivity() {
   var teacher = document.getElementById('teacherName').value.trim();
   var name = document.getElementById('studentName').value.trim();
@@ -381,6 +420,9 @@ function generateActivity() {
   if (!vocabWords.length) { alert('Adicione ao menos uma palavra de vocabulário.'); return; }
   if (!types.length) { alert('Selecione pelo menos uma seção.'); return; }
 
+  var apiKey = getApiKey();
+  if (!apiKey) { openModal(); return; }
+
   document.getElementById('emptyState').style.display = 'none';
   document.getElementById('loadingState').style.display = 'flex';
   document.getElementById('actWrap').innerHTML = '';
@@ -388,169 +430,184 @@ function generateActivity() {
   document.getElementById('btnWA').disabled = true;
   document.getElementById('btnEM').disabled = true;
 
-  // Call Vercel serverless function
-  fetch('/api/generate', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ teacher: teacher, name: name, level: level, theme: theme, vocab: vocabWords.slice(), grammar: grammar, types: types })
-  })
-  .then(function(r){ return r.json(); })
-  .then(function(data){
-    if (data.error) throw new Error(data.error);
-    var act = parseActivity(data.text, teacher, name, level, theme, vocabWords.slice(), grammar, types);
-    finalize(act);
-  })
-  .catch(function(err){
-    console.warn('API error, using fallback:', err.message);
-    finalize(buildActivity(teacher, name, level, theme, vocabWords.slice(), grammar, types));
-  });
+  // Reset steps
+  for (var i = 1; i <= 4; i++) {
+    var el = document.getElementById('step'+i);
+    if (el) { el.className = 'loading-step'; el.innerHTML = '⏳ ' + ['Conectando à API...','Criando texto de leitura...','Gerando exercícios...','Finalizando atividade...'][i-1]; }
+  }
+  setStep(1);
+
+  callAnthropicAPI(apiKey, teacher, name, level, theme, vocabWords.slice(), grammar, types);
 }
 
-// ── BUILD ACTIVITY (uses actual vocab words correctly) ──
-function buildActivity(teacher, name, level, theme, words, grammar, types) {
-  var w = words;
+function buildPrompt(teacher, name, level, theme, vocab, grammar, types) {
+  var vocabList = vocab.join(', ');
+  var typesList = types.join(', ');
 
-  // Reading — use actual words naturally
-  var vocabInText = w.slice(0,4).join(', ');
-  var reading = 'One of the most important aspects of ' + theme + ' is communication. When people use expressions like "' + (w[0]||'') + '" and "' + (w[1]||w[0]||'') + '", they show confidence and fluency in the language.\n\nFor ' + name + ', mastering vocabulary such as ' + vocabInText + ' is a key step towards real fluency. These words appear frequently in everyday conversations and professional settings.\n\nWith consistent practice, these words will become a natural part of your vocabulary. Remember: every expert was once a beginner.';
+  var prompt = 'You are an expert English language teacher. Create a personalized English practice activity.\n\n';
+  prompt += 'STUDENT INFO:\n';
+  prompt += '- Teacher: ' + teacher + '\n';
+  prompt += '- Student: ' + name + '\n';
+  prompt += '- Level: ' + level + '\n';
+  prompt += '- Lesson Theme: ' + theme + '\n';
+  prompt += '- Vocabulary words (MUST use ALL of these): ' + vocabList + '\n';
+  if (grammar) prompt += '- Grammar focus: ' + grammar + '\n';
+  prompt += '- Sections needed: ' + typesList + '\n\n';
 
-  // Comprehension — about the text
-  var comprehension = [
-    { q: 'According to the text, what do expressions like "' + (w[0]||'these words') + '" show?', a: 'They show confidence and fluency in the language.' },
-    { q: 'What does the text say is a key step towards real fluency for ' + name + '?', a: 'Mastering vocabulary such as ' + vocabInText + ' is a key step towards real fluency.' },
-    { q: 'What does the text say will happen with consistent practice?', a: 'These words will become a natural part of your vocabulary.' }
-  ];
+  prompt += 'CRITICAL RULES:\n';
+  prompt += '1. ALL vocabulary words (' + vocabList + ') MUST appear naturally in the reading text\n';
+  prompt += '2. The reading text must be coherent, engaging, and appropriate for ' + level + ' level\n';
+  prompt += '3. All exercises must relate to the reading text and the theme: ' + theme + '\n';
+  prompt += '4. Use exactly the format below with these exact headers\n\n';
 
-  // Open questions — grammar focused
-  var isPresPerf = grammar && grammar.toLowerCase().indexOf('perfect') > -1;
-  var isPastSimp = grammar && grammar.toLowerCase().indexOf('past') > -1;
-  var openQ = [];
-  if (grammar) {
-    if (isPresPerf) {
-      openQ = [
-        { q: 'Have you ever had to use English in a real situation? What happened?', hint: 'Use Present Perfect: "I have..." or "I have never..."', grammar: grammar },
-        { q: 'What is the most interesting thing you have learned about ' + theme + ' recently?', hint: 'Use Present Perfect + vocabulary from this lesson.', grammar: grammar },
-        { q: 'Have you ever felt nervous speaking English? How did you deal with it?', hint: 'Write 2-3 sentences using Present Perfect and Past Simple.', grammar: grammar }
-      ];
-    } else if (isPastSimp) {
-      openQ = [
-        { q: 'Describe a time when you used English at work or in daily life. What happened?', hint: 'Use Past Simple: "I went...", "I said...", "I needed..."', grammar: grammar },
-        { q: 'How did you first get interested in ' + theme + '? Tell the story.', hint: 'Use Past Simple verbs in your answer.', grammar: grammar },
-        { q: 'What was the most challenging moment you had with English? How did you overcome it?', hint: 'Write 2-3 sentences using Past Simple.', grammar: grammar }
-      ];
-    } else {
-      openQ = [
-        { q: 'How is ' + theme + ' relevant to your daily life or work?', hint: 'Use ' + grammar + ' in your answer. Write 2-3 sentences.', grammar: grammar },
-        { q: 'What do you think is the best way to practice ' + (w[0]||'English') + ' in real life?', hint: 'Try to use ' + grammar + ' and vocabulary from this lesson.', grammar: grammar },
-        { q: 'Describe your goals for learning English. How will it help you in the future?', hint: 'Use ' + grammar + ' if possible. Express your ideas freely.', grammar: grammar }
-      ];
-    }
+  prompt += 'Generate ONLY the following sections (exactly as requested: ' + typesList + '):\n\n';
+
+  if (types.indexOf('reading') > -1) {
+    prompt += '## READING TEXT\n';
+    prompt += 'Write a 3-paragraph reading text about "' + theme + '" for a ' + level + ' student named ' + name + '.\n';
+    prompt += 'Naturally include ALL these vocabulary words: ' + vocabList + '\n';
+    prompt += 'Make it interesting, coherent, and realistic (not generic).\n\n';
   }
 
-  // Grammar MC — specific to grammar point
-  var grammarMC = [];
-  if (grammar) {
-    if (isPresPerf) {
-      grammarMC = [
-        { q: 'Choose the correct sentence:', opts: ['She has never visited Paris.', 'She have never visited Paris.', 'She never visited Paris yet.', 'She had never visit Paris.'], correct: 0 },
-        { q: 'Complete: "I ___ this restaurant before. The food is amazing!"', opts: ['never tried', 'have never tried', 'had never try', 'never have tried'], correct: 1 },
-        { q: '"___ you ever worked abroad?" — "Yes, I ___ in London for two years."', opts: ['Have / worked', 'Did / have worked', 'Have / have worked', 'Did / worked'], correct: 0 },
-        { q: 'Which sentence uses Present Perfect correctly?', opts: ['They living here since 2010.', 'They have lived here since 2010.', 'They are living here since 2010.', 'They lives here since 2010.'], correct: 1 }
-      ];
-    } else if (isPastSimp) {
-      grammarMC = [
-        { q: 'Choose the correct Past Simple form:', opts: ['She goed to the meeting yesterday.', 'She gone to the meeting yesterday.', 'She went to the meeting yesterday.', 'She go to the meeting yesterday.'], correct: 2 },
-        { q: 'Complete: "We ___ the project last Friday."', opts: ['finish', 'have finished', 'finished', 'finishing'], correct: 2 },
-        { q: 'Which question is correct in Past Simple?', opts: ['Did she went to the event?', 'Did she go to the event?', 'Has she go to the event?', 'Does she went to the event?'], correct: 1 },
-        { q: '"I ___ him at the conference last year."', opts: ['have met', 'meet', 'met', 'was meeting'], correct: 2 }
-      ];
-    } else {
-      grammarMC = [
-        { q: 'Select the grammatically correct sentence:', opts: ['He can speaks English fluently.', 'He can speak English fluently.', 'He cans speak English fluently.', 'He could speaks English fluently.'], correct: 1 },
-        { q: 'Choose the correct form:', opts: ['They must to attend the meeting.', 'They must attending the meeting.', 'They must attend the meeting.', 'They must attended the meeting.'], correct: 2 },
-        { q: 'Which sentence is correct?', opts: ['She should studies more.', 'She should to study more.', 'She should study more.', 'She should studied more.'], correct: 2 },
-        { q: 'Complete correctly: "You ___ be on time for the presentation."', opts: ['must to', 'should to', 'ought', 'should'], correct: 3 }
-      ];
-    }
+  if (types.indexOf('comprehension') > -1) {
+    prompt += '## COMPREHENSION QUESTIONS\n';
+    prompt += 'Write 3 comprehension questions about the reading text above.\n';
+    prompt += 'Format exactly:\nQ1: [question]\nA1: [model answer]\nQ2: [question]\nA2: [model answer]\nQ3: [question]\nA3: [model answer]\n\n';
   }
 
-  // Fill in blanks — use ACTUAL vocab words with MATCHING sentences
-  var fillTemplates = {
-    // Generic templates that work with any word
-    default: [
-      function(w){ return { s: 'The manager decided to ___ a new strategy for the team.', a: w }; },
-      function(w){ return { s: 'She was impressed by the ___ of the new employee.', a: w }; },
-      function(w){ return { s: 'It is important to ___ your ideas clearly in a meeting.', a: w }; },
-      function(w){ return { s: 'He showed great ___ when dealing with the difficult client.', a: w }; },
-      function(w){ return { s: 'The company decided to ___ their services to new markets.', a: w }; }
-    ]
-  };
-  var fill = w.slice(0,5).map(function(word, i){
-    var sentence = 'In the context of ' + theme + ', the word "___ " is often used to describe an important concept.';
-    var cleanWord = word.toLowerCase().replace(/^to /, '');
-    // Simple sentence: "[Before blank] ___ [after blank]"
-    var templates = [
-      'After careful consideration, she decided to ___ immediately.',
-      'The instructor explained the concept of ___ to the students.',
-      'To be successful, you need to develop your ___ every day.',
-      'He was asked to ___ the situation before making a decision.',
-      'One of the key aspects of ' + theme + ' is to ___ effectively.'
-    ];
-    sentence = templates[i % templates.length];
-    return { sentence: sentence, answer: word };
+  if (types.indexOf('open') > -1) {
+    prompt += '## OPEN QUESTIONS\n';
+    prompt += 'Write 3 open-ended discussion questions about ' + theme + '.\n';
+    if (grammar) prompt += 'Students should use ' + grammar + ' in their answers.\n';
+    prompt += 'Format exactly:\nQ1: [question]\nH1: [hint for student, mention grammar if applicable]\nQ2: [question]\nH2: [hint]\nQ3: [question]\nH3: [hint]\n\n';
+  }
+
+  if (types.indexOf('grammar') > -1) {
+    prompt += '## GRAMMAR PRACTICE\n';
+    if (grammar) prompt += 'Focus on: ' + grammar + '\n';
+    prompt += 'Write 4 multiple-choice grammar questions.\n';
+    prompt += 'Format exactly (one question per block):\nQ1: [question text]\na) [option a] b) [option b] c) [option c] d) [option d]\nCORRECT: [a/b/c/d]\n\nQ2: ...\n\n';
+  }
+
+  if (types.indexOf('fill') > -1) {
+    prompt += '## FILL IN THE BLANKS\n';
+    prompt += 'Create ' + Math.min(vocab.length, 5) + ' fill-in-the-blank sentences using these vocabulary words: ' + vocabList + '\n';
+    prompt += 'Each sentence must make sense with the answer.\n';
+    prompt += 'Format exactly (one per line):\n1. [sentence with ___] | ANSWER: [word]\n2. [sentence with ___] | ANSWER: [word]\n';
+    prompt += '(and so on for each vocabulary word)\n\n';
+  }
+
+  prompt += 'IMPORTANT: Respond ONLY with the sections above. No preamble, no explanations outside the sections.';
+  return prompt;
+}
+
+function callAnthropicAPI(apiKey, teacher, name, level, theme, vocab, grammar, types) {
+  setStep(2);
+  var prompt = buildPrompt(teacher, name, level, theme, vocab, grammar, types);
+
+  fetch('https://api.anthropic.com/v1/messages', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'x-api-key': apiKey,
+      'anthropic-version': '2023-06-01',
+      'anthropic-dangerous-direct-browser-access': 'true'
+    },
+    body: JSON.stringify({
+      model: 'claude-opus-4-5',
+      max_tokens: 2000,
+      messages: [{ role: 'user', content: prompt }]
+    })
+  })
+  .then(function(r) {
+    if (!r.ok) return r.json().then(function(e){ throw new Error(e.error && e.error.message ? e.error.message : 'API error ' + r.status); });
+    return r.json();
+  })
+  .then(function(data) {
+    setStep(3);
+    var text = '';
+    if (data.content && data.content.length) {
+      data.content.forEach(function(block){ if (block.type === 'text') text += block.text; });
+    }
+    if (!text) throw new Error('Empty response from API');
+    setStep(4);
+    var act = parseActivity(text, teacher, name, level, theme, vocab, grammar, types);
+    finalize(act);
+  })
+  .catch(function(err) {
+    console.error('Anthropic API error:', err);
+    // Show error with option to configure key
+    document.getElementById('loadingState').style.display = 'none';
+    document.getElementById('actWrap').innerHTML = '<div style="background:#fff3f0;border:1.5px solid #ffd0c8;border-radius:10px;padding:20px 22px;text-align:center;">' +
+      '<div style="font-size:24px;margin-bottom:8px;">⚠️</div>' +
+      '<div style="font-family:\'Lora\',serif;font-size:16px;color:var(--teal);font-weight:600;margin-bottom:6px;">Erro na API</div>' +
+      '<div style="font-size:13px;color:var(--text-muted);margin-bottom:14px;">' + esc(err.message) + '</div>' +
+      '<button onclick="openModal()" style="background:var(--orange);color:white;border:none;border-radius:7px;padding:9px 18px;font-size:13px;font-weight:600;cursor:pointer;font-family:\'Inter\',sans-serif;">Verificar API Key</button>' +
+      '</div>';
+    document.getElementById('btnGen').disabled = false;
   });
-
-  return { teacher: teacher, name: name, level: level, theme: theme, vocab: w, grammar: grammar, types: types, reading: reading, comprehension: comprehension, openQ: openQ, grammarMC: grammarMC, fill: fill };
 }
 
 function parseActivity(text, teacher, name, level, theme, vocab, grammar, types) {
-  var act = buildActivity(teacher, name, level, theme, vocab, grammar, types);
-  var rm = text.match(/##\s*READING TEXT\s*([\s\S]*?)(?=##|$)/i);
-  if (rm && rm[1].trim()) act.reading = rm[1].trim();
-  var cm = text.match(/##\s*COMPREHENSION QUESTIONS\s*([\s\S]*?)(?=##|$)/i);
+  var act = { teacher: teacher, name: name, level: level, theme: theme, vocab: vocab, grammar: grammar, types: types };
+
+  // Reading
+  var rm = text.match(/##\s*READING TEXT\s*([\s\S]*?)(?=##\s*[A-Z]|$)/i);
+  act.reading = rm && rm[1].trim() ? rm[1].trim() : '';
+
+  // Comprehension
+  var cm = text.match(/##\s*COMPREHENSION QUESTIONS\s*([\s\S]*?)(?=##\s*[A-Z]|$)/i);
+  act.comprehension = [];
   if (cm) {
-    var qs = cm[1].match(/Q\d+:\s*(.+)/g)||[];
-    var as = cm[1].match(/A\d+:\s*(.+)/g)||[];
-    if (qs.length) act.comprehension = qs.map(function(q,i){ return { q: q.replace(/Q\d+:\s*/,'').trim(), a: as[i]?as[i].replace(/A\d+:\s*/,'').trim():'' }; });
+    var qs = cm[1].match(/Q\d+:\s*(.+)/g) || [];
+    var as = cm[1].match(/A\d+:\s*(.+)/g) || [];
+    act.comprehension = qs.map(function(q, i){ return { q: q.replace(/Q\d+:\s*/,'').trim(), a: as[i] ? as[i].replace(/A\d+:\s*/,'').trim() : '' }; });
   }
-  var om = text.match(/##\s*OPEN QUESTIONS\s*([\s\S]*?)(?=##|$)/i);
+
+  // Open questions
+  var om = text.match(/##\s*OPEN QUESTIONS\s*([\s\S]*?)(?=##\s*[A-Z]|$)/i);
+  act.openQ = [];
   if (om) {
-    var oqs = om[1].match(/Q\d+:\s*(.+)/g)||[];
-    var ohs = om[1].match(/H\d+:\s*(.+)/g)||[];
-    if (oqs.length) act.openQ = oqs.map(function(q,i){ return { q: q.replace(/Q\d+:\s*/,'').trim(), hint: ohs[i]?ohs[i].replace(/H\d+:\s*/,'').trim():'', grammar: grammar }; });
+    var oqs = om[1].match(/Q\d+:\s*(.+)/g) || [];
+    var ohs = om[1].match(/H\d+:\s*(.+)/g) || [];
+    act.openQ = oqs.map(function(q, i){ return { q: q.replace(/Q\d+:\s*/,'').trim(), hint: ohs[i] ? ohs[i].replace(/H\d+:\s*/,'').trim() : '', grammar: grammar }; });
   }
-  var gm = text.match(/##\s*GRAMMAR PRACTICE\s*([\s\S]*?)(?=##|$)/i);
+
+  // Grammar MC
+  var gm = text.match(/##\s*GRAMMAR PRACTICE\s*([\s\S]*?)(?=##\s*[A-Z]|$)/i);
+  act.grammarMC = [];
   if (gm) {
-    var blocks = gm[1].split(/Q\d+:/).filter(Boolean);
-    var gp = [];
-    blocks.forEach(function(block){
+    var blocks = gm[1].split(/\n(?=Q\d+:)/).filter(Boolean);
+    blocks.forEach(function(block) {
       var lines = block.trim().split('\n').filter(Boolean);
       if (!lines.length) return;
-      var question = lines[0].trim();
-      var optLine = lines.find(function(l){ return /[a-d]\)/i.test(l); });
+      var question = lines[0].replace(/Q\d+:\s*/,'').trim();
+      var optsLine = lines.find(function(l){ return /[a-d]\)/i.test(l); }) || '';
       var opts = [];
-      if (optLine) { opts = optLine.match(/[a-d]\)\s*[^a-d)]+/gi)||[]; opts = opts.map(function(o){ return o.replace(/^[a-d]\)\s*/i,'').trim(); }); }
+      var optMatches = optsLine.match(/[a-d]\)\s*[^a-d)\n]+/gi) || [];
+      opts = optMatches.map(function(o){ return o.replace(/^[a-d]\)\s*/i,'').trim(); });
       var correct = 0;
       var corrLine = lines.find(function(l){ return /CORRECT:/i.test(l); });
       if (corrLine) { var cm2 = corrLine.match(/CORRECT:\s*([a-d])/i); if(cm2) correct = 'abcd'.indexOf(cm2[1].toLowerCase()); }
-      if (opts.length >= 2) gp.push({ q: question, opts: opts, correct: correct });
+      if (question && opts.length >= 2) act.grammarMC.push({ q: question, opts: opts, correct: correct });
     });
-    if (gp.length) act.grammarMC = gp;
   }
-  var fm = text.match(/##\s*FILL IN THE BLANKS\s*([\s\S]*?)(?=##|$)/i);
+
+  // Fill in blanks
+  var fm = text.match(/##\s*FILL IN THE BLANKS\s*([\s\S]*?)(?=##\s*[A-Z]|$)/i);
+  act.fill = [];
   if (fm) {
     var flines = fm[1].trim().split('\n').filter(Boolean);
-    var fp = [];
-    flines.forEach(function(line){
+    flines.forEach(function(line) {
       var parts = line.split('|');
       if (parts.length >= 2) {
         var sentence = parts[0].replace(/^\d+\.\s*/,'').trim();
         var am = parts[1].match(/ANSWER:\s*(.+)/i);
-        if (am && sentence.indexOf('___') > -1) fp.push({ sentence: sentence, answer: am[1].trim() });
+        if (am && sentence.indexOf('___') > -1) act.fill.push({ sentence: sentence, answer: am[1].trim() });
       }
     });
-    if (fp.length) act.fill = fp;
   }
+
   return act;
 }
 
@@ -566,34 +623,28 @@ function finalize(act) {
 }
 
 function renderActivity(act, shareId, studentMode) {
-  var shareUrl = window.location.origin + '/atividade.html?id=' + shareId;
+  var shareUrl = window.location.origin + '/atividade?id=' + shareId;
   var html = '<div class="act-card">';
-
-  // Header
   html += '<div class="act-head"><div class="act-meta">EIC · Practice Activity · ' + esc(act.level) + '</div>';
   html += '<div class="act-title">' + esc(act.theme) + '</div>';
   html += '<div class="act-sub">For ' + esc(act.name) + ' · ' + new Date().toLocaleDateString('pt-BR') + '</div></div>';
   html += '<div class="act-body">';
 
-  // Vocab display
   if (act.vocab && act.vocab.length) {
     html += '<div class="vocab-display">';
     act.vocab.forEach(function(w){ html += '<span class="vocab-badge">' + esc(w) + '</span>'; });
     html += '</div>';
   }
 
-  // Share link (teacher only)
   if (!studentMode) {
     html += '<div class="share-box"><span class="share-link" id="shareLink">' + esc(shareUrl) + '</span><button class="btn-copy" onclick="copyLink()">Copiar link</button></div>';
   }
 
-  // READING
   if (act.types.indexOf('reading') > -1 && act.reading) {
     html += '<div class="sec"><div class="sec-title">📖 Reading</div>';
-    html += '<div class="reading-text">' + esc(act.reading).replace(/\n/g,'<br>') + '</div></div>';
+    html += '<div class="reading-text">' + esc(act.reading).replace(/\n\n/g,'</div><div class="reading-text" style="margin-top:10px;">').replace(/\n/g,'<br>') + '</div></div>';
   }
 
-  // COMPREHENSION
   if (act.types.indexOf('comprehension') > -1 && act.comprehension && act.comprehension.length) {
     html += '<div class="sec"><div class="sec-title">💬 Comprehension Questions</div>';
     act.comprehension.forEach(function(q, i){
@@ -605,7 +656,6 @@ function renderActivity(act, shareId, studentMode) {
     html += '</div>';
   }
 
-  // OPEN QUESTIONS
   if (act.types.indexOf('open') > -1 && act.openQ && act.openQ.length) {
     html += '<div class="sec"><div class="sec-title">✍️ Open Questions</div>';
     act.openQ.forEach(function(q, i){
@@ -616,7 +666,6 @@ function renderActivity(act, shareId, studentMode) {
     html += '</div>';
   }
 
-  // GRAMMAR MC
   if (act.types.indexOf('grammar') > -1 && act.grammarMC && act.grammarMC.length) {
     html += '<div class="sec"><div class="sec-title">📐 Grammar Practice' + (act.grammar ? ' — ' + esc(act.grammar) : '') + '</div>';
     act.grammarMC.forEach(function(q, qi){
@@ -626,11 +675,10 @@ function renderActivity(act, shareId, studentMode) {
       });
       html += '</div></div>';
     });
-    html += '<div class="score-bar" id="scoreBar"><div class="score-num" id="scoreNum">0/4</div><div class="score-lbl">Grammar score</div></div>';
+    html += '<div class="score-bar" id="scoreBar"><div class="score-num" id="scoreNum">0/' + act.grammarMC.length + '</div><div class="score-lbl">Grammar score</div></div>';
     html += '</div>';
   }
 
-  // FILL IN THE BLANKS
   if (act.types.indexOf('fill') > -1 && act.fill && act.fill.length) {
     html += '<div class="sec"><div class="sec-title">✏️ Fill in the Blanks</div>';
     act.fill.forEach(function(f, fi){
@@ -640,7 +688,6 @@ function renderActivity(act, shareId, studentMode) {
     html += '<button class="btn-reveal" onclick="revealFill()">Revelar respostas</button></div>';
   }
 
-  // SUBMIT (student)
   if (studentMode) {
     html += '<button class="btn-submit" id="btnSubmit" style="display:flex" onclick="submitActivity()">Enviar atividade ✓</button>';
     html += '<div class="submit-success" id="submitSuccess"><div class="submit-success-icon">🎉</div><div class="submit-success-title">Atividade enviada!</div><div class="submit-success-text">Seu professor receberá suas respostas em breve.</div></div>';
@@ -710,17 +757,17 @@ function copyLink() {
 
 function sendWhatsApp() {
   if (!currentActivity || !currentShareId) return;
-  var url = window.location.origin + '/atividade.html?id=' + currentShareId;
+  var url = window.location.origin + '/atividade?id=' + currentShareId;
   window.open('https://wa.me/?text=' + encodeURIComponent('Olá ' + currentActivity.name + '! 👋\n\nAqui está sua atividade de inglês sobre *' + currentActivity.theme + '*. 😊\n\n🔗 ' + url), '_blank');
 }
 
 function sendEmail() {
   if (!currentActivity || !currentShareId) return;
-  var url = window.location.origin + '/atividade.html?id=' + currentShareId;
+  var url = window.location.origin + '/atividade?id=' + currentShareId;
   window.open('mailto:?subject=' + encodeURIComponent('EIC · Your English Practice — ' + currentActivity.theme) + '&body=' + encodeURIComponent('Hi ' + currentActivity.name + ',\n\nHere is your personalized English practice:\n\n👉 ' + url + '\n\nKeep up the great work!\nEIC'));
 }
 
-// Student view
+// ── STUDENT VIEW ──
 window.addEventListener('DOMContentLoaded', function(){
   var id = new URLSearchParams(window.location.search).get('id');
   if (!id) return;
