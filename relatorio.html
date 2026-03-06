@@ -398,13 +398,11 @@ textarea { min-height: 80px; }
           </select></td>
           <td><div class="vocab-example-wrap">
   <input type="text" placeholder="ex: capaz de se recuperar">
-  <button type="button" class="btn-ai" style="background:linear-gradient(135deg,#5A6275,#3D4451)" onclick="aiTranslate(this)" title="Traduzir com IA">🤖</button>
-</div></td>
+  </td>
           <td><input type="text" placeholder="e.g. gather / gathered / gathered"></td>
           <td><div class="vocab-example-wrap">
   <input type="text" placeholder="e.g. She is very resilient under pressure.">
-  <button type="button" class="btn-ai" onclick="aiExample(this)" title="Gerar frase com IA">✨</button>
-</div></td>
+  </div></td>
           <td><button class="btn-del-row" onclick="delRow(this)">×</button></td>
         </tr></tbody>
       </table></div>
@@ -432,14 +430,12 @@ textarea { min-height: 80px; }
           </div></td>
           <td><div class="vocab-example-wrap">
             <input type="text" placeholder="correr">
-            <button type="button" class="btn-ai" style="background:linear-gradient(135deg,#5A6275,#3D4451)" onclick="aiTranslate(this)" title="Traduzir com IA">🤖</button>
-          </div></td>
+                </div></td>
           <td><input type="text" placeholder="ran"></td>
           <td><input type="text" placeholder="run"></td>
           <td><div class="vocab-example-wrap">
             <input type="text" placeholder="e.g. She runs every day.">
-            <button type="button" class="btn-ai" onclick="aiExample(this)" title="Gerar frase com IA">✨</button>
-          </div></td>
+                 </div></td>
           <td><button class="btn-del-row" onclick="delRow(this)">×</button></td>
         </tr></tbody>
       </table></div>
@@ -852,10 +848,10 @@ function addVerbRow() {
   var tr = document.createElement('tr');
   tr.innerHTML =
     '<td><div style="display:flex;gap:4px;align-items:center"><input type="text" placeholder="e.g. run" style="flex:1"><button type="button" class="btn-speak" onclick="speakWord(this)">🔊</button></div></td>' +
-    '<td><div class="vocab-example-wrap"><input type="text" placeholder="correr"><button type="button" class="btn-ai" style="background:linear-gradient(135deg,#5A6275,#3D4451)" onclick="aiTranslate(this)">🤖</button></div></td>' +
+    '<td><input type="text" placeholder="correr"></td>' +
     '<td><input type="text" placeholder="ran"></td>' +
     '<td><input type="text" placeholder="run"></td>' +
-    '<td><div class="vocab-example-wrap"><input type="text" placeholder="e.g. She runs every day."><button type="button" class="btn-ai" onclick="aiExample(this)">✨</button></div></td>' +
+    '<td><input type="text" placeholder="e.g. She runs every day."></td>' +
     '<td><button class="btn-del-row" onclick="delRow(this)">×</button></td>';
   tbody.appendChild(tr);
 }
@@ -872,9 +868,9 @@ function addVocabRow() {
       '<button type="button" class="btn-speak" onclick="speakWord(this)" title="Ouvir pronúncia">🔊</button>' +
     '</div></td>' +
     '<td><select class="vocab-type-select" style="width:100%;font-family:inherit;font-size:0.8rem;color:var(--slate);background:white;border:1px solid #ddd;border-radius:6px;padding:4px 6px;outline:none;"><option value="">—</option><option>verb</option><option>noun</option><option>adjective</option><option>adverb</option><option>pronoun</option><option>phrasal verb</option><option>idiom</option><option>expression</option><option>preposition</option><option>conjunction</option><option>interjection</option></select></td>' +
-    '<td><div class="vocab-example-wrap"><input type="text" placeholder="ex: capaz de se recuperar"><button type="button" class="btn-ai" style="background:linear-gradient(135deg,#5A6275,#3D4451)" onclick="aiTranslate(this)" title="Traduzir com IA">🤖</button></div></td>' +
+    '<td><input type="text" placeholder="ex: capaz de se recuperar"></td>' +
     '<td><input type="text" placeholder="e.g. gather / gathered / gathered"></td>' +
-    '<td><div class="vocab-example-wrap"><input type="text" placeholder="e.g. She is very resilient under pressure."><button type="button" class="btn-ai" onclick="aiExample(this)" title="Gerar frase com IA">✨</button></div></td>' +
+    '<td><input type="text" placeholder="e.g. She is very resilient under pressure."></td>' +
     '<td><button class="btn-del-row" onclick="delRow(this)">×</button></td>';
   tbody.appendChild(tr);
 }
