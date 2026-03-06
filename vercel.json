@@ -1,5 +1,8 @@
 {
     "routes": [
+        { "src": "/api/generate",         "dest": "/api/generate.js" },
+        { "src": "/atividade",            "dest": "/atividade.html" },
+        { "src": "/atividade.html",       "dest": "/atividade.html" },
         { "src": "/leads",                "dest": "/leads-eic.html" },
         { "src": "/cadastro",             "dest": "/cadastro.html" },
         { "src": "/placement",            "dest": "/placement.html" },
