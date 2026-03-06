@@ -1,15 +1,16 @@
 {
   "routes": [
-    { "src": "/leads",              "dest": "/leads-eic.html" },
-    { "src": "/cadastro",           "dest": "/cadastro.html" },
-    { "src": "/placement",          "dest": "/placement.html" },
-    { "src": "/relatorio",          "dest": "/relatorio.html" },
-    { "src": "/parceria-escolas",   "dest": "/eic-parceria-escolas.html" },
-    { "src": "/parceria-empresas",  "dest": "/eic-parceria-empresas.html" },
-    { "src": "/gerador-propostas",  "dest": "/eic-gerador-propostas.html" },
-    { "src": "/interesse-empresas", "dest": "/eic-interesse-empresas.html" },
-    { "src": "/matricula",          "dest": "/eic-interesse-matricula.html" },
-    { "src": "/painel-leads",       "dest": "/eic-painel-leads.html" },
-    { "src": "/(.*)",               "dest": "/index.html" }
+    { "src": "/leads",               "dest": "/leads-eic.html" },
+    { "src": "/cadastro",            "dest": "/cadastro.html" },
+    { "src": "/placement",           "dest": "/placement.html" },
+    { "src": "/relatorio",           "dest": "/relatorio.html" },
+    { "src": "/parceria-escolas",    "dest": "/eic-parceria-escolas.html" },
+    { "src": "/parceria-empresas",   "dest": "/eic-parceria-empresas.html" },
+    { "src": "/gerador-propostas",   "dest": "/eic-gerador-propostas.html" },
+    { "src": "/interesse-empresas",  "dest": "/eic-interesse-empresas.html" },
+    { "src": "/matricula",           "dest": "/eic-interesse-matricula.html" },
+    { "src": "/painel-leads",        "dest": "/eic-painel-leads.html" },
+    { "src": "/hub",                 "dest": "/hub.html" },
+    { "src": "/(.*)",                "dest": "/index.html" }
   ]
 }
