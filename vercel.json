@@ -1,9 +1,4 @@
 {
-    "functions": {
-        "api/generate.js": {
-            "runtime": "edge"
-        }
-    },
     "routes": [
         { "src": "/atividade",            "dest": "/atividade.html" },
         { "src": "/atividade.html",       "dest": "/atividade.html" },
