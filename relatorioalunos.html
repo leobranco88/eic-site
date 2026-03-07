@@ -274,21 +274,24 @@ const CEFR_LEVELS = ['A1','A2','B1','B2','C1','C2'];
 
 // ===== AUTH =====
 function doLogin(){
+  // Entra direto ignorando a senha para seu teste
   if(true){
     document.getElementById('loginScreen').style.display='none';
-    document.getElementById('topbar').style.display='flex';
-    document.getElementById('mainScreen').style.display='block';
-    addTab();
-  } else {
-    document.getElementById('loginErr').style.display='block';
+    if(document.getElementById('topbar')) document.getElementById('topbar').style.display='flex';
+    if(document.getElementById('mainScreen')) document.getElementById('mainScreen').style.display='block';
+    
+    if (typeof addTab === "function") {
+        addTab();
+    }
   }
 }
+
 function doLogout(){
   if(confirm('Sair? Os dados não salvos serão perdidos.')){
     location.reload();
   }
 }
-
+  
 // ===== TABS STATE =====
 let tabs = [];
 let activeTab = null;
