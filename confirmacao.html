@@ -20,53 +20,48 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
+
+// --- INÍCIO DA NOVA LÓGICA DO QR CODE ---
+const urlParams = new URLSearchParams(window.location.search);
+const teacherId = urlParams.get('teacher') || "EIC";
+const alunoNome = urlParams.get('aluno') || "Aluno";
+
+// Variáveis globais para uso nas outras funções do arquivo
+window.currentTeacher = teacherId;
+window.currentAluno = alunoNome;
 window.db = db;
-window.fsLib = { collection, doc, setDoc, getDocs, updateDoc, query, where, orderBy };
 
-const DIAS_ORDER = ['Segunda','Terça','Quarta','Quinta','Sexta'];
-
-// Parse URL params
-const params = new URLSearchParams(window.location.search);
-const ALUNO = decodeURIComponent(params.get('aluno') || '');
-const TEACHER = decodeURIComponent(params.get('teacher') || '');
-const TEACHER_ID = TEACHER.toLowerCase().replace(/\s+/g, '_').replace(/[^a-z0-9_]/g, '');
-
-let selectedSlotId = null;
-let step = 1; // 1: confirm receipt, 2: want meeting?, 3: pick slot, 4: done
-
-window.addEventListener('DOMContentLoaded', () => {
-  if (!ALUNO || !TEACHER) {
-    showError('Link inválido. Por favor, escaneie o QR Code do relatório novamente.');
-    return;
-  }
-
-  document.getElementById('alunoName').textContent = ALUNO;
-  document.getElementById('teacherName').textContent = TEACHER;
-  document.getElementById('alunoName2').textContent = ALUNO;
-  document.getElementById('teacherName2').textContent = TEACHER;
-  showStep(1);
-});
-
-window.confirmReceipt = async function() {
-  document.getElementById('btnConfirm').disabled = true;
-  document.getElementById('btnConfirm').textContent = 'Confirmando...';
+window.loadSlots = async function() {
+  const container = document.getElementById('slotsContainer');
+  container.innerHTML = '<div class="loading-sm">Buscando horários de '+teacherId+'...</div>';
+  
   try {
-    const id = `conf_${TEACHER_ID}_${ALUNO.replace(/\s+/g,'_')}_${Date.now()}`;
-    await setDoc(doc(db, 'confirmacoes', id), {
-      aluno: ALUNO,
-      teacher: TEACHER,
-      teacherId: TEACHER_ID,
-      confirmedAt: new Date().toISOString(),
-      wantsMeeting: null
+    const q = query(
+      collection(db, "disponibilidade"), 
+      where("teacherId", "==", teacherId),
+      where("status", "==", "livre")
+    );
+    
+    const snap = await getDocs(q);
+    container.innerHTML = "";
+
+    if(snap.empty) {
+      container.innerHTML = '<div class="empty-state-sm">Não há horários disponíveis para este professor no momento.</div>';
+      return;
+    }
+
+    snap.forEach(docSnap => {
+      const data = docSnap.data();
+      const btn = document.createElement('button');
+      btn.className = 'slot-pill';
+      btn.innerHTML = `<strong>${data.dia}</strong> às ${data.hora}`;
+      btn.onclick = () => selectSlot(docSnap.id, data.dia, data.hora, btn);
+      container.appendChild(btn);
     });
-    window._confirmId = id;
-    showStep(2);
-  } catch(e) {
-    document.getElementById('btnConfirm').disabled = false;
-    document.getElementById('btnConfirm').textContent = 'Confirmar recebimento';
-    showError('Erro ao confirmar: ' + e.message);
+  } catch (e) {
+    console.error(e);
+    container.innerHTML = "Erro ao carregar horários.";
   }
-};
 
 window.answerMeeting = async function(wants) {
   if (!wants) {
