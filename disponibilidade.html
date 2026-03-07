@@ -1,18 +1,48 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>EIC — Gestão de Disponibilidade</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+<script type="module">
+import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
+import { getFirestore, collection, doc, setDoc, getDocs, deleteDoc, query, where } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+
+const firebaseConfig = {
+  apiKey: "AIzaSyDykKpVrCHNdq09aaxJXbF6KBqkcd2mIgM",
+  authDomain: "eic-pagamentos.firebaseapp.com",
+  projectId: "eic-pagamentos",
+  storageBucket: "eic-pagamentos.firebasestorage.app",
+  messagingSenderId: "527042889607",
+  appId: "1:527042889607:web:9b69d5ae9ab55a3653f522"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+// --- FUNÇÕES GLOBAIS ---
+
 window.addSlot = async function() {
   const prof = document.getElementById('professorSelect').value;
   const dia = document.getElementById('slotDia').value;
   const hora = document.getElementById('slotHora').value;
-  if(!prof){ alert("Selecione um professor"); return; }
 
-  // Criamos um ID que inclua o professor para evitar sobreposição
-  const id = `${prof}_${dia}_${hora.replace(':','')}`;
-  await setDoc(doc(db, "disponibilidade", id), {
-    teacherId: prof, 
-    dia: dia,
-    hora: hora,
-    status: "livre"
-  });
-  loadSlots();
+  if(!prof) { alert("Por favor, selecione um professor primeiro."); return; }
+
+  // Criamos um ID único: Professor_Dia_Hora
+  const slotId = `${prof}_${dia}_${hora.replace(':','')}`;
+  
+  try {
+    await setDoc(doc(db, "disponibilidade", slotId), {
+      teacherId: prof,
+      dia: dia,
+      hora: hora,
+      status: "livre"
+    });
+    alert("Horário adicionado!");
+    loadSlots();
+  } catch (e) { alert("Erro ao salvar."); }
 }
 
 window.addMultipleSlots = async function() {
@@ -20,24 +50,107 @@ window.addMultipleSlots = async function() {
   const dia = document.getElementById('slotDia').value;
   const inicio = document.getElementById('slotInicio').value;
   const fim = document.getElementById('slotFim').value;
-  if(!prof){ alert("Selecione o professor"); return; }
+
+  if(!prof) { alert("Selecione um professor."); return; }
 
   let curr = new Date(`2025-01-01T${inicio}`);
   const end = new Date(`2025-01-01T${fim}`);
 
-  while(curr < end){
-    const hh = String(curr.getHours()).padStart(2,'0');
-    const mm = String(curr.getMinutes()).padStart(2,'0');
-    const timeStr = `${hh}:${mm}`;
-    const id = `${prof}_${dia}_${hh}${mm}`;
-    
-    await setDoc(doc(db, "disponibilidade", id), {
-      teacherId: prof,
-      dia: dia,
-      hora: timeStr,
-      status: "livre"
+  try {
+    while(curr < end) {
+      const hh = String(curr.getHours()).padStart(2,'0');
+      const mm = String(curr.getMinutes()).padStart(2,'0');
+      const timeStr = `${hh}:${mm}`;
+      const slotId = `${prof}_${dia}_${hh}${mm}`;
+      
+      await setDoc(doc(db, "disponibilidade", slotId), {
+        teacherId: prof,
+        dia: dia,
+        hora: timeStr,
+        status: "livre"
+      });
+      curr.setMinutes(curr.getMinutes() + 30);
+    }
+    alert("Intervalos gerados!");
+    loadSlots();
+  } catch (e) { alert("Erro ao gerar múltiplos horários."); }
+}
+
+window.loadSlots = async function() {
+  const prof = document.getElementById('professorSelect').value;
+  const list = document.getElementById('slotsList');
+  if(!prof) { list.innerHTML = "Selecione um professor para ver os horários."; return; }
+
+  list.innerHTML = "A carregar...";
+  
+  try {
+    const q = query(collection(db, "disponibilidade"), where("teacherId", "==", prof));
+    const snap = await getDocs(q);
+    list.innerHTML = "";
+
+    if(snap.empty) {
+      list.innerHTML = "Nenhum horário cadastrado para este professor.";
+      return;
+    }
+
+    snap.forEach(d => {
+      const data = d.data();
+      const item = document.createElement('div');
+      item.className = 'slot-item';
+      item.innerHTML = `
+        <span><strong>${data.dia}</strong> - ${data.hora} (${data.status})</span>
+        <button onclick="deleteSlot('${d.id}')" style="background:none; border:none; color:red; cursor:pointer;">Excluir</button>
+      `;
+      list.appendChild(item);
     });
-    curr.setMinutes(curr.getMinutes() + 30);
-  }
+  } catch (e) { list.innerHTML = "Erro ao carregar lista."; }
+}
+
+window.deleteSlot = async function(id) {
+  if(!confirm("Deseja excluir este horário?")) return;
+  await deleteDoc(doc(db, "disponibilidade", id));
   loadSlots();
 }
+</script>
+
+<style>
+/* Design EIC */
+:root{--coral:#E8450A;--dark:#1A1208;--bg:#EDEAE4;--cream:#FBF7F0}
+body{background:var(--bg); font-family:'DM Sans', sans-serif; padding:20px; color:var(--dark)}
+.card{background:var(--cream); max-width:500px; margin:auto; padding:30px; border-radius:20px; box-shadow:0 10px 30px rgba(0,0,0,0.05)}
+h2{font-family:'Playfair Display', serif; margin-bottom:20px}
+label{display:block; margin:10px 0 5px; font-weight:600}
+select, input{width:100%; padding:12px; border-radius:8px; border:1px solid #ddd; margin-bottom:10px}
+button{width:100%; padding:15px; border-radius:10px; border:none; cursor:pointer; font-weight:bold; margin-top:10px}
+.btn-add-slot{background:var(--coral); color:white}
+.slot-item{background:white; padding:10px; margin-top:10px; border-radius:8px; display:flex; justify-content:space-between; border:1px solid #eee}
+</style>
+</head>
+<body>
+<div class="card">
+  <h2>Gestão de Horários</h2>
+  
+  <label>Selecione o Professor</label>
+  <select id="professorSelect" onchange="loadSlots()">
+    <option value="">-- Escolha um nome --</option>
+    <option value="Leonardo">Leonardo</option>
+    </select>
+
+  <div style="border-top:1px solid #ddd; margin:20px 0;"></div>
+
+  <label>Dia da Semana</label>
+  <select id="slotDia">
+    <option>Segunda</option><option>Terça</option><option>Quarta</option><option>Quinta</option><option>Sexta</option>
+  </select>
+
+  <label>Horário (ex: 18:00)</label>
+  <input type="time" id="slotHora" value="18:00">
+  <button class="btn-add-slot" onclick="addSlot()">Adicionar Horário Único</button>
+
+  <div style="text-align:center; margin:15px 0; color:#999; font-size:12px;">OU GERAR INTERVALO</div>
+
+  <input type="time" id="slotInicio" value="17:00">
+  <input type="time" id="slotFim" value="20:00">
+  <button onclick="addMultipleSlots()" style="background:#2E4A52; color:white;">Gerar 30 em 30 min</button>
+
+  <h3 style="margin-top:30px;">
