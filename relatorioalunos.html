@@ -486,11 +486,29 @@ function renderTabContent(){
           Teacher
        <span class="tip-icon">?<span class="tooltip">Selecione seu nome como professor(a) responsável.</span></span>
         </div>
-        <select id="f_teacher" class="form-control" onchange="updateTabField(activeTab, 'teacher', this.value)">
-          <option value="Leonardo" ${d.teacher === 'Leonardo' ? 'selected' : ''}>Leonardo</option>
-          <option value="Maria" ${d.teacher === 'Maria' ? 'selected' : ''}>Maria</option>
-          <option value="Joao" ${d.teacher === 'Joao' ? 'selected' : ''}>João</option>
-        </select>
+       <select id="f_teacher" class="form-control" onchange="updateTabField(activeTab, 'teacher', this.value)">
+  <option value="">Carregando professores...</option>
+</select>
+
+<script>
+  // Este script vai buscar os nomes que você cadastrou no Admin
+  db.collection("professores").orderBy("nome").onSnapshot((snap) => {
+    const select = document.getElementById('f_teacher');
+    const valorSalvo = select.getAttribute('data-current') || ""; // Para não perder a seleção ao atualizar
+    
+    select.innerHTML = '<option value="">-- Selecione --</option>';
+    
+    snap.forEach(doc => {
+      const nome = doc.data().nome;
+      const opt = document.createElement('option');
+      opt.value = nome;
+      opt.textContent = nome;
+      // Se for o professor que já estava no relatório, ele continua selecionado
+      if(nome === valorSalvo) opt.selected = true;
+      select.appendChild(opt);
+    });
+  });
+</script>
       </div>
       <div class="field">
         <div class="field-label">Coordinator</div>
