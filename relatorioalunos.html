@@ -9,6 +9,34 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+
+<script>
+  // CONFIGURAÇÃO DO FIREBASE COM AS SUAS CHAVES
+  const firebaseConfig = {
+    apiKey: "AIzaSyDykKpVrCHNdq09aaxJXbF6KBqkcd2mIgM",
+    authDomain: "eic-pagamentos.firebaseapp.com",
+    projectId: "eic-pagamentos",
+    storageBucket: "eic-pagamentos.firebasestorage.app",
+    messagingSenderId: "527042889607",
+    appId: "1:527042889607:web:9b69d5ae9ab55a3653f522"
+  };
+  
+  // Inicializa apenas se ainda não foi inicializado
+  if (!firebase.apps.length) {
+    firebase.initializeApp(firebaseConfig);
+  }
+  const db = firebase.firestore();
+
+  // LISTA DE PROFESSORES QUE VEM DO ADMIN
+  let professores = ["Leonardo"]; 
+  db.collection("professores").orderBy("nome").onSnapshot(snap => {
+      professores = snap.docs.map(doc => doc.data().nome);
+      // Atualiza o formulário automaticamente se ele já estiver desenhado
+      if(typeof renderTabContent === "function") renderTabContent(); 
+  });
+</script>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
