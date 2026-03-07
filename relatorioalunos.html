@@ -484,13 +484,15 @@ function renderTabContent(){
       <div class="field">
         <div class="field-label">
           Teacher
-          <span class="tip-icon">?<span class="tooltip">Seu nome completo como professor(a) responsável pela turma.</span></span>
+          <span class="tip-icon">?<span class="tooltip">Selecione seu nome como professor(a) responsável.</span></span>
         </div>
-        <input type="text" id="f_teacher" value="${esc(d.teacher)}" placeholder="Seu nome completo"/>
+        <select id="f_teacher" class="form-control" onchange="updateTabField(activeTab, 'teacher', this.value)">
+          <option value="Leonardo" ${d.teacher === 'Leonardo' ? 'selected' : ''}>Leonardo</option>
+        </select>
       </div>
       <div class="field">
         <div class="field-label">Coordinator</div>
-        <input type="text" id="f_coord" value="${esc(d.coordinator)}" placeholder="Nome do coordenador"/>
+        <input type="text" id="f_coord" value="${esc(d.coordinator)}" placeholder="Nome do coordenador" oninput="updateTabField(activeTab, 'coordinator', this.value)"/>
       </div>
     </div>
     <label class="vip-row">
