@@ -7,7 +7,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
 <script type="module">
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
-import { getFirestore, collection, doc, setDoc, getDocs, updateDoc, query, where, orderBy } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+import { getFirestore, collection, doc, getDocs, updateDoc, query, where } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
 
 const firebaseConfig = {
   apiKey: "AIzaSyDykKpVrCHNdq09aaxJXbF6KBqkcd2mIgM",
@@ -21,14 +21,11 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-// CAPTURA DE DADOS DO QR CODE
+// --- LÓGICA DE CAPTURA DO QR CODE (URL) ---
 const urlParams = new URLSearchParams(window.location.search);
 const teacherId = urlParams.get('teacher') || "EIC";
 const alunoNome = urlParams.get('aluno') || "Aluno";
 
-window.currentTeacher = teacherId;
-window.currentAluno = alunoNome;
-window.db = db;
 let selectedSlotId = null;
 
 window.answerMeeting = function(wants){
@@ -43,46 +40,61 @@ window.answerMeeting = function(wants){
 
 window.loadSlots = async function() {
   const container = document.getElementById('slotsContainer');
-  container.innerHTML = `<div class="loading-sm">Buscando horários de ${teacherId}...</div>`;
+  container.innerHTML = `<div style="color:var(--gray); padding:20px; text-align:center;">Buscando horários de ${teacherId}...</div>`;
+  
   try {
-    const q = query(collection(db, "disponibilidade"), where("teacherId", "==", teacherId), where("status", "==", "livre"));
+    // Busca apenas horários deste professor específico que estejam "livre"
+    const q = query(
+      collection(db, "disponibilidade"), 
+      where("teacherId", "==", teacherId),
+      where("status", "==", "livre")
+    );
+    
     const snap = await getDocs(q);
     container.innerHTML = "";
+
     if(snap.empty){
-      container.innerHTML = '<div class="empty-state-sm">Não há horários disponíveis para este professor no momento.</div>';
+      container.innerHTML = `<div style="text-align:center; padding:20px; color:var(--gray);">Não há horários disponíveis para ${teacherId} no momento.</div>`;
       return;
     }
+
     snap.forEach(d => {
       const data = d.data();
       const btn = document.createElement('button');
       btn.className = 'slot-pill';
       btn.innerHTML = `<strong>${data.dia}</strong> às ${data.hora}`;
-      btn.onclick = () => selectSlot(d.id, data.dia, data.hora, btn);
+      btn.onclick = () => {
+        selectedSlotId = d.id;
+        document.querySelectorAll('.slot-pill').forEach(b => b.classList.remove('selected'));
+        btn.classList.add('selected');
+        document.getElementById('btnBooking').disabled = false;
+      };
       container.appendChild(btn);
     });
-  } catch(e){ container.innerHTML = "Erro ao carregar horários."; }
-}
-
-window.selectSlot = function(id, dia, hora, btn){
-  selectedSlotId = id;
-  document.querySelectorAll('.slot-pill').forEach(b => b.classList.remove('selected'));
-  btn.classList.add('selected');
-  document.getElementById('selectedInfo').innerText = `Agendado para: ${dia} às ${hora}`;
-  document.getElementById('btnBooking').disabled = false;
+  } catch(e){ 
+    console.error(e);
+    container.innerHTML = "Erro ao carregar horários."; 
+  }
 }
 
 window.confirmBooking = async function(){
   if(!selectedSlotId) return;
   const btn = document.getElementById('btnBooking');
-  btn.innerText = "Agendando...";
   btn.disabled = true;
+  btn.innerText = "Agendando...";
+  
   try {
+    // Atualiza o status e salva o nome do aluno que veio do QR Code
     await updateDoc(doc(db, "disponibilidade", selectedSlotId), { 
-        status: "reservado", 
-        aluno: alunoNome 
+      status: "reservado", 
+      aluno: alunoNome 
     });
-    showDone(`Reunião agendada com sucesso para ${alunoNome}! Aguardamos você.`);
-  } catch(e){ alert("Erro ao agendar."); btn.innerText = "Confirmar agendamento"; btn.disabled = false; }
+    showDone(`Reunião agendada com sucesso para ${alunoNome}!`);
+  } catch(e){ 
+    alert("Erro ao agendar."); 
+    btn.disabled = false; 
+    btn.innerText = "Confirmar agendamento"; 
+  }
 }
 
 function showDone(msg){
@@ -93,16 +105,20 @@ function showDone(msg){
 </script>
 
 <style>
-/* Mantive exatamente o seu estilo original aqui para não mudar a identidade */
+/* Identidade Visual EIC preservada */
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{--coral:#E8450A;--amber:#F5A623;--dark:#1A1208;--cream:#FBF7F0;--bg:#EDEAE4;--gray:#7A6B5A}
-body{background:var(--bg);font-family:'DM Sans',sans-serif;color:var(--dark);display:flex;justify:center;padding:20px;line-height:1.5}
-.card{background:var(--cream);width:100%;max-width:400px;margin:auto;border-radius:24px;padding:32px;box-shadow:0 20px 40px rgba(26,18,8,0.1)}
+body{background:var(--bg);font-family:'DM Sans',sans-serif;color:var(--dark);display:flex;align-items:center;justify-content:center;min-height:100vh;padding:20px}
+.card{background:var(--cream);width:100%;max-width:400px;border-radius:24px;padding:32px;box-shadow:0 20px 40px rgba(26,18,8,0.1)}
 .step{display:none}.step.active{display:block}
-.btn-primary{background:var(--coral);color:white;border:none;width:100%;padding:16px;border-radius:12px;font-weight:600;cursor:pointer;margin-top:20px}
-.btn-secondary{background:transparent;color:var(--gray);border:none;width:100%;padding:12px;cursor:pointer;margin-top:8px}
-.slot-pill{background:white;border:1px solid rgba(26,18,8,0.1);padding:12px;border-radius:12px;margin-bottom:8px;width:100%;text-align:left;cursor:pointer}
-.slot-pill.selected{border-color:var(--coral);background:rgba(232,69,10,0.05)}
+h2, h3{font-family:'Playfair Display',serif;margin-bottom:12px}
+p{color:var(--gray);margin-bottom:20px}
+.btn-primary{background:var(--coral);color:white;border:none;width:100%;padding:16px;border-radius:12px;font-weight:600;cursor:pointer;margin-top:20px;transition:opacity 0.2s}
+.btn-primary:disabled{opacity:0.5;cursor:not-allowed}
+.btn-secondary{background:transparent;color:var(--gray);border:none;width:100%;padding:12px;cursor:pointer;margin-top:8px;font-size:14px}
+.slot-pill{background:white;border:1px solid rgba(26,18,8,0.1);padding:12px;border-radius:12px;margin-bottom:8px;width:100%;text-align:left;cursor:pointer;transition:all 0.2s}
+.slot-pill.selected{border-color:var(--coral);background:rgba(232,69,10,0.05);box-shadow:0 0 0 1px var(--coral)}
+#doneMessage{font-weight:500;text-align:center;color:var(--dark)}
 </style>
 </head>
 <body>
@@ -113,15 +129,14 @@ body{background:var(--bg);font-family:'DM Sans',sans-serif;color:var(--dark);dis
     <button class="btn-primary" onclick="answerMeeting(true)">Sim, quero agendar</button>
     <button class="btn-secondary" onclick="answerMeeting(false)">Não, apenas confirmar leitura</button>
   </div>
+
   <div class="step" id="step3">
     <h3>Horários Disponíveis</h3>
+    <p>Selecione um dos horários abaixo para sua reunião de 30 minutos.</p>
     <div id="slotsContainer"></div>
-    <div id="selectedInfo" style="margin-top:10px; font-weight:bold; color:var(--coral)"></div>
     <button class="btn-primary" id="btnBooking" onclick="confirmBooking()" disabled>Confirmar agendamento</button>
   </div>
+
   <div class="step" id="step4">
-    <h2 id="doneMessage"></h2>
-  </div>
-</div>
-</body>
-</html>
+    <div style="text-align:center; margin-bottom:20px;">
+      <svg width="5
