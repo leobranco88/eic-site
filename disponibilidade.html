@@ -5,10 +5,11 @@
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
 <title>EIC — Gestão de Disponibilidade</title>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
-<script type="module">
-import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
-import { getFirestore, collection, doc, setDoc, getDocs, deleteDoc, query, where } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
 
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+
+<script>
 const firebaseConfig = {
   apiKey: "AIzaSyDykKpVrCHNdq09aaxJXbF6KBqkcd2mIgM",
   authDomain: "eic-pagamentos.firebaseapp.com",
@@ -18,73 +19,106 @@ const firebaseConfig = {
   appId: "1:527042889607:web:9b69d5ae9ab55a3653f522"
 };
 
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
+// Inicialização
+firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
 
-// TORNANDO AS FUNÇÕES GLOBAIS (PARA O CLIQUE FUNCIONAR)
-window.addSlot = async function() {
+// Função para Adicionar Horário
+async function addSlot() {
   const prof = document.getElementById('professorSelect').value;
   const dia = document.getElementById('slotDia').value;
   const hora = document.getElementById('slotHora').value;
+
   if(!prof) { alert("Selecione um professor"); return; }
 
   const slotId = `${prof}_${dia}_${hora.replace(':','')}`;
-  await setDoc(doc(db, "disponibilidade", slotId), {
-    teacherId: prof,
-    dia: dia,
-    hora: hora,
-    status: "livre"
-  });
-  alert("Horário adicionado!");
-  window.loadSlots();
+  
+  try {
+    await db.collection("disponibilidade").doc(slotId).set({
+      teacherId: prof,
+      dia: dia,
+      hora: hora,
+      status: "livre"
+    });
+    alert("Horário adicionado!");
+    loadSlots();
+  } catch (e) {
+    console.error(e);
+    alert("Erro ao salvar no banco de dados.");
+  }
 }
 
-window.loadSlots = async function() {
+// Função para Carregar Lista
+async function loadSlots() {
   const prof = document.getElementById('professorSelect').value;
   const list = document.getElementById('slotsList');
   if(!prof) { list.innerHTML = ""; return; }
 
-  const q = query(collection(db, "disponibilidade"), where("teacherId", "==", prof));
-  const snap = await getDocs(q);
-  list.innerHTML = "";
-  snap.forEach(d => {
-    const data = d.data();
-    const item = document.createElement('div');
-    item.className = 'slot-item';
-    item.innerHTML = `<span>${data.dia} - ${data.hora}</span> <button onclick="window.deleteSlot('${d.id}')" style="color:red; cursor:pointer; background:none; border:none;">[Excluir]</button>`;
-    list.appendChild(item);
-  });
+  list.innerHTML = "Carregando...";
+  
+  try {
+    const snap = await db.collection("disponibilidade")
+                        .where("teacherId", "==", prof)
+                        .get();
+    
+    list.innerHTML = "";
+    snap.forEach(doc => {
+      const data = doc.data();
+      const item = document.createElement('div');
+      item.className = 'slot-item';
+      item.innerHTML = `
+        <span><strong>${data.dia}</strong> - ${data.hora}</span>
+        <button onclick="deleteSlot('${doc.id}')" style="color:red; background:none; border:none; cursor:pointer; width:auto; padding:0; margin:0;">[Excluir]</button>
+      `;
+      list.appendChild(item);
+    });
+  } catch (e) {
+    list.innerHTML = "Erro ao carregar horários.";
+  }
 }
 
-window.deleteSlot = async function(id) {
-  if(!confirm("Excluir horário?")) return;
-  await deleteDoc(doc(db, "disponibilidade", id));
-  window.loadSlots();
+// Função para Apagar
+async function deleteSlot(id) {
+  if(!confirm("Deseja excluir?")) return;
+  await db.collection("disponibilidade").doc(id).delete();
+  loadSlots();
 }
 </script>
+
 <style>
 :root{--coral:#E8450A;--dark:#1A1208;--bg:#EDEAE4;--cream:#FBF7F0}
 body{background:var(--bg); font-family:'DM Sans', sans-serif; padding:20px; color:var(--dark)}
 .card{background:var(--cream); max-width:500px; margin:auto; padding:30px; border-radius:20px; box-shadow:0 10px 30px rgba(0,0,0,0.05)}
-select, input{width:100%; padding:12px; border-radius:8px; border:1px solid #ddd; margin-bottom:10px}
-button{width:100%; padding:15px; border-radius:10px; border:none; cursor:pointer; font-weight:bold; background:var(--coral); color:white}
-.slot-item{background:white; padding:10px; margin-top:10px; border-radius:8px; display:flex; justify-content:space-between; border:1px solid #eee}
+h2{font-family:'Playfair Display', serif; margin-bottom:20px}
+select, input{width:100%; padding:12px; border-radius:8px; border:1px solid #ddd; margin-bottom:10px; font-size:16px}
+button{width:100%; padding:15px; border-radius:10px; border:none; cursor:pointer; font-weight:bold; background:var(--coral); color:white; font-size:16px}
+.slot-item{background:white; padding:12px; margin-top:10px; border-radius:12px; display:flex; justify-content:space-between; align-items:center; border:1px solid #eee}
 </style>
 </head>
 <body>
 <div class="card">
-  <h2>Gestão EIC</h2>
+  <h2>Agenda EIC</h2>
+  
   <label>Professor:</label>
-  <select id="professorSelect" onchange="window.loadSlots()">
-    <option value="">-- Selecione --</option>
+  <select id="professorSelect" onchange="loadSlots()">
+    <option value="">-- Selecione seu nome --</option>
     <option value="Leonardo">Leonardo</option>
   </select>
+
   <label>Dia:</label>
   <select id="slotDia">
-    <option>Segunda</option><option>Terça</option><option>Quarta</option><option>Quinta</option><option>Sexta</option>
+    <option>Segunda</option>
+    <option>Terça</option>
+    <option>Quarta</option>
+    <option>Quinta</option>
+    <option>Sexta</option>
   </select>
+
+  <label>Horário:</label>
   <input type="time" id="slotHora" value="18:00">
-  <button onclick="window.addSlot()">Adicionar Horário</button>
+  
+  <button onclick="addSlot()">Adicionar Horário</button>
+
   <div id="slotsList" style="margin-top:20px;"></div>
 </div>
 </body>
