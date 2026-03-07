@@ -484,10 +484,12 @@ function renderTabContent(){
       <div class="field">
         <div class="field-label">
           Teacher
-          <span class="tip-icon">?<span class="tooltip">Selecione seu nome como professor(a) responsável.</span></span>
+       <span class="tip-icon">?<span class="tooltip">Selecione seu nome como professor(a) responsável.</span></span>
         </div>
         <select id="f_teacher" class="form-control" onchange="updateTabField(activeTab, 'teacher', this.value)">
           <option value="Leonardo" ${d.teacher === 'Leonardo' ? 'selected' : ''}>Leonardo</option>
+          <option value="Maria" ${d.teacher === 'Maria' ? 'selected' : ''}>Maria</option>
+          <option value="Joao" ${d.teacher === 'Joao' ? 'selected' : ''}>João</option>
         </select>
       </div>
       <div class="field">
