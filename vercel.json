@@ -16,6 +16,7 @@
         { "src": "/painel-leads",         "dest": "/eic-painel-leads.html" },
         { "src": "/hub",                  "dest": "/hub.html" },
         { "src": "/ferramentas",          "dest": "/ferramentas.html" },
+        { "src": "/pagamentos",           "dest": "/eic-pagamentos-v5%20(7).html" },
         { "src": "/(.*)",                 "dest": "/index.html" }
     ]
 }
