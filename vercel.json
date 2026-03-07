@@ -7,6 +7,8 @@
         { "src": "/placement",            "dest": "/placement.html" },
         { "src": "/relatorio",            "dest": "/relatorio.html" },
         { "src": "/relatorio.html",       "dest": "/relatorio.html" },
+        { "src": "/disponibilidade",      "dest": "/disponibilidade.html" },
+        { "src": "/confirmacao",          "dest": "/confirmacao.html" },
         { "src": "/eic-vip-report.html",  "dest": "/eic-vip-report.html" },
         { "src": "/parceria-escolas",     "dest": "/eic-parceria-escolas.html" },
         { "src": "/parceria-empresas",    "dest": "/eic-parceria-empresas.html" },
