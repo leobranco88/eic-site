@@ -858,28 +858,25 @@ function makeQRCode(text){
 
 // ===== GENERATE PDF (VERSÃO CORRIGIDA) =====
 async function renderToPDF(d){
-  // 1. Ajustamos a URL para incluir o .html e garantir que os parâmetros existam
-  // Usamos d.professor (ou o campo que guarda o nome do prof) para o QR Code
-  const profName = d.professor || "EIC"; 
-  const qrURL = `https://eicschool.com.br/confirmacao.html?teacher=${encodeURIComponent(profName)}&aluno=${encodeURIComponent(d.nome)}`;
+  // 1. Gera a URL sem o .html (o vercel.json cuida do redirecionamento)
+  // d.professor é o nome do professor selecionado no formulário
+  const profName = d.professor || "EIC";
+  const qrURL = `https://eicschool.com.br/confirmacao?teacher=${encodeURIComponent(profName)}&aluno=${encodeURIComponent(d.nome)}`;
   
-  // 2. Gera o QR Code com a nova URL
   const qrData = await makeQRCode(qrURL);
-
   const area = document.getElementById('reportArea');
   area.innerHTML = buildReportHTML(d, qrData);
   area.style.visibility='visible';
   area.style.left='0';
   area.style.top='-9999px';
 
-  // Draw radar
   const radarCanvas = document.getElementById('radar_'+d.id);
   if(radarCanvas) drawRadar(radarCanvas, d.notas);
 
-  await new Promise(r=>setTimeout(r,400));
+  await new Promise(r=>setTimeout(r,600));
 
   const el = document.getElementById('rpage_'+d.id);
-  const canvas = await html2canvas(el, {scale:2, useCORS:true, logging:false, backgroundColor:'#ffffff'});
+  const canvas = await html2canvas(el, {scale:2, useCORS:true, backgroundColor:'#ffffff'});
 
   const {jsPDF} = window.jspdf;
   const pdf = new jsPDF('p','mm','a4');
