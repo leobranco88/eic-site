@@ -100,10 +100,12 @@ button{width:100%; padding:15px; border-radius:10px; border:none; cursor:pointer
   <h2>Agenda EIC</h2>
   
   <label>Professor:</label>
-  <select id="professorSelect" onchange="loadSlots()">
-    <option value="">-- Selecione seu nome --</option>
-    <option value="Leonardo">Leonardo</option>
-  </select>
+<select id="professorSelect" onchange="window.loadSlots()">
+  <option value="">-- Selecione --</option>
+  <option value="Leonardo">Leonardo</option>
+  <option value="Maria">Maria</option>
+  <option value="Joao">João</option>
+</select>
 
   <label>Dia:</label>
   <select id="slotDia">
