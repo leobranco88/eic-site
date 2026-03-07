@@ -80,13 +80,23 @@
     }
 
     // Listar Professores
-    db.collection("professores").orderBy("nome").onSnapshot((snap) => {
-        const div = document.getElementById('listaProf');
-        div.innerHTML = "<strong>Professores na rede:</strong><br>";
-        snap.forEach(doc => {
-            div.innerHTML += `<span class="prof-badge">${doc.data().nome}</span>`;
-        });
+ // Este código limpa a lista e puxa os nomes do Firebase
+db.collection("professores").orderBy("nome").onSnapshot((snap) => {
+    const lista = document.getElementById('listaProfessores'); // Certifique-se que este ID existe no seu HTML
+    if (!lista) return;
+    
+    lista.innerHTML = '';
+    snap.forEach(doc => {
+        const p = doc.data();
+        const item = document.createElement('div');
+        item.className = 'teacher-item';
+        item.innerHTML = `
+            <span>${p.nome}</span>
+            <button onclick="excluirProfessor('${doc.id}')" style="color:red">Excluir</button>
+        `;
+        lista.appendChild(item);
     });
+});
 
     // Listar Agendamentos (Status Reservado)
     db.collection("disponibilidade").where("status", "==", "reservado").onSnapshot((snap) => {
