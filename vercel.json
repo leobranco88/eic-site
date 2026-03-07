@@ -1,4 +1,22 @@
 {
   "cleanUrls": true,
-  "trailingSlash": false
+  "trailingSlash": false,
+  "rewrites": [
+    { "source": "/atividade", "destination": "/atividade.html" },
+    { "source": "/leads", "destination": "/leads-eic.html" },
+    { "source": "/cadastro", "destination": "/cadastro.html" },
+    { "source": "/placement", "destination": "/placement.html" },
+    { "source": "/relatorio", "destination": "/relatorioalunos.html" },
+    { "source": "/disponibilidade", "destination": "/disponibilidade.html" },
+    { "source": "/confirmacao", "destination": "/confirmacao.html" },
+    { "source": "/parceria-escolas", "destination": "/eic-parceria-escolas.html" },
+    { "source": "/parceria-empresas", "destination": "/eic-parceria-empresas.html" },
+    { "source": "/gerador-propostas", "destination": "/eic-gerador-propostas.html" },
+    { "source": "/interesse-empresas", "destination": "/eic-interesse-empresas.html" },
+    { "source": "/matricula", "destination": "/eic-interesse-matricula.html" },
+    { "source": "/painel-leads", "destination": "/eic-painel-leads.html" },
+    { "source": "/hub", "destination": "/hub.html" },
+    { "source": "/ferramentas", "destination": "/ferramentas.html" },
+    { "source": "/pagamentos", "destination": "/eic-pagamentos-v5%20(7).html" }
+  ]
 }
