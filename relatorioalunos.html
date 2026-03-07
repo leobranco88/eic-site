@@ -286,12 +286,15 @@ function doLogin(){
   }
 }
 
-function doLogout(){
-  if(confirm('Sair? Os dados não salvos serão perdidos.')){
-    location.reload();
+if (typeof addTab === "function") {
+        addTab();
+    }
   }
 }
-  
+
+function doLogout(){
+  if(confirm('Sair?')){ location.reload(); }
+}
 // ===== TABS STATE =====
 let tabs = [];
 let activeTab = null;
