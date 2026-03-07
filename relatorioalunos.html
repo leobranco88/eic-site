@@ -424,8 +424,7 @@ function renderTabContent(){
   const d = getTabData(activeTab);
   if(!d) return;
 
-  const html = `
-  <!-- DADOS GERAIS -->
+ const html = `
   <div class="card">
     <div class="card-title"><span class="icon" style="display:inline-flex;align-items:center;color:var(--coral);"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--coral)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg></span> Dados do Aluno e Turma</div>
     <div class="form-grid">
@@ -436,6 +435,15 @@ function renderTabContent(){
         </div>
         <input type="text" id="f_nome" value="${esc(d.nome)}" placeholder="Ex: Maria Fernanda Oliveira Silva" oninput="updateTabName(this.value)"/>
       </div>
+
+      <div class="field">
+        <div class="field-label">Teacher</div>
+        <select id="f_teacher" onchange="updateTabField('${activeTab}', 'teacher', this.value)">
+          <option value="">-- Selecione --</option>
+          ${professores.map(p => `<option value="${p}" ${d.teacher === p ? 'selected' : ''}>${p}</option>`).join('')}
+        </select>
+      </div>
+
       <div class="field">
         <div class="field-label">
           Tipo de Relatório
@@ -446,10 +454,12 @@ function renderTabContent(){
           <option ${d.tipo==='End-of-Year Report'?'selected':''}>End-of-Year Report</option>
         </select>
       </div>
+
       <div class="field">
         <div class="field-label">Ano</div>
         <input type="text" id="f_ano" value="${esc(d.ano)}"/>
       </div>
+
       <div class="field">
         <div class="field-label">
           Nível / Turma
