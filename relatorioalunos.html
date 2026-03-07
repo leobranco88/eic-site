@@ -14,6 +14,7 @@
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
 
 <script>
+ <script>
   const firebaseConfig = {
     apiKey: "AIzaSyDykKpVrCHNdq09aaxJXbF6KBqkcd2mIgM",
     authDomain: "eic-pagamentos.firebaseapp.com",
@@ -51,14 +52,9 @@
         updateTabField(activeTab, 'nivel', dados.nivel || "");
         updateTabField(activeTab, 'ano', dados.ano || "");
       });
-    }).catch(err => console.error(err));
+    }).catch(err => console.error("Erro ao buscar:", err));
   }
 </script>
-<style>
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-:root{
-  --coral:#E8450A;--amber:#F5A623;--dark:#1A1208;
-  --cream:#FBF7F0;--bg:#EDEAE4;--gray:#7A6B5A;--panel:#2E4A52;
   --border:rgba(26,18,8,0.1);--blue:#1a56db;
 }
 body{background:var(--bg);font-family:'DM Sans',sans-serif;color:var(--dark);min-height:100vh;}
