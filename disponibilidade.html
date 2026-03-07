@@ -99,13 +99,27 @@ button{width:100%; padding:15px; border-radius:10px; border:none; cursor:pointer
 <div class="card">
   <h2>Agenda EIC</h2>
   
-  <label>Professor:</label>
+ <label>Professor:</label>
 <select id="professorSelect" onchange="window.loadSlots()">
-  <option value="">-- Selecione --</option>
-  <option value="Leonardo">Leonardo</option>
-  <option value="Maria">Maria</option>
-  <option value="Joao">João</option>
+  <option value="">Carregando professores...</option>
 </select>
+
+<script>
+  // Script para atualizar a lista de professores em tempo real
+  db.collection("professores").orderBy("nome").onSnapshot((snap) => {
+    const select = document.getElementById('professorSelect');
+    // Limpa e coloca a opção padrão
+    select.innerHTML = '<option value="">-- Selecione o Professor --</option>';
+    
+    snap.forEach(doc => {
+      const nome = doc.data().nome;
+      const opt = document.createElement('option');
+      opt.value = nome;
+      opt.textContent = nome;
+      select.appendChild(opt);
+    });
+  });
+</script>
 
   <label>Dia:</label>
   <select id="slotDia">
