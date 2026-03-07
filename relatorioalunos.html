@@ -14,7 +14,7 @@
 
 <script>
   // CONFIGURAÇÃO DO FIREBASE COM AS SUAS CHAVES
-  const firebaseConfig = {
+const firebaseConfig = {
     apiKey: "AIzaSyDykKpVrCHNdq09aaxJXbF6KBqkcd2mIgM",
     authDomain: "eic-pagamentos.firebaseapp.com",
     projectId: "eic-pagamentos",
@@ -23,19 +23,36 @@
     appId: "1:527042889607:web:9b69d5ae9ab55a3653f522"
   };
   
-  // Inicializa apenas se ainda não foi inicializado
   if (!firebase.apps.length) {
     firebase.initializeApp(firebaseConfig);
   }
   const db = firebase.firestore();
 
-  // LISTA DE PROFESSORES QUE VEM DO ADMIN
   let professores = ["Leonardo"]; 
+  let alunos = [];
+
   db.collection("professores").orderBy("nome").onSnapshot(snap => {
       professores = snap.docs.map(doc => doc.data().nome);
-      // Atualiza o formulário automaticamente se ele já estiver desenhado
       if(typeof renderTabContent === "function") renderTabContent(); 
   });
+
+  db.collection("alunos").orderBy("nome").onSnapshot(snap => {
+      alunos = snap.docs.map(doc => doc.data().nome);
+      if(typeof renderTabContent === "function") renderTabContent(); 
+  });
+
+  function buscarDadosAluno(nomeSelecionado) {
+    if (!nomeSelecionado) return;
+    db.collection("alunos").where("nome", "==", nomeSelecionado).get().then((querySnapshot) => {
+      querySnapshot.forEach((doc) => {
+        const dados = doc.data();
+        if(document.getElementById('f_nivel')) document.getElementById('f_nivel').value = dados.nivel || "";
+        if(document.getElementById('f_ano')) document.getElementById('f_ano').value = dados.ano || "";
+        updateTabField(activeTab, 'nivel', dados.nivel || "");
+        updateTabField(activeTab, 'ano', dados.ano || "");
+      });
+    });
+  }
 </script>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
