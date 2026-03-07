@@ -430,10 +430,14 @@ function renderTabContent(){
     <div class="form-grid">
       <div class="field full">
         <div class="field-label">
+   <div class="field-label">
           Nome completo do aluno
           <span class="tip-icon">?<span class="tooltip">Escreva o nome completo para aparecer no relatório. Ex: "Danilo Cunha Albuquerque Costa". Evite apelidos.</span></span>
         </div>
-        <input type="text" id="f_nome" value="${esc(d.nome)}" placeholder="Ex: Maria Fernanda Oliveira Silva" oninput="updateTabName(this.value)"/>
+        <input type="text" id="f_nome" list="listaAlunosSugestao" value="${esc(d.nome)}" placeholder="Ex: Maria Fernanda Oliveira Silva" oninput="updateTabName(this.value)" onchange="buscarDadosAluno(this.value)"/>
+        <datalist id="listaAlunosSugestao">
+          ${alunos.map(a => `<option value="${a}">`).join('')}
+        </datalist>
       </div>
 
       <div class="field">
