@@ -861,8 +861,13 @@ function makeQRCode(text){
 
 // ===== GENERATE PDF =====
 async function renderToPDF(d){
-  // QR code
-  const qrURL = `https://eicschool.com.br/confirmacao?aluno=${encodeURIComponent(d.nome)}&teacher=${encodeURIComponent(d.teacher)}`;
+  // 1. Definição do Nome do Professor (Puxa o que você selecionou no menu)
+  const professorAtivo = d.teacher || "Leonardo";
+
+  // 2. Link do QR Code Corrigido (Sem o .html e com os nomes certos)
+  const qrURL = `https://eicschool.com.br/confirmacao?teacher=${encodeURIComponent(professorAtivo)}&aluno=${encodeURIComponent(d.nome)}`;
+
+  // 3. Geração do QR Code
   const qrData = await makeQRCode(qrURL);
 
   const area = document.getElementById('reportArea');
