@@ -52,7 +52,7 @@
         updateTabField(activeTab, 'nivel', dados.nivel || "");
         updateTabField(activeTab, 'ano', dados.ano || "");
       });
-    });
+    }).catch(err => console.error(err));
   }
 </script>
 <style>
