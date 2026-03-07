@@ -21,6 +21,7 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
+// TORNANDO AS FUNÇÕES GLOBAIS (PARA O CLIQUE FUNCIONAR)
 window.addSlot = async function() {
   const prof = document.getElementById('professorSelect').value;
   const dia = document.getElementById('slotDia').value;
@@ -34,39 +35,14 @@ window.addSlot = async function() {
     hora: hora,
     status: "livre"
   });
-  loadSlots();
-}
-
-window.addMultipleSlots = async function() {
-  const prof = document.getElementById('professorSelect').value;
-  const dia = document.getElementById('slotDia').value;
-  const inicio = document.getElementById('slotInicio').value;
-  const fim = document.getElementById('slotFim').value;
-  if(!prof) { alert("Selecione um professor"); return; }
-
-  let curr = new Date(`2025-01-01T${inicio}`);
-  const end = new Date(`2025-01-01T${fim}`);
-
-  while(curr < end) {
-    const hh = String(curr.getHours()).padStart(2,'0');
-    const mm = String(curr.getMinutes()).padStart(2,'0');
-    const timeStr = `${hh}:${mm}`;
-    const slotId = `${prof}_${dia}_${hh}${mm}`;
-    await setDoc(doc(db, "disponibilidade", slotId), {
-      teacherId: prof,
-      dia: dia,
-      hora: timeStr,
-      status: "livre"
-    });
-    curr.setMinutes(curr.getMinutes() + 30);
-  }
-  loadSlots();
+  alert("Horário adicionado!");
+  window.loadSlots();
 }
 
 window.loadSlots = async function() {
   const prof = document.getElementById('professorSelect').value;
   const list = document.getElementById('slotsList');
-  if(!prof) { list.innerHTML = "Selecione um professor para ver os horários."; return; }
+  if(!prof) { list.innerHTML = ""; return; }
 
   const q = query(collection(db, "disponibilidade"), where("teacherId", "==", prof));
   const snap = await getDocs(q);
@@ -75,7 +51,7 @@ window.loadSlots = async function() {
     const data = d.data();
     const item = document.createElement('div');
     item.className = 'slot-item';
-    item.innerHTML = `<span>${data.dia} - ${data.hora}</span> <button onclick="deleteSlot('${d.id}')" style="color:red; cursor:pointer; background:none; border:none;">[Excluir]</button>`;
+    item.innerHTML = `<span>${data.dia} - ${data.hora}</span> <button onclick="window.deleteSlot('${d.id}')" style="color:red; cursor:pointer; background:none; border:none;">[Excluir]</button>`;
     list.appendChild(item);
   });
 }
@@ -83,7 +59,7 @@ window.loadSlots = async function() {
 window.deleteSlot = async function(id) {
   if(!confirm("Excluir horário?")) return;
   await deleteDoc(doc(db, "disponibilidade", id));
-  loadSlots();
+  window.loadSlots();
 }
 </script>
 <style>
@@ -97,9 +73,9 @@ button{width:100%; padding:15px; border-radius:10px; border:none; cursor:pointer
 </head>
 <body>
 <div class="card">
-  <h2>Gestão de Horários EIC</h2>
+  <h2>Gestão EIC</h2>
   <label>Professor:</label>
-  <select id="professorSelect" onchange="loadSlots()">
+  <select id="professorSelect" onchange="window.loadSlots()">
     <option value="">-- Selecione --</option>
     <option value="Leonardo">Leonardo</option>
   </select>
@@ -108,11 +84,7 @@ button{width:100%; padding:15px; border-radius:10px; border:none; cursor:pointer
     <option>Segunda</option><option>Terça</option><option>Quarta</option><option>Quinta</option><option>Sexta</option>
   </select>
   <input type="time" id="slotHora" value="18:00">
-  <button onclick="addSlot()">Adicionar Horário</button>
-  <hr style="margin:20px 0; border:0; border-top:1px solid #ddd;">
-  <input type="time" id="slotInicio" value="17:00">
-  <input type="time" id="slotFim" value="20:00">
-  <button onclick="addMultipleSlots()" style="background:#2E4A52;">Gerar de 30 em 30 min</button>
+  <button onclick="window.addSlot()">Adicionar Horário</button>
   <div id="slotsList" style="margin-top:20px;"></div>
 </div>
 </body>
