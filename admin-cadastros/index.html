@@ -226,6 +226,15 @@
     .btn-processar:hover { background: var(--green-dark); }
     .btn-processar:disabled { background: var(--gray-300); box-shadow: none; cursor: not-allowed; }
 
+    .btn-excluir {
+      width: 100%; padding: 10px;
+      background: none; color: var(--red); border: 1px solid var(--gray-200);
+      border-radius: 8px; font-family: 'Inter', sans-serif;
+      font-size: 13px; font-weight: 500; cursor: pointer;
+      margin-top: 10px; transition: all 0.15s;
+    }
+    .btn-excluir:hover { background: #fef2f2; border-color: var(--red); }
+
     @media (max-width: 600px) {
       .stats { grid-template-columns: 1fr 1fr; }
       .modal-header, .modal-body { padding: 20px; }
@@ -305,7 +314,7 @@
 
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.0/firebase-app.js";
-  import { getFirestore, collection, getDocs, doc, updateDoc, orderBy, query } from "https://www.gstatic.com/firebasejs/11.0.0/firebase-firestore.js";
+  import { getFirestore, collection, getDocs, doc, updateDoc, deleteDoc, orderBy, query } from "https://www.gstatic.com/firebasejs/11.0.0/firebase-firestore.js";
   const app = initializeApp({
     apiKey: "AIzaSyClRhsNoV8nFdht8_94DRgEsfe4Lq96GO8",
     authDomain: "eic-matriculas.firebaseapp.com",
@@ -320,6 +329,7 @@
   window._query = (...a) => query(...a);
   window._col = () => collection(db,'matriculas');
   window._doc = (id) => doc(db,'matriculas',id);
+  window._deleteDoc = (r) => deleteDoc(r);
   window._orderBy = orderBy;
 </script>
 
@@ -453,6 +463,9 @@
       <button class="btn-processar" id="btnProcessar" onclick="marcarProcessado()" ${f.status==='processado'?'disabled':''}>
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
         ${f.status==='processado' ? 'Já processado' : 'Marcar como Processado'}
+      </button>
+      <button class="btn-excluir" onclick="excluirFicha()">
+        🗑️ Excluir cadastro
       </button>`;
 
     document.getElementById('modalBody').innerHTML = html;
@@ -513,6 +526,20 @@ Vencimento: Dia ${f.vencimento} de cada mês`;
       btn.innerHTML = '✓ Tudo copiado!';
       setTimeout(() => { btn.style.background = ''; btn.innerHTML = orig; }, 2000);
     });
+  }
+
+  async function excluirFicha() {
+    if (!fichaAberta) return;
+    if (!confirm('Tem certeza? Esta ação não pode ser desfeita.')) return;
+    try {
+      await window._deleteDoc(window._doc(fichaAberta.id));
+      todasFichas = todasFichas.filter(f => f.id !== fichaAberta.id);
+      atualizarStats(); renderLista();
+      document.getElementById('overlay').classList.remove('show');
+    } catch(e) {
+      console.error(e);
+      alert('Erro ao excluir. Tente novamente.');
+    }
   }
 
   async function marcarProcessado() {
