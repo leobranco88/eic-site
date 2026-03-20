@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin — Matrículas EIC</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600;700&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --laranja: #FF6B00; --azul: #1A1AFF; --azul-prof: #0A0A8C;
+      --preto: #0A0A0F; --branco: #F5F5FF;
+      --cinza-borda: #E0E0E0; --cinza-texto: #666; --sucesso: #38A169;
+    }
+    body { font-family: 'DM Sans', sans-serif; background: var(--branco); color: var(--preto); min-height: 100vh; }
+
+    /* LOGIN */
+    .login-screen { min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 20px; }
+    .login-card {
+      background: white; border: 1px solid var(--cinza-borda); border-radius: 20px;
+      padding: 48px 40px; width: 100%; max-width: 380px; text-align: center;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+    }
+    .logo-box {
+      width: 56px; height: 56px; background: var(--laranja); border-radius: 14px;
+      display: flex; align-items: center; justify-content: center; margin: 0 auto 20px;
+    }
+    .logo-box span { font-family: 'Cormorant Garamond', serif; font-size: 24px; font-weight: 700; color: white; }
+    .login-card h2 { font-family: 'Cormorant Garamond', serif; font-size: 22px; font-weight: 700; margin-bottom: 6px; }
+    .login-card p { font-size: 13px; color: var(--cinza-texto); margin-bottom: 24px; }
+    .login-card input {
+      width: 100%; padding: 12px 14px; border: 1.5px solid var(--cinza-borda);
+      border-radius: 10px; font-family: 'DM Sans', sans-serif; font-size: 14px;
+      outline: none; margin-bottom: 12px; transition: border-color 0.2s;
+    }
+    .login-card input:focus { border-color: var(--laranja); }
+    .login-card input.error { border-color: #E53E3E; }
+    .login-card button {
+      width: 100%; padding: 13px; background: var(--preto); color: white;
+      border: none; border-radius: 10px; font-family: 'DM Sans', sans-serif;
+      font-size: 15px; font-weight: 600; cursor: pointer; transition: background 0.2s;
+    }
+    .login-card button:hover { background: #222; }
+    .login-erro { font-size: 12px; color: #E53E3E; margin-top: 8px; display: none; }
+    .login-erro.show { display: block; }
+
+    /* APP */
+    .app { display: none; }
+    .app.show { display: block; }
+    .topbar {
+      background: white; border-bottom: 1px solid var(--cinza-borda);
+      padding: 0 28px; height: 60px;
+      display: flex; align-items: center; justify-content: space-between;
+      position: sticky; top: 0; z-index: 10;
+    }
+    .topbar-left { display: flex; align-items: center; gap: 12px; }
+    .logo-mini {
+      width: 36px; height: 36px; background: var(--laranja); border-radius: 9px;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .logo-mini span { font-family: 'Cormorant Garamond', serif; font-size: 16px; font-weight: 700; color: white; }
+    .topbar h1 { font-family: 'Cormorant Garamond', serif; font-size: 18px; font-weight: 700; }
+    .btn-sair {
+      font-size: 13px; color: var(--cinza-texto); background: none; border: none;
+      cursor: pointer; padding: 6px 12px; border-radius: 8px; transition: background 0.2s;
+    }
+    .btn-sair:hover { background: var(--branco); }
+    .main { max-width: 900px; margin: 0 auto; padding: 32px 20px; }
+
+    .stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 32px; }
+    .stat-card { background: white; border: 1px solid var(--cinza-borda); border-radius: 14px; padding: 20px; text-align: center; }
+    .stat-card .num { font-family: 'Cormorant Garamond', serif; font-size: 36px; font-weight: 700; }
+    .stat-card .label { font-size: 12px; color: var(--cinza-texto); margin-top: 2px; }
+    .stat-card.laranja .num { color: var(--laranja); }
+    .stat-card.verde .num { color: var(--sucesso); }
+
+    .filtros { display: flex; gap: 8px; margin-bottom: 20px; }
+    .filtro-btn {
+      padding: 7px 16px; border-radius: 20px; font-size: 13px; font-weight: 500;
+      border: 1.5px solid var(--cinza-borda); background: white; cursor: pointer; transition: all 0.2s;
+    }
+    .filtro-btn.active { background: var(--preto); color: white; border-color: var(--preto); }
+
+    .lista { display: flex; flex-direction: column; gap: 12px; }
+    .ficha-item {
+      background: white; border: 1px solid var(--cinza-borda); border-radius: 14px;
+      padding: 20px 24px; cursor: pointer; transition: box-shadow 0.2s, border-color 0.2s;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .ficha-item:hover { box-shadow: 0 4px 16px rgba(0,0,0,0.08); border-color: #ccc; }
+    .ficha-info h3 { font-size: 15px; font-weight: 600; margin-bottom: 4px; }
+    .ficha-info p { font-size: 13px; color: var(--cinza-texto); }
+    .ficha-right { display: flex; align-items: center; gap: 12px; }
+    .badge { padding: 4px 10px; border-radius: 20px; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.3px; }
+    .badge.novo { background: #FFF3E8; color: var(--laranja); }
+    .badge.processado { background: #E8F8F0; color: var(--sucesso); }
+
+    .empty { text-align: center; padding: 60px 20px; color: var(--cinza-texto); font-size: 14px; }
+    .loading-spinner { display: flex; align-items: center; justify-content: center; padding: 60px; color: var(--cinza-texto); font-size: 14px; gap: 10px; }
+    .spin { width: 20px; height: 20px; border: 2px solid var(--cinza-borda); border-top-color: var(--laranja); border-radius: 50%; animation: spin 0.7s linear infinite; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* MODAL */
+    .overlay {
+      position: fixed; inset: 0; background: rgba(10,10,15,0.4);
+      z-index: 100; display: none; align-items: flex-start; justify-content: center;
+      padding: 20px; overflow-y: auto;
+    }
+    .overlay.show { display: flex; }
+    .modal {
+      background: white; border-radius: 20px; width: 100%; max-width: 640px;
+      margin: auto; box-shadow: 0 20px 60px rgba(0,0,0,0.15);
+      animation: slideUp 0.25s ease;
+    }
+    @keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+    .modal-header {
+      padding: 24px 28px; border-bottom: 1px solid var(--cinza-borda);
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .modal-header h2 { font-family: 'Cormorant Garamond', serif; font-size: 20px; font-weight: 700; }
+    .modal-header p { font-size: 13px; color: var(--cinza-texto); margin-top: 2px; }
+    .btn-fechar {
+      width: 32px; height: 32px; border-radius: 8px; border: none;
+      background: var(--branco); cursor: pointer; font-size: 18px; color: var(--cinza-texto);
+      display: flex; align-items: center; justify-content: center;
+    }
+    .modal-body { padding: 24px 28px; }
+
+    .copy-section { margin-bottom: 24px; }
+    .copy-section-title {
+      font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;
+      color: var(--cinza-texto); margin-bottom: 12px; padding-bottom: 8px; border-bottom: 1px solid var(--cinza-borda);
+    }
+    .copy-field { margin-bottom: 10px; }
+    .copy-field label { font-size: 11px; font-weight: 600; color: var(--cinza-texto); display: block; margin-bottom: 4px; }
+    .copy-row { display: flex; align-items: center; gap: 8px; }
+    .copy-value {
+      flex: 1; padding: 10px 14px; background: var(--branco);
+      border: 1px solid var(--cinza-borda); border-radius: 8px; font-size: 14px;
+    }
+    .btn-copy {
+      padding: 10px 14px; background: white; border: 1px solid var(--cinza-borda);
+      border-radius: 8px; cursor: pointer; font-size: 12px; font-weight: 600;
+      color: var(--cinza-texto); transition: all 0.2s; white-space: nowrap;
+      display: flex; align-items: center; gap: 5px;
+    }
+    .btn-copy:hover { border-color: var(--laranja); color: var(--laranja); }
+    .btn-copy.copiado { border-color: var(--sucesso); color: var(--sucesso); background: #f0fdf4; }
+
+    .btn-copiar-tudo {
+      width: 100%; padding: 13px; background: var(--preto); color: white;
+      border: none; border-radius: 10px; font-family: 'DM Sans', sans-serif;
+      font-size: 14px; font-weight: 600; cursor: pointer; margin-bottom: 12px;
+      transition: background 0.2s; display: flex; align-items: center; justify-content: center; gap: 8px;
+    }
+    .btn-copiar-tudo:hover { background: #222; }
+    .btn-processar {
+      width: 100%; padding: 13px; background: var(--sucesso); color: white;
+      border: none; border-radius: 10px; font-family: 'DM Sans', sans-serif;
+      font-size: 14px; font-weight: 600; cursor: pointer; transition: background 0.2s;
+      display: flex; align-items: center; justify-content: center; gap: 8px;
+    }
+    .btn-processar:hover { background: #2f855a; }
+    .btn-processar:disabled { background: #ccc; cursor: not-allowed; }
+
+    @media (max-width: 600px) {
+      .stats { grid-template-columns: 1fr 1fr; }
+      .modal-header, .modal-body { padding: 20px; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="login-screen" id="loginScreen">
+  <div class="login-card">
+    <div class="logo-box"><span>EIC</span></div>
+    <h2>Acesso Administrativo</h2>
+    <p>Painel de Matrículas — uso interno</p>
+    <input type="password" id="senhaInput" placeholder="Senha de acesso" onkeydown="if(event.key==='Enter') entrar()" />
+    <button onclick="entrar()">Entrar</button>
+    <div class="login-erro" id="loginErro">Senha incorreta. Tente novamente.</div>
+  </div>
+</div>
+
+<div class="app" id="appScreen">
+  <div class="topbar">
+    <div class="topbar-left">
+      <div class="logo-mini"><span>EIC</span></div>
+      <h1>Matrículas</h1>
+    </div>
+    <button class="btn-sair" onclick="sair()">Sair</button>
+  </div>
+  <div class="main">
+    <div class="stats">
+      <div class="stat-card laranja"><div class="num" id="totalCount">—</div><div class="label">Total recebido</div></div>
+      <div class="stat-card laranja"><div class="num" id="novosCount">—</div><div class="label">Novos</div></div>
+      <div class="stat-card verde"><div class="num" id="procesCount">—</div><div class="label">Processados</div></div>
+    </div>
+    <div class="filtros">
+      <button class="filtro-btn active" onclick="filtrar('todos', this)">Todos</button>
+      <button class="filtro-btn" onclick="filtrar('novo', this)">Novos</button>
+      <button class="filtro-btn" onclick="filtrar('processado', this)">Processados</button>
+    </div>
+    <div class="lista" id="lista">
+      <div class="loading-spinner"><div class="spin"></div> Carregando fichas...</div>
+    </div>
+  </div>
+</div>
+
+<div class="overlay" id="overlay" onclick="fecharModal(event)">
+  <div class="modal" id="modal">
+    <div class="modal-header">
+      <div><h2 id="modalNome">—</h2><p id="modalProtocolo">—</p></div>
+      <button class="btn-fechar" onclick="fecharModal()">✕</button>
+    </div>
+    <div class="modal-body" id="modalBody"></div>
+  </div>
+</div>
+
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.0/firebase-app.js";
+  import { getFirestore, collection, getDocs, doc, updateDoc, orderBy, query } from "https://www.gstatic.com/firebasejs/11.0.0/firebase-firestore.js";
+  const app = initializeApp({
+    apiKey: "AIzaSyClRhsNoV8nFdht8_94DRgEsfe4Lq96GO8",
+    authDomain: "eic-matriculas.firebaseapp.com",
+    projectId: "eic-matriculas",
+    storageBucket: "eic-matriculas.firebasestorage.app",
+    messagingSenderId: "154057641574",
+    appId: "1:154057641574:web:97b1c1ae6595be7a1067a7"
+  });
+  const db = getFirestore(app);
+  window._getDocs = (q) => getDocs(q);
+  window._updateDoc = (ref, data) => updateDoc(ref, data);
+  window._query = (...args) => query(...args);
+  window._col = () => collection(db, 'matriculas');
+  window._doc = (id) => doc(db, 'matriculas', id);
+  window._orderBy = orderBy;
+</script>
+
+<script>
+  const SENHA = 'eic2026';
+  let todasFichas = [];
+  let filtroAtivo = 'todos';
+  let fichaAberta = null;
+
+  function entrar() {
+    if (document.getElementById('senhaInput').value === SENHA) {
+      document.getElementById('loginScreen').style.display = 'none';
+      document.getElementById('appScreen').classList.add('show');
+      carregarFichas();
+    } else {
+      document.getElementById('senhaInput').classList.add('error');
+      document.getElementById('loginErro').classList.add('show');
+    }
+  }
+
+  function sair() {
+    document.getElementById('loginScreen').style.display = 'flex';
+    document.getElementById('appScreen').classList.remove('show');
+    document.getElementById('senhaInput').value = '';
+  }
+
+  async function carregarFichas() {
+    try {
+      const q = window._query(window._col(), window._orderBy('timestamp', 'desc'));
+      const snap = await window._getDocs(q);
+      todasFichas = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+      atualizarStats(); renderLista();
+    } catch(e) {
+      console.error(e);
+      document.getElementById('lista').innerHTML = '<div class="empty">Erro ao carregar fichas. Verifique as regras do Firestore.</div>';
+    }
+  }
+
+  function atualizarStats() {
+    document.getElementById('totalCount').textContent = todasFichas.length;
+    document.getElementById('novosCount').textContent = todasFichas.filter(f => f.status === 'novo').length;
+    document.getElementById('procesCount').textContent = todasFichas.filter(f => f.status === 'processado').length;
+  }
+
+  function filtrar(status, btn) {
+    filtroAtivo = status;
+    document.querySelectorAll('.filtro-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    renderLista();
+  }
+
+  function renderLista() {
+    const lista = document.getElementById('lista');
+    const fichas = filtroAtivo === 'todos' ? todasFichas : todasFichas.filter(f => f.status === filtroAtivo);
+    if (!fichas.length) { lista.innerHTML = '<div class="empty">Nenhuma ficha encontrada.</div>'; return; }
+    lista.innerHTML = fichas.map(f => `
+      <div class="ficha-item" onclick="abrirFicha('${f.id}')">
+        <div class="ficha-info">
+          <h3>${f.aluno?.nome || '—'}</h3>
+          <p>${f.protocolo} &middot; ${f.responsavel?.email || ''} &middot; Venc. dia ${f.vencimento}</p>
+        </div>
+        <div class="ficha-right">
+          <span class="badge ${f.status}">${f.status}</span>
+          <span style="color:#ccc">›</span>
+        </div>
+      </div>`).join('');
+  }
+
+  function abrirFicha(id) {
+    fichaAberta = todasFichas.find(f => f.id === id);
+    if (!fichaAberta) return;
+    const f = fichaAberta;
+    const end = f.endereco || {};
+    const endCompleto = `${end.rua || ''}, ${end.numero || ''}${end.complemento ? ' '+end.complemento : ''} — ${end.bairro || ''}, ${end.cidade || ''}/${end.estado || ''} — CEP ${end.cep || ''}`;
+
+    document.getElementById('modalNome').textContent = f.aluno?.nome || '—';
+    document.getElementById('modalProtocolo').textContent = `${f.protocolo} · ${f.status === 'novo' ? 'Novo' : 'Processado'}`;
+
+    const secoes = [
+      { titulo: 'Dados do Aluno', campos: [
+        ['Nome do Aluno', f.aluno?.nome],
+        ['Data de Nascimento (Aluno)', fmtData(f.aluno?.nascimento)],
+        ['CPF / RG (Aluno)', f.aluno?.documento || '—'],
+      ]},
+      { titulo: 'Dados do Responsável', campos: [
+        ['Nome do Responsável', f.responsavel?.nome],
+        ['CPF', f.responsavel?.cpf],
+        ['RG', f.responsavel?.rg],
+        ['Data de Nascimento (Responsável)', fmtData(f.responsavel?.nascimento)],
+        ['Celular / WhatsApp', f.responsavel?.celular],
+        ['E-mail', f.responsavel?.email],
+      ]},
+      { titulo: 'Endereço', campos: [
+        ['Endereço completo', endCompleto],
+      ]},
+      { titulo: 'Financeiro', campos: [
+        ['Dia de Vencimento', `Dia ${f.vencimento} de cada mês`],
+      ]},
+    ];
+
+    let html = secoes.map(sec => `
+      <div class="copy-section">
+        <div class="copy-section-title">${sec.titulo}</div>
+        ${sec.campos.map(([label, valor], i) => {
+          const uid = `cf_${sec.titulo.replace(/\s/g,'')}_${i}`;
+          const safe = (valor||'—').replace(/"/g, '&quot;');
+          return `
+            <div class="copy-field">
+              <label>${label}</label>
+              <div class="copy-row">
+                <div class="copy-value">${valor || '—'}</div>
+                <button class="btn-copy" id="${uid}" onclick="copiar('${uid}', &quot;${safe}&quot;)">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+                  Copiar
+                </button>
+              </div>
+            </div>`;
+        }).join('')}
+      </div>`).join('');
+
+    html += `
+      <button class="btn-copiar-tudo" onclick="copiarTudo()">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+        Copiar todos os dados
+      </button>
+      <button class="btn-processar" id="btnProcessar" onclick="marcarProcessado()" ${f.status==='processado'?'disabled':''}>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+        ${f.status==='processado' ? 'Já processado' : 'Marcar como Processado'}
+      </button>`;
+
+    document.getElementById('modalBody').innerHTML = html;
+    document.getElementById('overlay').classList.add('show');
+  }
+
+  function fecharModal(e) {
+    if (!e || e.target === document.getElementById('overlay')) {
+      document.getElementById('overlay').classList.remove('show');
+    }
+  }
+
+  function copiar(uid, valor) {
+    navigator.clipboard.writeText(valor).then(() => {
+      const btn = document.getElementById(uid);
+      if (!btn) return;
+      btn.classList.add('copiado');
+      btn.innerHTML = `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> Copiado!`;
+      setTimeout(() => {
+        btn.classList.remove('copiado');
+        btn.innerHTML = `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg> Copiar`;
+      }, 2000);
+    });
+  }
+
+  function copiarTudo() {
+    if (!fichaAberta) return;
+    const f = fichaAberta;
+    const end = f.endereco || {};
+    const txt = `FICHA DE MATRÍCULA — EIC
+Protocolo: ${f.protocolo}
+Data: ${new Date(f.timestamp).toLocaleDateString('pt-BR')}
+
+DADOS DO ALUNO
+Nome: ${f.aluno?.nome}
+Nascimento: ${fmtData(f.aluno?.nascimento)}
+CPF/RG: ${f.aluno?.documento || '—'}
+
+DADOS DO RESPONSÁVEL
+Nome: ${f.responsavel?.nome}
+CPF: ${f.responsavel?.cpf}
+RG: ${f.responsavel?.rg}
+Nascimento: ${fmtData(f.responsavel?.nascimento)}
+Celular: ${f.responsavel?.celular}
+E-mail: ${f.responsavel?.email}
+
+ENDEREÇO
+${end.rua}, ${end.numero}${end.complemento ? ' '+end.complemento : ''}
+${end.bairro} — ${end.cidade}/${end.estado}
+CEP: ${end.cep}
+
+FINANCEIRO
+Vencimento: Dia ${f.vencimento} de cada mês`;
+
+    navigator.clipboard.writeText(txt).then(() => {
+      const btn = document.querySelector('.btn-copiar-tudo');
+      const orig = btn.innerHTML;
+      btn.style.background = '#38A169';
+      btn.innerHTML = '✓ Tudo copiado!';
+      setTimeout(() => { btn.style.background = ''; btn.innerHTML = orig; }, 2000);
+    });
+  }
+
+  async function marcarProcessado() {
+    if (!fichaAberta) return;
+    const btn = document.getElementById('btnProcessar');
+    btn.disabled = true; btn.textContent = 'Salvando...';
+    try {
+      await window._updateDoc(window._doc(fichaAberta.id), { status: 'processado' });
+      fichaAberta.status = 'processado';
+      const idx = todasFichas.findIndex(f => f.id === fichaAberta.id);
+      if (idx >= 0) todasFichas[idx].status = 'processado';
+      atualizarStats(); renderLista();
+      document.getElementById('modalProtocolo').textContent = `${fichaAberta.protocolo} · Processado`;
+      btn.textContent = 'Já processado';
+    } catch(e) {
+      console.error(e);
+      btn.disabled = false; btn.textContent = 'Marcar como Processado';
+    }
+  }
+
+  function fmtData(str) {
+    if (!str) return '—';
+    const [y,m,d] = str.split('-');
+    return `${d}/${m}/${y}`;
+  }
+</script>
+</body>
+</html>

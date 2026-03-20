@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ficha de Matrícula Online — EIC</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --laranja: #FF6B00;
+      --laranja-prof: #FF4500;
+      --azul: #1A1AFF;
+      --azul-prof: #0A0A8C;
+      --preto: #0A0A0F;
+      --branco: #F5F5FF;
+      --cinza-borda: #E0E0E0;
+      --cinza-texto: #666;
+      --erro: #E53E3E;
+      --sucesso: #38A169;
+    }
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--branco);
+      color: var(--preto);
+      min-height: 100vh;
+      padding: 40px 16px 80px;
+    }
+    .header {
+      text-align: center;
+      margin-bottom: 40px;
+    }
+    .logo-box {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 64px; height: 64px;
+      background: var(--laranja);
+      border-radius: 16px;
+      margin-bottom: 16px;
+    }
+    .logo-box span {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 28px; font-weight: 700;
+      color: white;
+    }
+    .header h1 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 28px; font-weight: 700;
+      margin-bottom: 4px;
+    }
+    .header p { font-size: 14px; color: var(--cinza-texto); }
+    .aviso-seguranca {
+      display: inline-flex; align-items: center; gap: 6px;
+      background: #f0fdf4; border: 1px solid #bbf7d0;
+      border-radius: 20px; padding: 6px 14px;
+      font-size: 12px; color: #166534; margin-top: 12px;
+    }
+    .form-container { max-width: 600px; margin: 0 auto; }
+    .section-card {
+      background: white; border: 1px solid var(--cinza-borda);
+      border-radius: 16px; padding: 28px; margin-bottom: 20px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+    }
+    .section-header {
+      display: flex; align-items: center; gap: 10px;
+      margin-bottom: 24px; padding-bottom: 16px;
+      border-bottom: 1px solid var(--cinza-borda);
+    }
+    .section-icon {
+      width: 36px; height: 36px; border-radius: 10px;
+      display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+    }
+    .section-icon.laranja { background: #FFF0E8; }
+    .section-icon.azul { background: #E8E8FF; }
+    .section-icon.verde { background: #E8F8F0; }
+    .section-icon.laranja svg { stroke: var(--laranja); }
+    .section-icon.azul svg { stroke: var(--azul); }
+    .section-icon.verde svg { stroke: var(--sucesso); }
+    .section-icon svg { width: 18px; height: 18px; }
+    .section-title h2 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 18px; font-weight: 700;
+    }
+    .section-title p { font-size: 12px; color: var(--cinza-texto); }
+    .field-row { display: grid; gap: 16px; margin-bottom: 16px; }
+    .field-row.two { grid-template-columns: 1fr 1fr; }
+    .field-row.one { grid-template-columns: 1fr; }
+    .field-row:last-child { margin-bottom: 0; }
+    .field label { display: block; font-size: 12px; font-weight: 600; margin-bottom: 6px; }
+    .field label .req { color: var(--laranja); }
+    .field input, .field select {
+      width: 100%; padding: 11px 14px;
+      border: 1.5px solid var(--cinza-borda);
+      border-radius: 10px;
+      font-family: 'DM Sans', sans-serif; font-size: 14px;
+      color: var(--preto); background: white;
+      transition: border-color 0.2s, box-shadow 0.2s;
+      outline: none; appearance: none;
+    }
+    .field input:focus, .field select:focus {
+      border-color: var(--laranja);
+      box-shadow: 0 0 0 3px rgba(255,107,0,0.1);
+    }
+    .field input.error, .field select.error { border-color: var(--erro); }
+    .field input::placeholder { color: #bbb; }
+    .field-error { font-size: 11px; color: var(--erro); margin-top: 4px; display: none; }
+    .field-error.show { display: block; }
+    .vencimento-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
+    .venc-btn {
+      border: 1.5px solid var(--cinza-borda); border-radius: 10px;
+      padding: 14px 8px; text-align: center; cursor: pointer;
+      transition: all 0.2s; background: white;
+    }
+    .venc-btn .dia {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 24px; font-weight: 700;
+      color: var(--preto); display: block; line-height: 1;
+    }
+    .venc-btn .mes {
+      font-size: 10px; color: var(--cinza-texto);
+      text-transform: uppercase; letter-spacing: 0.5px;
+      display: block; margin-top: 4px;
+    }
+    .venc-btn:hover { border-color: var(--laranja); background: #FFF8F5; }
+    .venc-btn.active { border-color: var(--laranja); background: var(--laranja); }
+    .venc-btn.active .dia, .venc-btn.active .mes { color: white; }
+    .btn-enviar {
+      width: 100%; padding: 16px;
+      background: var(--laranja); color: white;
+      border: none; border-radius: 12px;
+      font-family: 'DM Sans', sans-serif; font-size: 16px; font-weight: 600;
+      cursor: pointer; transition: background 0.2s;
+      margin-top: 8px; display: flex; align-items: center; justify-content: center; gap: 8px;
+    }
+    .btn-enviar:hover { background: var(--laranja-prof); }
+    .btn-enviar:disabled { background: #ccc; cursor: not-allowed; }
+    .spinner {
+      width: 18px; height: 18px;
+      border: 2px solid rgba(255,255,255,0.4);
+      border-top-color: white; border-radius: 50%;
+      animation: spin 0.7s linear infinite; display: none;
+    }
+    .btn-enviar.loading .spinner { display: block; }
+    .btn-enviar.loading .btn-text { display: none; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .sucesso-screen { display: none; max-width: 600px; margin: 0 auto; text-align: center; }
+    .sucesso-screen.show { display: block; }
+    .form-container.hide { display: none; }
+    .sucesso-card {
+      background: white; border: 1px solid var(--cinza-borda);
+      border-radius: 20px; padding: 48px 32px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+    }
+    .check-icon {
+      width: 72px; height: 72px; background: var(--sucesso);
+      border-radius: 50%; display: flex; align-items: center; justify-content: center;
+      margin: 0 auto 24px;
+      animation: popIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+    @keyframes popIn { from { transform: scale(0); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+    .check-icon svg { width: 36px; height: 36px; stroke: white; }
+    .sucesso-card h2 { font-family: 'Cormorant Garamond', serif; font-size: 28px; font-weight: 700; margin-bottom: 16px; }
+    .aviso-email {
+      background: #EFF6FF; border: 1px solid #BFDBFE;
+      border-radius: 12px; padding: 16px 20px; margin: 20px 0; text-align: left;
+    }
+    .aviso-email p { font-size: 14px; color: #1e40af; line-height: 1.6; }
+    .aviso-email strong { font-weight: 600; }
+    .aviso-email .spam-note { font-size: 12px; color: #3b82f6; margin-top: 6px; }
+    .protocolo-box {
+      background: linear-gradient(135deg, var(--azul-prof), var(--azul));
+      border-radius: 14px; padding: 20px; margin: 20px 0;
+    }
+    .protocolo-box .label { font-size: 12px; color: rgba(255,255,255,0.7); margin-bottom: 6px; }
+    .protocolo-box .numero { font-family: 'Cormorant Garamond', serif; font-size: 32px; font-weight: 700; color: white; }
+    .protocolo-box .guardar { font-size: 12px; color: rgba(255,255,255,0.6); margin-top: 4px; }
+    .btn-whatsapp {
+      width: 100%; padding: 16px; background: #25D366; color: white;
+      border: none; border-radius: 12px;
+      font-family: 'DM Sans', sans-serif; font-size: 15px; font-weight: 600;
+      cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px;
+      text-decoration: none; margin-top: 8px; transition: background 0.2s;
+    }
+    .btn-whatsapp:hover { background: #1ebe5d; }
+    .link-novo { display: block; margin-top: 16px; font-size: 14px; color: var(--cinza-texto); cursor: pointer; text-decoration: underline; }
+    .link-novo:hover { color: var(--laranja); }
+    @media (max-width: 500px) {
+      .field-row.two { grid-template-columns: 1fr; }
+      .vencimento-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+  </style>
+</head>
+<body>
+
+<div class="header">
+  <div class="logo-box"><span>EIC</span></div>
+  <h1>Ficha de Matrícula Online</h1>
+  <p>EIC School — Preencha os dados abaixo</p>
+  <div class="aviso-seguranca">
+    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+    Todas as informações são tratadas com segurança e sigilo
+  </div>
+</div>
+
+<div class="form-container" id="formContainer">
+
+  <!-- Dados do Aluno -->
+  <div class="section-card">
+    <div class="section-header">
+      <div class="section-icon laranja">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+      </div>
+      <div class="section-title">
+        <h2>Dados do Aluno</h2>
+        <p>Informações pessoais do estudante</p>
+      </div>
+    </div>
+    <div class="field-row one">
+      <div class="field">
+        <label>Nome completo do Aluno <span class="req">*</span></label>
+        <input type="text" id="nomeAluno" placeholder="Ex: Ana Clara Souza" />
+        <div class="field-error" id="err-nomeAluno">Campo obrigatório</div>
+      </div>
+    </div>
+    <div class="field-row two">
+      <div class="field">
+        <label>Data de Nascimento <span class="req">*</span></label>
+        <input type="date" id="nascAluno" />
+        <div class="field-error" id="err-nascAluno">Campo obrigatório</div>
+      </div>
+      <div class="field">
+        <label>CPF ou RG do Aluno</label>
+        <input type="text" id="docAluno" placeholder="Ex: 123.456.789-00" />
+      </div>
+    </div>
+  </div>
+
+  <!-- Dados do Responsável -->
+  <div class="section-card">
+    <div class="section-header">
+      <div class="section-icon azul">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+      </div>
+      <div class="section-title">
+        <h2>Dados do Responsável</h2>
+        <p>Informações de quem assina a matrícula</p>
+      </div>
+    </div>
+    <div class="field-row one">
+      <div class="field">
+        <label>Nome completo do Responsável <span class="req">*</span></label>
+        <input type="text" id="nomeResp" placeholder="Ex: Carla Souza" />
+        <div class="field-error" id="err-nomeResp">Campo obrigatório</div>
+      </div>
+    </div>
+    <div class="field-row two">
+      <div class="field">
+        <label>CPF do Responsável <span class="req">*</span></label>
+        <input type="text" id="cpfResp" placeholder="000.000.000-00" maxlength="14" />
+        <div class="field-error" id="err-cpfResp">Campo obrigatório</div>
+      </div>
+      <div class="field">
+        <label>RG do Responsável <span class="req">*</span></label>
+        <input type="text" id="rgResp" placeholder="00.000.000-0" maxlength="12" />
+        <div class="field-error" id="err-rgResp">Campo obrigatório</div>
+      </div>
+    </div>
+    <div class="field-row two">
+      <div class="field">
+        <label>Data de Nascimento <span class="req">*</span></label>
+        <input type="date" id="nascResp" />
+        <div class="field-error" id="err-nascResp">Campo obrigatório</div>
+      </div>
+      <div class="field">
+        <label>Celular (WhatsApp) <span class="req">*</span></label>
+        <input type="text" id="celResp" placeholder="(11) 99999-9999" maxlength="15" />
+        <div class="field-error" id="err-celResp">Campo obrigatório</div>
+      </div>
+    </div>
+    <div class="field-row one">
+      <div class="field">
+        <label>E-mail do Responsável <span class="req">*</span></label>
+        <input type="email" id="emailResp" placeholder="email@exemplo.com" />
+        <div class="field-error" id="err-emailResp">E-mail inválido</div>
+      </div>
+    </div>
+    <div class="field-row two">
+      <div class="field">
+        <label>Rua/Avenida <span class="req">*</span></label>
+        <input type="text" id="rua" placeholder="Nome da rua" />
+        <div class="field-error" id="err-rua">Campo obrigatório</div>
+      </div>
+      <div class="field">
+        <label>Número <span class="req">*</span></label>
+        <input type="text" id="numero" placeholder="123" />
+        <div class="field-error" id="err-numero">Campo obrigatório</div>
+      </div>
+    </div>
+    <div class="field-row one">
+      <div class="field">
+        <label>Complemento</label>
+        <input type="text" id="complemento" placeholder="Apartamento, bloco, etc. (opcional)" />
+      </div>
+    </div>
+    <div class="field-row two">
+      <div class="field">
+        <label>Bairro <span class="req">*</span></label>
+        <input type="text" id="bairro" placeholder="Nome do bairro" />
+        <div class="field-error" id="err-bairro">Campo obrigatório</div>
+      </div>
+      <div class="field">
+        <label>CEP <span class="req">*</span></label>
+        <input type="text" id="cep" placeholder="00000-000" maxlength="9" />
+        <div class="field-error" id="err-cep">Campo obrigatório</div>
+      </div>
+    </div>
+    <div class="field-row two">
+      <div class="field">
+        <label>Cidade <span class="req">*</span></label>
+        <input type="text" id="cidade" placeholder="Nome da cidade" />
+        <div class="field-error" id="err-cidade">Campo obrigatório</div>
+      </div>
+      <div class="field">
+        <label>Estado <span class="req">*</span></label>
+        <select id="estado">
+          <option value="">Selecione</option>
+          <option>AC</option><option>AL</option><option>AP</option><option>AM</option>
+          <option>BA</option><option>CE</option><option>DF</option><option>ES</option>
+          <option>GO</option><option>MA</option><option>MT</option><option>MS</option>
+          <option>MG</option><option>PA</option><option>PB</option><option>PR</option>
+          <option>PE</option><option>PI</option><option>RJ</option><option>RN</option>
+          <option>RS</option><option>RO</option><option>RR</option><option>SC</option>
+          <option selected>SP</option><option>SE</option><option>TO</option>
+        </select>
+        <div class="field-error" id="err-estado">Campo obrigatório</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Informações Financeiras -->
+  <div class="section-card">
+    <div class="section-header">
+      <div class="section-icon verde">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/></svg>
+      </div>
+      <div class="section-title">
+        <h2>Informações Financeiras</h2>
+        <p>Escolha a melhor data de vencimento</p>
+      </div>
+    </div>
+    <label style="font-size:12px;font-weight:600;display:block;margin-bottom:12px;">
+      Data de Vencimento da Parcela Mensal <span style="color:var(--laranja)">*</span>
+    </label>
+    <div class="vencimento-grid" id="vencimentoGrid">
+      <div class="venc-btn" data-dia="05"><span class="dia">05</span><span class="mes">todo mês</span></div>
+      <div class="venc-btn" data-dia="10"><span class="dia">10</span><span class="mes">todo mês</span></div>
+      <div class="venc-btn" data-dia="15"><span class="dia">15</span><span class="mes">todo mês</span></div>
+      <div class="venc-btn" data-dia="20"><span class="dia">20</span><span class="mes">todo mês</span></div>
+    </div>
+    <div class="field-error" id="err-vencimento" style="margin-top:8px;">Selecione uma data de vencimento</div>
+  </div>
+
+  <button class="btn-enviar" id="btnEnviar" onclick="enviarFormulario()">
+    <div class="spinner"></div>
+    <span class="btn-text">Enviar Cadastro</span>
+  </button>
+</div>
+
+<!-- SUCESSO -->
+<div class="sucesso-screen" id="sucessoScreen">
+  <div class="sucesso-card">
+    <div class="check-icon">
+      <svg viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+    </div>
+    <h2>Cadastro recebido com sucesso!</h2>
+    <p style="font-size:14px;color:var(--cinza-texto);margin-top:8px;">
+      Obrigado por preencher a ficha de matrícula da EIC. Estamos muito felizes em ter vocês conosco!
+    </p>
+    <div class="aviso-email">
+      <p>Em breve você receberá um e-mail do <strong>KAITS</strong> com o link para acesso e finalização oficial da matrícula.</p>
+      <p class="spam-note">Verifique também sua caixa de spam ou lixo eletrônico.</p>
+    </div>
+    <div class="protocolo-box">
+      <div class="label">Seu número de protocolo:</div>
+      <div class="numero" id="numeroProtocolo">EIC-2026-0001</div>
+      <div class="guardar">Guarde este número para referência</div>
+    </div>
+    <a class="btn-whatsapp" id="btnWhatsapp" href="#" target="_blank">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="white"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+      Enviar mensagem pelo WhatsApp
+    </a>
+    <span class="link-novo" onclick="novoFormulario()">Fazer outro cadastro</span>
+  </div>
+</div>
+
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.0/firebase-app.js";
+  import { getFirestore, collection, addDoc, getDocs } from "https://www.gstatic.com/firebasejs/11.0.0/firebase-firestore.js";
+
+  const app = initializeApp({
+    apiKey: "AIzaSyClRhsNoV8nFdht8_94DRgEsfe4Lq96GO8",
+    authDomain: "eic-matriculas.firebaseapp.com",
+    projectId: "eic-matriculas",
+    storageBucket: "eic-matriculas.firebasestorage.app",
+    messagingSenderId: "154057641574",
+    appId: "1:154057641574:web:97b1c1ae6595be7a1067a7"
+  });
+  const db = getFirestore(app);
+  window._db = db;
+  window._col = (name) => collection(db, name);
+  window._addDoc = addDoc;
+  window._getDocs = getDocs;
+</script>
+
+<script>
+  let vencimentoSelecionado = null;
+
+  document.querySelectorAll('.venc-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.venc-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      vencimentoSelecionado = btn.dataset.dia;
+    });
+  });
+
+  function mascara(id, fn) {
+    document.getElementById(id).addEventListener('input', function() { this.value = fn(this.value); });
+  }
+  mascara('cpfResp', v => { v=v.replace(/\D/g,''); v=v.replace(/(\d{3})(\d)/,'$1.$2'); v=v.replace(/(\d{3})(\d)/,'$1.$2'); return v.replace(/(\d{3})(\d{1,2})$/,'$1-$2'); });
+  mascara('rgResp',  v => { v=v.replace(/\D/g,''); v=v.replace(/(\d{2})(\d)/,'$1.$2'); v=v.replace(/(\d{3})(\d)/,'$1.$2'); return v.replace(/(\d{3})(\d{1,2})$/,'$1-$2'); });
+  mascara('celResp', v => { v=v.replace(/\D/g,''); v=v.replace(/^(\d{2})(\d)/,'($1) $2'); return v.replace(/(\d{5})(\d)/,'$1-$2'); });
+  mascara('cep',     v => { v=v.replace(/\D/g,''); return v.replace(/(\d{5})(\d)/,'$1-$2'); });
+
+  function validar(id, ok) {
+    const el = document.getElementById(id);
+    const err = document.getElementById('err-' + id);
+    el.classList.toggle('error', !ok);
+    if (err) err.classList.toggle('show', !ok);
+    return ok;
+  }
+
+  window.enviarFormulario = async function() {
+    const v = id => document.getElementById(id).value.trim();
+    const ok = [
+      validar('nomeAluno', v('nomeAluno').length > 2),
+      validar('nascAluno', v('nascAluno') !== ''),
+      validar('nomeResp',  v('nomeResp').length > 2),
+      validar('cpfResp',   v('cpfResp').length >= 11),
+      validar('rgResp',    v('rgResp').length >= 7),
+      validar('nascResp',  v('nascResp') !== ''),
+      validar('celResp',   v('celResp').length >= 13),
+      validar('emailResp', /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v('emailResp'))),
+      validar('rua',       v('rua').length > 1),
+      validar('numero',    v('numero').length > 0),
+      validar('bairro',    v('bairro').length > 1),
+      validar('cep',       v('cep').length >= 9),
+      validar('cidade',    v('cidade').length > 1),
+      validar('estado',    v('estado') !== ''),
+    ];
+    const errVenc = document.getElementById('err-vencimento');
+    const vencOk = !!vencimentoSelecionado;
+    errVenc.classList.toggle('show', !vencOk);
+    ok.push(vencOk);
+
+    if (ok.includes(false)) {
+      document.querySelector('.error')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      return;
+    }
+
+    const btn = document.getElementById('btnEnviar');
+    btn.classList.add('loading'); btn.disabled = true;
+
+    try {
+      const snap = await window._getDocs(window._col('matriculas'));
+      const protocolo = `EIC-${new Date().getFullYear()}-${String(snap.size + 1).padStart(4,'0')}`;
+
+      await window._addDoc(window._col('matriculas'), {
+        protocolo, status: 'novo',
+        timestamp: new Date().toISOString(),
+        aluno: { nome: v('nomeAluno'), nascimento: v('nascAluno'), documento: v('docAluno') },
+        responsavel: { nome: v('nomeResp'), cpf: v('cpfResp'), rg: v('rgResp'), nascimento: v('nascResp'), celular: v('celResp'), email: v('emailResp') },
+        endereco: { rua: v('rua'), numero: v('numero'), complemento: v('complemento'), bairro: v('bairro'), cep: v('cep'), cidade: v('cidade'), estado: v('estado') },
+        vencimento: vencimentoSelecionado,
+      });
+
+      document.getElementById('numeroProtocolo').textContent = protocolo;
+      const msg = encodeURIComponent(`Olá! Acabei de preencher o formulário de matrícula da EIC.\nProtocolo: ${protocolo}\nFico no aguardo do próximo passo. Obrigado!`);
+      document.getElementById('btnWhatsapp').href = `https://wa.me/5511953541126?text=${msg}`;
+
+      document.getElementById('formContainer').classList.add('hide');
+      document.getElementById('sucessoScreen').classList.add('show');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    } catch(e) {
+      console.error(e);
+      alert('Erro ao enviar. Verifique sua conexão e tente novamente.');
+      btn.classList.remove('loading'); btn.disabled = false;
+    }
+  };
+
+  window.novoFormulario = function() {
+    location.reload();
+  };
+</script>
+</body>
+</html>
