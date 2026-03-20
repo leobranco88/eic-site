@@ -15,31 +15,34 @@
     }
     .container { max-width: 768px; margin: 0 auto; }
 
-    /* CARD PRINCIPAL */
+    /* CARD */
     .card {
-      background: white;
-      border-radius: 16px;
+      background: white; border-radius: 16px;
       box-shadow: 0 20px 60px rgba(0,0,0,0.12);
       padding: 40px;
     }
 
     /* HEADER */
     .header { text-align: center; margin-bottom: 32px; }
-    .logo {
-      margin: 0 auto 16px;
-      text-align: center;
-    }
-    .logo img { width: 120px; height: auto; object-fit: contain; }
-    .logo-text { color: white; font-weight: 700; font-size: 28px; }
+    .logo { margin: 0 auto 16px; display: block; width: 120px; height: auto; }
     .header h1 { font-size: 28px; font-weight: 700; color: #111827; margin-bottom: 6px; }
     .header p { color: #6b7280; font-size: 15px; }
+
+    /* NOTA SEGURANÇA */
+    .security-note {
+      display: flex; align-items: center; justify-content: center; gap: 6px;
+      background: #f0fdf4; border: 1px solid #bbf7d0;
+      border-radius: 20px; padding: 8px 16px;
+      margin: 14px auto 0; width: fit-content;
+      font-size: 12px; color: #166534;
+    }
+    .security-note svg { flex-shrink: 0; }
 
     /* SEÇÕES */
     .section { margin-bottom: 32px; }
     .section-title {
       font-size: 18px; font-weight: 600; color: #1f2937;
-      padding-bottom: 10px;
-      border-bottom: 2px solid #3b82f6;
+      padding-bottom: 10px; border-bottom: 2px solid #3b82f6;
       margin-bottom: 20px;
     }
     .section-subtitle { font-size: 14px; font-weight: 500; color: #374151; margin-bottom: 12px; }
@@ -51,18 +54,12 @@
     .field { margin-bottom: 16px; }
     .field:last-child { margin-bottom: 0; }
 
-    /* LABELS E INPUTS */
-    label {
-      display: block; font-size: 13px; font-weight: 500;
-      color: #374151; margin-bottom: 5px;
-    }
+    label { display: block; font-size: 13px; font-weight: 500; color: #374151; margin-bottom: 5px; }
     input, select {
       width: 100%; padding: 10px 14px;
-      border: 1px solid #d1d5db;
-      border-radius: 8px;
+      border: 1px solid #d1d5db; border-radius: 8px;
       font-family: 'Inter', sans-serif; font-size: 14px;
-      color: #111827; background: white;
-      outline: none;
+      color: #111827; background: white; outline: none;
       transition: border-color 0.15s, box-shadow 0.15s;
       appearance: none;
     }
@@ -78,10 +75,10 @@
     /* VENCIMENTO */
     .due-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
     .due-btn {
-      padding: 12px 8px; border: 2px solid #d1d5db;
-      border-radius: 8px; background: white;
-      font-family: 'Inter', sans-serif; font-size: 15px; font-weight: 600;
-      color: #374151; cursor: pointer; transition: all 0.15s;
+      padding: 12px 8px; border: 2px solid #d1d5db; border-radius: 8px;
+      background: white; font-family: 'Inter', sans-serif;
+      font-size: 15px; font-weight: 600; color: #374151;
+      cursor: pointer; transition: all 0.15s;
     }
     .due-btn:hover { border-color: #93c5fd; }
     .due-btn.active { background: #3b82f6; color: white; border-color: #3b82f6; }
@@ -89,15 +86,13 @@
     /* BOTÃO ENVIAR */
     .btn-submit {
       width: 100%; padding: 14px;
-      background: #2563eb; color: white;
-      border: none; border-radius: 8px;
+      background: #2563eb; color: white; border: none; border-radius: 8px;
       font-family: 'Inter', sans-serif; font-size: 16px; font-weight: 600;
-      cursor: pointer; transition: all 0.15s;
-      margin-top: 8px;
+      cursor: pointer; transition: all 0.15s; margin-top: 8px;
       box-shadow: 0 4px 14px rgba(37,99,235,0.3);
       display: flex; align-items: center; justify-content: center; gap: 8px;
     }
-    .btn-submit:hover { background: #1d4ed8; box-shadow: 0 6px 20px rgba(37,99,235,0.4); }
+    .btn-submit:hover { background: #1d4ed8; }
     .btn-submit:disabled { background: #9ca3af; box-shadow: none; cursor: not-allowed; }
     .spinner {
       width: 18px; height: 18px;
@@ -109,13 +104,18 @@
     .btn-submit.loading .btn-text { display: none; }
     @keyframes spin { to { transform: rotate(360deg); } }
 
+    /* RODAPÉ SEGURANÇA */
+    .footer-security {
+      text-align: center; margin-top: 20px;
+      font-size: 11px; color: #9ca3af;
+      display: flex; align-items: center; justify-content: center; gap: 5px;
+    }
+
     /* TELA SUCESSO */
     .sucesso-screen {
-      display: none;
-      min-height: 100vh;
+      display: none; min-height: 100vh;
       background: linear-gradient(135deg, #f0fdf4 0%, #d1fae5 100%);
-      margin: -48px -16px;
-      padding: 48px 16px;
+      margin: -48px -16px; padding: 48px 16px;
       align-items: center; justify-content: center;
     }
     .sucesso-screen.show { display: flex; }
@@ -135,7 +135,22 @@
     }
     @keyframes popIn { from { transform: scale(0); opacity: 0; } to { transform: scale(1); opacity: 1; } }
     .check-circle svg { width: 44px; height: 44px; stroke: white; }
-    .sucesso-card h1 { font-size: 28px; font-weight: 700; color: #111827; margin-bottom: 24px; }
+    .sucesso-card h1 { font-size: 26px; font-weight: 700; color: #111827; margin-bottom: 24px; }
+
+    /* BARRA DE ESTÁGIOS */
+    .estagios { display: flex; align-items: center; margin: 0 0 28px; }
+    .estagio { display: flex; flex-direction: column; align-items: center; flex: 1; }
+    .estagio-circulo {
+      width: 40px; height: 40px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 15px; font-weight: 700; margin-bottom: 8px;
+    }
+    .estagio-circulo.done { background: #22c55e; color: white; }
+    .estagio-circulo.pending { background: #e5e7eb; color: #9ca3af; }
+    .estagio-label { font-size: 11px; font-weight: 500; text-align: center; color: #9ca3af; line-height: 1.4; }
+    .estagio-label.done { color: #15803d; font-weight: 600; }
+    .estagio-linha { flex: 1; height: 3px; background: #e5e7eb; margin-bottom: 26px; }
+    .estagio-linha.done { background: #22c55e; }
 
     .aviso-box {
       background: #eff6ff; border: 1px solid #bfdbfe;
@@ -155,8 +170,7 @@
     .protocolo-box .guardar { font-size: 12px; color: rgba(255,255,255,0.7); margin-top: 4px; }
 
     .btn-whatsapp {
-      width: 100%; padding: 14px;
-      background: #22c55e; color: white;
+      width: 100%; padding: 14px; background: #22c55e; color: white;
       border: none; border-radius: 8px;
       font-family: 'Inter', sans-serif; font-size: 15px; font-weight: 600;
       cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px;
@@ -176,6 +190,7 @@
       .grid-2, .grid-3, .grid-3b { grid-template-columns: 1fr; }
       .due-grid { grid-template-columns: repeat(2,1fr); }
       .sucesso-card { padding: 32px 24px; }
+      .estagio-label { font-size: 10px; }
     }
   </style>
 </head>
@@ -186,11 +201,15 @@
     <div class="card">
 
       <div class="header">
-        <div class="logo" id="logoBox">
-          <img src="../images/logo-eic.png" alt="EIC" onerror="this.parentElement.innerHTML='<span class=\'logo-text\'>EIC</span>'" />
-        </div>
+        <img src="../images/logo-eic.png" alt="EIC School" class="logo" />
         <h1>Ficha de Matrícula Online</h1>
         <p>EIC School - Preencha os dados abaixo</p>
+        <div class="security-note">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+          </svg>
+          Seus dados estão protegidos e são tratados com total segurança e sigilo
+        </div>
       </div>
 
       <!-- DADOS DO ALUNO -->
@@ -250,7 +269,6 @@
           </div>
         </div>
 
-        <!-- Endereço -->
         <div class="section-subtitle" style="margin-top:8px;">Endereço</div>
         <div class="grid-3 field">
           <div>
@@ -321,6 +339,13 @@
         <span class="btn-text">Enviar Cadastro</span>
       </button>
 
+      <div class="footer-security">
+        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+        </svg>
+        Conexão segura · Dados criptografados · Informações confidenciais
+      </div>
+
     </div>
   </div>
 </div>
@@ -328,28 +353,52 @@
 <!-- TELA SUCESSO -->
 <div class="sucesso-screen" id="sucessoScreen">
   <div class="sucesso-card">
+
     <div class="check-circle">
       <svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
         <polyline points="20 6 9 17 4 12"/>
       </svg>
     </div>
     <h1>Cadastro recebido com sucesso!</h1>
+
+    <!-- BARRA DE ESTÁGIOS -->
+    <div class="estagios">
+      <div class="estagio">
+        <div class="estagio-circulo done">✓</div>
+        <div class="estagio-label done">Cadastro<br>realizado</div>
+      </div>
+      <div class="estagio-linha done"></div>
+      <div class="estagio">
+        <div class="estagio-circulo pending">2</div>
+        <div class="estagio-label">Assinatura<br>no KAITS</div>
+      </div>
+      <div class="estagio-linha"></div>
+      <div class="estagio">
+        <div class="estagio-circulo pending">3</div>
+        <div class="estagio-label">Matrícula<br>confirmada</div>
+      </div>
+    </div>
+
     <div class="aviso-box">
       <p>Em breve você receberá um e-mail do <strong>KAITS</strong> com o link para acesso e finalização oficial da matrícula.</p>
       <p class="spam"><strong>Importante:</strong> Verifique também sua caixa de spam ou lixo eletrônico.</p>
     </div>
+
     <div class="protocolo-box">
       <div class="label">Seu número de protocolo:</div>
       <div class="numero" id="numeroProtocolo">EIC-2026-0001</div>
       <div class="guardar">Guarde este número para referência</div>
     </div>
+
     <a class="btn-whatsapp" id="btnWhatsapp" href="#" target="_blank">
       <svg width="22" height="22" viewBox="0 0 24 24" fill="white">
         <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
       </svg>
       Enviar mensagem pelo WhatsApp
     </a>
+
     <span class="link-outro" onclick="location.reload()">Fazer outro cadastro</span>
+
   </div>
 </div>
 
@@ -374,7 +423,6 @@
 <script>
   let dueDate = null;
 
-  // Vencimento
   document.querySelectorAll('.due-btn').forEach(btn => {
     btn.addEventListener('click', () => {
       document.querySelectorAll('.due-btn').forEach(b => b.classList.remove('active'));
@@ -383,7 +431,6 @@
     });
   });
 
-  // Máscaras
   function mask(id, fn) {
     document.getElementById(id).addEventListener('input', function() { this.value = fn(this.value); });
   }
@@ -399,25 +446,24 @@
     err?.classList?.toggle('show', show);
     return !show;
   }
-
   function v(id) { return document.getElementById(id)?.value?.trim() || ''; }
 
   window.enviar = async function() {
     const checks = [
-      setError('studentName',     v('studentName').length < 2),
-      setError('studentBirthDate',v('studentBirthDate') === ''),
-      setError('guardianName',    v('guardianName').length < 2),
-      setError('guardianCPF',     v('guardianCPF').replace(/\D/g,'').length !== 11),
-      setError('guardianRG',      v('guardianRG').replace(/[^a-zA-Z0-9]/g,'').length < 7),
+      setError('studentName',      v('studentName').length < 2),
+      setError('studentBirthDate', v('studentBirthDate') === ''),
+      setError('guardianName',     v('guardianName').length < 2),
+      setError('guardianCPF',      v('guardianCPF').replace(/\D/g,'').length !== 11),
+      setError('guardianRG',       v('guardianRG').replace(/[^a-zA-Z0-9]/g,'').length < 7),
       setError('guardianBirthDate',v('guardianBirthDate') === ''),
-      setError('phone',           v('phone').replace(/\D/g,'').length !== 11),
-      setError('email',           !/\S+@\S+\.\S+/.test(v('email'))),
-      setError('street',          v('street').length < 1),
-      setError('number',          v('number').length < 1),
-      setError('neighborhood',    v('neighborhood').length < 1),
-      setError('cep',             v('cep').replace(/\D/g,'').length !== 8),
-      setError('city',            v('city').length < 1),
-      setError('state',           v('state') === ''),
+      setError('phone',            v('phone').replace(/\D/g,'').length !== 11),
+      setError('email',            !/\S+@\S+\.\S+/.test(v('email'))),
+      setError('street',           v('street').length < 1),
+      setError('number',           v('number').length < 1),
+      setError('neighborhood',     v('neighborhood').length < 1),
+      setError('cep',              v('cep').replace(/\D/g,'').length !== 8),
+      setError('city',             v('city').length < 1),
+      setError('state',            v('state') === ''),
     ];
     const errDue = document.getElementById('err-dueDate');
     const dueOk = !!dueDate;
