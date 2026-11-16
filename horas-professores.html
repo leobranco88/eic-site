@@ -48,9 +48,16 @@ aside{border-right:1px solid var(--rule);padding:28px 28px 36px;position:sticky;
 .logo-q{display:block;width:200px;height:auto;margin:0 auto 22px}
 .brand{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink2);font-weight:600}
 .brand b{color:var(--coral)}
-nav.tabs{display:flex;flex-wrap:wrap;gap:8px 12px;font-size:13px;margin:22px 0 34px;border-bottom:1px solid var(--rule)}
-nav.tabs button{padding:0 0 10px;font-weight:500;color:var(--ink3);border-bottom:2px solid transparent;margin-bottom:-1px}
-nav.tabs button.on{color:var(--ink);border-bottom-color:var(--ink)}
+nav.tabs{display:flex;flex-direction:column;margin:18px 0 22px;padding-bottom:14px;border-bottom:1px solid var(--rule)}
+nav.tabs .ng{font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink3);font-weight:600;padding:12px 10px 4px}
+nav.tabs .ng:first-child{padding-top:0}
+nav.tabs button{display:flex;align-items:center;gap:11px;padding:7px 10px;font-size:14px;font-weight:500;color:var(--ink2);border-left:3px solid transparent;text-align:left;width:100%}
+nav.tabs button:hover{background:var(--sheet)}
+nav.tabs button .ni{display:inline-flex;width:20px;height:20px;flex:none;color:var(--ink3)}
+nav.tabs button .ni svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+nav.tabs button.on{color:var(--ink);font-weight:600;border-left-color:var(--coral);background:var(--sheet)}
+nav.tabs button.on .ni{color:var(--coral)}
+nav.tabs button span:last-child{margin-left:auto}
 .bigday{font-family:var(--serif);font-weight:800;font-size:120px;line-height:.85;letter-spacing:-.06em}
 .wk{font-weight:600;font-size:22px;margin-top:14px;letter-spacing:-.01em}
 .mo{font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink2);margin-top:4px}
@@ -143,8 +150,15 @@ i.ok{background:var(--c-dada)}.cal-k i.cl{width:9px;height:9px;border-radius:1px
 .tally .tot b{font-size:28px;font-family:var(--serif);font-weight:800}
 .pend{margin-top:18px;font-size:14px;padding:10px 12px;background:var(--pend-bg);color:#6B4100;border-left:3px solid var(--pend)}
 .done{margin-top:18px;font-size:14px;padding:10px 12px;background:#E1F0E7;color:#1D5233;border-left:3px solid var(--c-dada)}
-.who{margin-top:auto;padding-top:28px;font-size:12px;color:var(--ink3)}
-.who button{color:var(--ink2);text-decoration:underline;margin-left:6px}
+.who{margin-top:auto;padding-top:16px;border-top:1px solid var(--rule);font-size:13px;color:var(--ink2);display:flex;flex-direction:column;gap:2px}
+.who .wm{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+.who .wm b{display:block;color:var(--ink);font-size:14px;line-height:1.2;word-break:break-all}
+.who .wm small{display:block;color:var(--ink3);font-size:12px}
+.who .wav{width:32px;height:32px;border-radius:50%;background:#E3F0E8;color:var(--c-dada);display:flex;align-items:center;justify-content:center;font-weight:600;font-size:13px;flex:none}
+.who button{display:flex;align-items:center;gap:10px;padding:7px 8px;color:var(--ink2);font-size:13px;text-align:left}
+.who button:hover{background:var(--sheet);color:var(--ink)}
+.who button .ni{display:inline-flex;width:18px;height:18px;color:var(--ink3)}
+.who button .ni svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
 .demo{background:var(--ink);color:var(--paper);font-size:12px;letter-spacing:.04em;padding:7px 28px}
 
 main{padding:36px 48px 80px;max-width:1040px}
@@ -465,7 +479,9 @@ button.vt:hover{outline:2px solid var(--ink);outline-offset:1px}
   #login{grid-template-columns:1fr}#login .l-left{padding:32px;gap:40px}
   #app{grid-template-columns:1fr}
   aside{position:static;height:auto;border-right:0;border-bottom:1px solid var(--rule);padding:20px}
-  .bigday{font-size:84px;display:inline-block}.who{display:none}
+  .bigday{font-size:84px;display:inline-block}
+  nav.tabs{flex-direction:row;flex-wrap:wrap;gap:4px}nav.tabs .ng{display:none}nav.tabs button{width:auto;border-left:0;border-bottom:2px solid transparent}nav.tabs button.on{border-bottom-color:var(--coral)}
+  .who{flex-direction:row;flex-wrap:wrap;align-items:center;gap:8px}.who .wm{margin:0}
   main{padding:24px 18px 60px}
   .row{grid-template-columns:1fr;gap:8px}.sub-line{grid-column:1}
   .setup{grid-template-columns:1fr}.week{grid-template-columns:1fr 1fr}
@@ -533,6 +549,10 @@ button.vt:hover{outline:2px solid var(--ink);outline-offset:1px}
 .cprb{border:1px solid var(--rule);background:#fff;padding:5px 11px;font-size:13px;color:var(--ink2)}
 .cprb:hover{border-color:var(--ink)}
 .cprb.on{border-color:var(--c-dada);color:var(--c-dada);font-weight:600}
+#main .vhs{display:grid;gap:8px;max-width:340px}
+#main .vh{display:grid;grid-template-columns:110px 1fr;align-items:center;gap:12px;border-bottom:1px solid var(--rule);padding-bottom:8px}
+#main .vh .vhd{font-weight:600}
+#main .vh input{max-width:150px}
 .cpbt{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap}
 .cpbt button{font-size:13px;font-weight:600;padding:9px 14px;border:1px solid var(--ink);border-radius:2px}.cpbt button.p{background:var(--coral);border-color:var(--coral);color:#fff}.cpbt button.g{border-color:var(--c-canc);color:var(--c-canc)}
 .cplg{font-size:13.5px}.cplg div{display:grid;grid-template-columns:80px 1fr;gap:10px;padding:8px 0;border-top:1px solid var(--rule)}.cplg em{font-style:normal;color:var(--ink2)}
@@ -570,19 +590,22 @@ button.vt:hover{outline:2px solid var(--ink);outline-offset:1px}
   <aside>
     <img class="logo-s" src="/images/logo-eic.png" alt="EIC · Escola de Idiomas e Cultura">
     <div class="brand">Horas dos professores</div>
-    <nav class="tabs">
-      <button data-a="tab" data-v="dia">Dia</button>
-      <button data-a="tab" data-v="turmas">Turmas</button>
-      <button data-a="tab" data-v="cp">Checkpoints <span id="cpbadge"></span></button>
-      <button data-a="tab" data-v="mes">Mês</button>
-      <button data-a="tab" data-v="conf">Conferir <span id="cfbadge"></span></button>
-      <button data-a="tab" data-v="vip">VIP</button>
-      <button data-a="tab" data-v="agenda">Horários</button>
-      <button data-a="tab" data-v="cal">Calendário</button>
-      <button data-a="tab" data-v="prof">Professores</button>
+    <nav class="tabs" aria-label="Seções">
+      <div class="ng">Rotina</div>
+      <button data-a="tab" data-v="dia"><i class="ni" data-i="dia"></i>Dia</button>
+      <button data-a="tab" data-v="conf"><i class="ni" data-i="conferir"></i>Conferir<span id="cfbadge"></span></button>
+      <button data-a="tab" data-v="mes"><i class="ni" data-i="relogio"></i>Mês</button>
+      <div class="ng">Turmas</div>
+      <button data-a="tab" data-v="turmas"><i class="ni" data-i="grupo"></i>Turmas</button>
+      <button data-a="tab" data-v="cp"><i class="ni" data-i="prancheta"></i>Checkpoints<span id="cpbadge"></span></button>
+      <button data-a="tab" data-v="vip"><i class="ni" data-i="vip"></i>VIP</button>
+      <div class="ng">Escola</div>
+      <button data-a="tab" data-v="agenda"><i class="ni" data-i="grade"></i>Horários</button>
+      <button data-a="tab" data-v="cal"><i class="ni" data-i="calendario"></i>Calendário</button>
+      <button data-a="tab" data-v="prof"><i class="ni" data-i="capelo"></i>Professores</button>
     </nav>
     <div id="side"></div>
-    <div class="who"><span id="whoami"></span><button data-a="trocar">Trocar de pessoa</button><button data-a="logout">Sair</button></div>
+    <div class="who"><div class="wm"><span class="wav" id="whoav" aria-hidden="true"></span><div><b id="whoami"></b><small>neste computador</small></div></div><button data-a="trocar"><i class="ni" data-i="substituida"></i>Trocar de pessoa</button><button data-a="logout"><i class="ni" data-i="sair"></i>Sair</button></div>
   </aside>
   <main id="main"></main>
 </div>
@@ -651,9 +674,17 @@ const P = {
   maleta:'<rect x="4" y="8" width="16" height="11" rx="1"/><path d="M9 8V5.5h6V8M4 13h16"/>',
   vip:'<circle cx="12" cy="8.5" r="3.4"/><path d="M5.5 20c.5-3.9 3.1-6 6.5-6s6 2.1 6.5 6"/>',
   grupo:'<circle cx="12" cy="8" r="2.6"/><circle cx="5.8" cy="10" r="2.1"/><circle cx="18.2" cy="10" r="2.1"/><path d="M7.5 19c.3-3 2-4.6 4.5-4.6s4.2 1.6 4.5 4.6M2.5 18c.2-2.4 1.5-3.7 3.3-3.7M21.5 18c-.2-2.4-1.5-3.7-3.3-3.7"/>',
+  dia:'<circle cx="12" cy="12" r="3.5"/><path d="M12 3.5v2M12 18.5v2M3.5 12h2M18.5 12h2M6 6l1.4 1.4M16.6 16.6L18 18M18 6l-1.4 1.4M7.4 16.6L6 18"/>',
+  conferir:'<path d="M4.5 7l1.5 1.5L9 5.5M4.5 15l1.5 1.5L9 13.5M12 7h7.5M12 15h7.5"/>',
+  prancheta:'<rect x="6" y="5" width="12" height="15" rx="1"/><path d="M9.5 5V3.5h5V5M9 13l2 2 4-4"/>',
+  grade:'<rect x="4" y="4.5" width="16" height="15"/><path d="M4 9.5h16M9.5 9.5v10M14.5 9.5v10"/>',
+  capelo:'<path d="M3 9.5l9-4.5 9 4.5-9 4.5z"/><path d="M7 11.8v4c1.4 1.4 3 2 5 2s3.6-.6 5-2v-4"/>',
+  sair:'<path d="M10 5H5.5v14H10M14 8l4 4-4 4M18 12H9.5"/>',
   disco:'<path d="M5 4.5h11l3.5 3.5V19.5H5z"/><path d="M8 4.5v5h7v-5M8 19.5v-6h8v6"/>'
 };
 const ico = k => `<svg class="ico" viewBox="0 0 24 24" aria-hidden="true">${P[k]||''}</svg>`;
+document.querySelectorAll('.ni[data-i]').forEach(e => e.innerHTML = ico(e.dataset.i));
+{ const w = document.getElementById('whoami'), av = document.getElementById('whoav'); if(w && av) new MutationObserver(() => { av.textContent = initials((w.textContent || '').split('@')[0]); }).observe(w, {childList:true, characterData:true, subtree:true}); }
 const tipoTag = t => t === 'vip' ? `<span class="tp vip">${ico('vip')}VIP</span>` : `<span class="tp grp">${ico('grupo')}Grupo</span>`;
 const initials = n => String(n||'?').trim().split(/\s+/).slice(0,2).map(w => w[0]).join('').toUpperCase();
 const avatar = (p, size) => p && p.foto
@@ -1813,7 +1844,7 @@ function renderVip(){
 /* ---------- novo pacote ---------- */
 function pfNovo(base){
   const leo = activeProfs().find(p => /^le[oó]$/i.test(p.nome)) || activeProfs()[0];
-  return Object.assign({step:1, aluno:'', tel:'', profId:leo ? leo.id : '', total:8, dias:[], hora:'', dur:60, ini:addDays(hojeStr(), 1), datas:null, pulos:[], edit:null, done:null}, base || {});
+  return Object.assign({step:1, aluno:'', tel:'', profId:leo ? leo.id : '', total:8, dias:[], hs:{}, dur:60, ini:addDays(hojeStr(), 1), datas:null, pulos:[], edit:null, done:null}, base || {});
 }
 function pfCheck(f, i){
   const x = f.datas[i], sa = diaSemAula(x.d);
@@ -1825,16 +1856,17 @@ function pfCheck(f, i){
   return {ok:true, msg:`${(prof(f.profId) || {}).nome} livre`};
 }
 async function pfGerar(){
-  const f = S.pf, out = [], pulos = [], fim = fmtMin(toMin(f.hora) + f.dur);
+  const f = S.pf, out = [], pulos = [];
   let d = f.ini, g = 0;
   while(out.length < f.total && g++ < 600){
     if(f.dias.includes(parse(d).getDay())){
+      const hora = f.hs[parse(d).getDay()], fim = fmtMin(toMin(hora) + f.dur);
       await ensureMonth(d.slice(0, 7));
       const sa = diaSemAula(d);
       if(sa) pulos.push({d, motivo:sa.nome});
       else {
-        const bate = ocupado(f.profId, d).find(o => toMin(o.ini) < toMin(fim) && toMin(o.fim) > toMin(f.hora));
-        if(bate) pulos.push({d, motivo:`${(prof(f.profId) || {}).nome} ocupado (${bate.txt})`}); else out.push({d, inicio:f.hora, fim});
+        const bate = ocupado(f.profId, d).find(o => toMin(o.ini) < toMin(fim) && toMin(o.fim) > toMin(hora));
+        if(bate) pulos.push({d, motivo:`${(prof(f.profId) || {}).nome} ocupado (${bate.txt})`}); else out.push({d, inicio:hora, fim});
       }
     }
     d = addDays(d, 1);
@@ -1853,7 +1885,7 @@ function vWizard(){
   } else if(st === 2){
     body = `<label>Quantas aulas tem o pacote</label><div class="vbig"><button class="${f.total === 4 ? 'on' : ''}" data-a="v-pf-total" data-t="4">4</button><button class="${f.total === 8 ? 'on' : ''}" data-a="v-pf-total" data-t="8">8</button></div>
       <label>Dias da semana</label><div class="chips">${[1, 2, 3, 4, 5, 6].map(d => `<button class="chip ${f.dias.includes(d) ? 'on' : ''}" data-a="v-pf-dia" data-d="${d}">${DIAS[d].replace('-feira', '')}</button>`).join('')}</div>
-      <label>Horário de início</label><input type="time" data-vf="hora" value="${f.hora}" style="max-width:160px">
+      <label>Horário de cada dia</label>${f.dias.length ? `<div class="vhs">${f.dias.map(d => `<div class="vh"><span class="vhd">${DIAS[d].replace('-feira', '')}</span><input type="time" data-vh="${d}" value="${f.hs[d] || ''}" aria-label="Horário de ${DIAS[d]}"></div>`).join('')}</div><p class="note" style="margin:8px 0 0">Cada dia pode ter um horário diferente. Ex.: segunda às 19:00 e quarta ao meio-dia.</p>` : '<p class="note" style="margin:0">Escolha os dias acima para definir o horário de cada um.</p>'}
       <label>Duração da aula</label><div class="chips">${[45, 60, 90].map(n => `<button class="chip ${f.dur === n ? 'on' : ''}" data-a="v-pf-dur" data-n="${n}">${n} min</button>`).join('')}</div>
       <label>Primeira aula a partir de</label><input type="date" data-vf="ini" value="${f.ini}" style="max-width:200px">
       <div class="vnav"><button class="vb dk" data-a="v-pf-next">Sugerir as datas${ico('seta')}</button><button class="cancel" data-a="v-pf-back">Voltar</button></div>`;
@@ -1866,7 +1898,7 @@ function vWizard(){
       return `<div class="vdc ${c.ok ? '' : 'bad'}"><small>Aula ${n}</small>${ed ? `<input type="date" data-vd="${it.i}" data-vk="d" value="${it.x.d}"><input type="time" data-vd="${it.i}" data-vk="inicio" value="${it.x.inicio}">` : `<b>${diaCurto(parse(it.x.d).getDay())} ${dmy(it.x.d)}</b><small style="margin-top:2px">${it.x.inicio} às ${it.x.fim}</small>`}<span>${esc(c.msg)}</span><button class="tm-edit" data-a="v-pf-edit" data-i="${it.i}">${ed ? 'Pronto' : 'Trocar data'}</button></div>`;
     }).join('');
     const bad = f.datas.some((x, i) => !pfCheck(f, i).ok);
-    body = `<p class="note" style="max-width:none;margin-top:0"><b>${esc(f.aluno)}</b> com ${esc(p ? p.nome : '')} · pacote de ${f.total} aulas · ${f.dias.map(d => diaCurto(d)).join(' e ')} às ${f.hora}. Feriados, férias e horários ocupados do professor foram pulados.</p>
+    body = `<p class="note" style="max-width:none;margin-top:0"><b>${esc(f.aluno)}</b> com ${esc(p ? p.nome : '')} · pacote de ${f.total} aulas · ${f.dias.map(d => diaCurto(d) + ' às ' + f.hs[d]).join(' e ')}. Feriados, férias e horários ocupados do professor foram pulados.</p>
       <div class="vdl">${cards}</div>
       ${bad ? '<p class="note" style="max-width:none;color:var(--c-canc);margin-top:14px">Alguma data tem conflito. Troque a data antes de criar.</p>' : ''}
       <div class="vnav"><button class="vb pri" data-a="v-pf-criar" ${bad ? 'disabled' : ''}>${ico('dada')}Criar pacote e gerar link</button><button class="cancel" data-a="v-pf-back">Voltar</button></div>`;
@@ -1978,8 +2010,8 @@ async function vipClick(a, el, e){
   }
   if(a === 'v-renovar'){
     const ult = k.aulas.map(x => x.data).filter(Boolean).sort().pop() || hojeStr(), dias = [...new Set(k.aulas.filter(x => x.data).map(x => parse(x.data).getDay()))];
-    const base = k.aulas.find(x => x.data) || {};
-    S.pf = pfNovo({step:2, aluno:k.aluno, tel:k.tel || '', profId:k.profId, total:k.total, dias, hora:base.inicio || '', dur:k.dur || 60, ini:addDays(ult, 1)}); S.pc = null; render(); return window.scrollTo({top:0});
+    const hs = {}; k.aulas.filter(x => x.data && x.inicio).sort((x, y) => y.data.localeCompare(x.data)).forEach(x => { hs[parse(x.data).getDay()] = x.inicio; });
+    S.pf = pfNovo({step:2, aluno:k.aluno, tel:k.tel || '', profId:k.profId, total:k.total, dias, hs, dur:k.dur || 60, ini:addDays(ult, 1)}); S.pc = null; render(); return window.scrollTo({top:0});
   }
   /* ---- assistente ---- */
   if(a === 'v-pf-cancel'){ S.pf = null; return render(); }
@@ -1994,9 +2026,9 @@ async function vipClick(a, el, e){
     if(f.step === 1){ if(!f.aluno.trim()) return toast('Escreva o nome do aluno.', true); if(!f.profId) return toast('Escolha o professor.', true); f.step = 2; return render(); }
     if(f.step === 2){
       if(!f.dias.length) return toast('Escolha pelo menos um dia da semana.', true);
-      if(!f.hora) return toast('Informe o horário de início.', true);
+      const sem = f.dias.find(d => !f.hs[d]); if(sem !== undefined) return toast(`Informe o horário de ${DIAS[sem].replace('-feira', '').toLowerCase()}.`, true);
       if(!f.ini) return toast('Informe a data da primeira aula.', true);
-      el.disabled = true; await pfGerar(); f.step = 3; f.edit = null; return render();
+      el.disabled = true; await pfGerar(); if(!f.datas.length){ el.disabled = false; return toast('Nenhuma data livre nesses dias e horários: o professor já tem aula neles. Troque o horário ou o professor.', true); } f.step = 3; f.edit = null; return render();
     }
   }
   if(a === 'v-pf-criar'){
@@ -2329,6 +2361,7 @@ async function onClick(e){
 
 function onInput(e){
   const el = e.target;
+  if(el.dataset.vh !== undefined && S.pf){ S.pf.hs[+el.dataset.vh] = el.value; return; }
   if(el.dataset.vf !== undefined && S.pf){ S.pf[el.dataset.vf] = el.value; return; }
   if(el.dataset.vc !== undefined && S.pc){ (S.pc.tmp = S.pc.tmp || {})[el.dataset.vc] = el.value; return; }
   if(el.id === 'v-q'){ S.pkq = el.value; const l = $('#vlist'); if(l) l.innerHTML = vLista(); return; }
