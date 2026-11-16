@@ -57,6 +57,19 @@ nav.tabs button .ni{display:inline-flex;width:20px;height:20px;flex:none;color:v
 nav.tabs button .ni svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
 nav.tabs button.on{color:var(--ink);font-weight:600;border-left-color:var(--coral);background:var(--sheet)}
 nav.tabs button.on .ni{color:var(--coral)}
+.menutg{display:none;align-items:center;gap:10px;width:100%;margin-top:18px;padding:10px 12px;background:var(--ink);color:#fff;font-size:14px;font-weight:600;border-radius:2px;text-align:left}
+.menutg:hover{background:#2a2a2a}.menutg .ni{display:inline-flex;width:18px;height:18px}.menutg svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.menutg .mtl{flex:1}.menutg .mta{font-weight:400;font-size:12px;opacity:.8}.menutg .mtc{transition:transform .15s}
+aside.mc-off .menutg .mtc{transform:rotate(180deg)}
+@media (min-width:901px){
+ .menutg{display:flex}
+ aside.mc-off nav.tabs{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;margin:8px 0 14px;padding-bottom:14px}
+ aside.mc-off nav.tabs .ng{display:none}
+ aside.mc-off nav.tabs button{flex-direction:column;justify-content:center;gap:3px;padding:8px 2px;font-size:11px;border:1px solid var(--rule);border-radius:2px;text-align:center;position:relative;width:auto;min-width:0}
+ aside.mc-off nav.tabs button .ni{margin:0}
+ aside.mc-off nav.tabs button.on{border-color:var(--coral);color:var(--coral);background:var(--sheet)}
+ aside.mc-off nav.tabs button span:last-child{margin:0;position:absolute;top:3px;right:4px}
+}
 nav.tabs button span:last-child{margin-left:auto}
 .bigday{font-family:var(--serif);font-weight:800;font-size:120px;line-height:.85;letter-spacing:-.06em}
 .wk{font-weight:600;font-size:22px;margin-top:14px;letter-spacing:-.01em}
@@ -618,7 +631,8 @@ button.vt:hover{outline:2px solid var(--ink);outline-offset:1px}
   <aside>
     <img class="logo-s" src="/images/logo-eic.png" alt="EIC · Escola de Idiomas e Cultura">
     <div class="brand">Horas dos professores</div>
-    <nav class="tabs" aria-label="Seções">
+    <button class="menutg" data-a="menu-t" aria-expanded="true" aria-controls="menunav"><i class="ni" data-i="menu"></i><span class="mtl">Menu</span><span class="mta" id="menuatual"></span><i class="ni mtc" data-i="chevup"></i></button>
+    <nav class="tabs" id="menunav" aria-label="Seções">
       <div class="ng">Rotina</div>
       <button data-a="tab" data-v="dia"><i class="ni" data-i="dia"></i>Dia</button>
       <button data-a="tab" data-v="conf"><i class="ni" data-i="conferir"></i>Conferir<span id="cfbadge"></span></button>
@@ -686,6 +700,8 @@ const P = {
   outro:'<circle cx="6" cy="12" r=".6"/><circle cx="12" cy="12" r=".6"/><circle cx="18" cy="12" r=".6"/>',
   camera:'<path d="M4 8.5h3l1.5-2.5h7L17 8.5h3V18H4z"/><circle cx="12" cy="13" r="3.2"/>',
   mais:'<path d="M12 5v14M5 12h14"/>',
+  menu:'<path d="M4 7h16M4 12h16M4 17h16"/>',
+  chevup:'<path d="M6 15l6-6 6 6"/>',
   lupa:'<circle cx="11" cy="11" r="6.5"/><path d="M16 16l4.5 4.5"/>',
   cadeado:'<rect x="5" y="11" width="14" height="9" rx="1"/><path d="M8 11V8a4 4 0 018 0v3"/>',
   lixo:'<path d="M5 7h14M10 7V4.5h4V7M7 7l.8 12h8.4L17 7M10.5 10.5v5.5M13.5 10.5v5.5"/>',
@@ -712,6 +728,7 @@ const P = {
 };
 const ico = k => `<svg class="ico" viewBox="0 0 24 24" aria-hidden="true">${P[k]||''}</svg>`;
 document.querySelectorAll('.ni[data-i]').forEach(e => e.innerHTML = ico(e.dataset.i));
+try { if(localStorage.getItem('eic_menu_off') === '1'){ document.querySelector('aside').classList.add('mc-off'); const mt = document.querySelector('.menutg'); if(mt) mt.setAttribute('aria-expanded', 'false'); } } catch(_) {}
 { const w = document.getElementById('whoami'), av = document.getElementById('whoav'); if(w && av) new MutationObserver(() => { av.textContent = initials((w.textContent || '').split('@')[0]); }).observe(w, {childList:true, characterData:true, subtree:true}); }
 const tipoTag = t => t === 'vip' ? `<span class="tp vip">${ico('vip')}VIP</span>` : `<span class="tp grp">${ico('grupo')}Grupo</span>`;
 const initials = n => String(n||'?').trim().split(/\s+/).slice(0,2).map(w => w[0]).join('').toUpperCase();
@@ -851,6 +868,7 @@ function dayModel(date){
 function render(){
   _ult.clear();
   document.querySelectorAll('nav.tabs button').forEach(b => b.classList.toggle('on', b.dataset.v === S.view));
+  { const on = document.querySelector('nav.tabs button.on'), at = $('#menuatual'); if(at) at.textContent = on ? on.firstElementChild.nextSibling.textContent.trim() : ''; }
   if(S.view === 'dia') renderDia();
   else if(S.view === 'turmas') renderTurmas();
   else if(S.view === 'mes') renderMes();
@@ -2273,6 +2291,7 @@ async function onClick(e){
   const a = el.dataset.a;
   if(a.startsWith('q-')) return quemClick(a, el);
   if(a === 'trocar') return trocarPessoa();
+  if(a === 'menu-t'){ const as = $('aside'), off = as.classList.toggle('mc-off'); el.setAttribute('aria-expanded', String(!off)); try { localStorage.setItem('eic_menu_off', off ? '1' : '0'); } catch(_) {} return; }
   if(a.startsWith('v-')) return vipClick(a, el, e);
   if(S.view === 'dia' && ['status','motivo','alldone','xopen','xsave','xdel','excl','desfaz','aopen','asave'].includes(a) && fechado(S.date)) return toast('Dia fechado. Reabra para editar.', true);
   if(el.tagName === 'SELECT') return;
