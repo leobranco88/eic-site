@@ -552,6 +552,7 @@ button.vt:hover{outline:2px solid var(--ink);outline-offset:1px}
 .cprb.on{border-color:var(--c-dada);color:var(--c-dada);font-weight:600}
 #main .vgh{display:flex;align-items:center;gap:10px;font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink2);margin:26px 0 8px;font-weight:600}
 #main .vgh span{background:var(--sheet);padding:1px 8px;border-radius:9px;color:var(--ink)}
+#main .vgb{display:flex;gap:6px}
 #main .vgr{display:grid;grid-template-columns:1fr auto auto;gap:16px;align-items:center;padding:12px 0;border-bottom:1px solid var(--rule)}
 #main .vgn b{display:block;font-size:15px}#main .vgn small{color:var(--ink2);font-size:13px}
 #main .vgp{display:flex;align-items:center;gap:8px;font-size:14px;font-weight:500}
@@ -1469,9 +1470,9 @@ function importPanel(){
    ===================================================================== */
 const JANELA = {1:['08:00','21:00'], 2:['08:00','21:00'], 3:['08:00','21:00'], 4:['08:00','21:00'], 5:['08:00','21:00'], 6:['08:00','13:00']};
 const fmtMin = m => `${pad(Math.floor(m/60))}:${pad(m%60)}`;
-function ocupado(pid, date){
+function ocupado(pid, date, ignora){
   const dow = parse(date).getDay(), out = [];
-  slotsOn(date).filter(s => s.profId === pid).forEach(s => {
+  slotsOn(date).filter(s => s.profId === pid && !(ignora && s.turmaId === ignora)).forEach(s => {
     const r = S.regs[regId(date, s.id)];
     if(r && (r.status === 'cancelada' || r.status === 'removida')) return;
     if(r && r.status === 'substituida' && r.substitutoId && r.substitutoId !== pid) return;
@@ -1836,7 +1837,7 @@ function vGradeLista(){
     .sort((a, b) => a.nome.localeCompare(b.nome, 'pt-BR'));
   if(!l.length) return '';
   const row = t => { const st = turmaStats(t), p = prof(t.profId), hor = [...(t.horarios || [])].sort((a, b) => a.dia - b.dia).map(h => `${diaCurto(h.dia)} ${h.inicio}–${h.fim}`).join(' · ');
-    return `<div class="vgr"><div class="vgn"><b>${esc(t.nome)}</b><small>${esc(hor)}${st.total ? ` · ${st.dadas} de ${st.total} aulas dadas` : ` · ${st.dadas} aulas dadas`}</small></div><div class="vgp">${p ? avatar(p, 26) + esc(p.nome) : ''}</div><button class="vb" data-a="tedit" data-id="${t.id}">${ico('lapis')}Editar</button></div>`; };
+    return `<div class="vgr"><div class="vgn"><b>${esc(t.nome)}</b><small>${esc(hor)}${st.total ? ` · ${st.dadas} de ${st.total} aulas dadas` : ` · ${st.dadas} aulas dadas`}</small></div><div class="vgp">${p ? avatar(p, 26) + esc(p.nome) : ''}</div><div class="vgb"><button class="vb" data-a="v-npt" data-id="${t.id}">${ico('mais')}Novo pacote</button><button class="vb" data-a="tedit" data-id="${t.id}">${ico('lapis')}Editar</button></div></div>`; };
   return `<h5 class="vgh">VIPs na grade da escola <span>${l.length}</span></h5><p class="note" style="max-width:none;margin:0 0 6px">Alunos VIP com horário fixo na grade. Em Editar você atualiza o pacote (aulas previstas e quantas já foram dadas), o professor e os horários.</p>${l.map(row).join('')}`;
 }
 function vLista(){
@@ -1865,6 +1866,34 @@ function renderVip(){
 }
 
 /* ---------- novo pacote ---------- */
+function vNomeLimpo(n){
+  const profs = activeProfs().map(p => normTxt(p.nome)).concat(['leo']);
+  const dia = /^(seg|segunda|segundas|ter|terca|tercas|qua|quarta|quartas|qui|quinta|quintas|sex|sexta|sextas|sab|sabado|sabados|dom|domingo|feira|e|as|das|vip|hibrido|0|00|15|30|45)$/;
+  const out = String(n).split(/[\s\-·–]+/).filter(w => {
+    const x = normTxt(w).replace(/[^a-z0-9:\/]/g, ''); if(!x) return false;
+    if(x.includes('/')) return false;
+    return !(profs.includes(x) || dia.test(x) || /^\d{1,2}(h\d{0,2}|:\d\d)$/.test(x));
+  });
+  return out.join(' ').trim();
+}
+function vAlunos(){
+  const m = new Map();
+  vipGrade().forEach(t => {
+    const nome = vNomeLimpo(t.nome) || t.nome, hs = {}; (t.horarios || []).forEach(h => { if(h.inicio) hs[h.dia] = h.inicio; });
+    const h0 = (t.horarios || [])[0], dur = h0 ? (toMin(h0.fim) - toMin(h0.inicio)) || 60 : 60;
+    m.set(normTxt(nome), {nome, tel:'', profId:t.profId, dias:Object.keys(hs).map(Number).sort(), hs, dur, turmaId:t.id});
+  });
+  S.pk.slice().sort((a, b) => String(a.criadoEm || '').localeCompare(String(b.criadoEm || ''))).forEach(k => {
+    const hs = {}; (k.aulas || []).filter(x => x.data && x.inicio).sort((x, y) => x.data.localeCompare(y.data)).forEach(x => { hs[parse(x.data).getDay()] = x.inicio; });
+    const ant = m.get(normTxt(k.aluno));
+    m.set(normTxt(k.aluno), {nome:k.aluno, tel:k.tel || (ant && ant.tel) || '', profId:k.profId, dias:Object.keys(hs).map(Number).sort(), hs, dur:k.dur || 60, turmaId:ant && ant.turmaId});
+  });
+  return [...m.values()].sort((a, b) => a.nome.localeCompare(b.nome, 'pt-BR'));
+}
+function pfAplica(f, a){
+  Object.assign(f, {aluno:a.nome, profId:a.profId || f.profId, dias:a.dias.slice(), hs:Object.assign({}, a.hs), dur:a.dur || 60, deTurma:a.turmaId || null});
+  if(a.tel && !f.tel) f.tel = a.tel;
+}
 function pfNovo(base){
   const leo = activeProfs().find(p => /^le[oó]$/i.test(p.nome)) || activeProfs()[0];
   return Object.assign({step:1, aluno:'', tel:'', profId:leo ? leo.id : '', total:8, dias:[], hs:{}, dur:60, ini:addDays(hojeStr(), 1), datas:null, pulos:[], edit:null, done:null}, base || {});
@@ -1872,7 +1901,7 @@ function pfNovo(base){
 function pfCheck(f, i){
   const x = f.datas[i], sa = diaSemAula(x.d);
   if(sa) return {ok:false, msg:sa.nome};
-  const bate = ocupado(f.profId, x.d).find(o => toMin(o.ini) < toMin(x.fim) && toMin(o.fim) > toMin(x.inicio));
+  const bate = ocupado(f.profId, x.d, f.deTurma).find(o => toMin(o.ini) < toMin(x.fim) && toMin(o.fim) > toMin(x.inicio));
   if(bate) return {ok:false, msg:`${(prof(f.profId) || {}).nome} ocupado (${bate.txt})`};
   if(f.datas.some((y, j) => j !== i && y.d === x.d && toMin(y.inicio) < toMin(x.fim) && toMin(y.fim) > toMin(x.inicio))) return {ok:false, msg:'Mesmo horário de outra aula do pacote'};
   if(parse(x.d).getDay() === 0) return {ok:false, msg:'Domingo'};
@@ -1888,7 +1917,7 @@ async function pfGerar(){
       const sa = diaSemAula(d);
       if(sa) pulos.push({d, motivo:sa.nome});
       else {
-        const bate = ocupado(f.profId, d).find(o => toMin(o.ini) < toMin(fim) && toMin(o.fim) > toMin(hora));
+        const bate = ocupado(f.profId, d, f.deTurma).find(o => toMin(o.ini) < toMin(fim) && toMin(o.fim) > toMin(hora));
         if(bate) pulos.push({d, motivo:`${(prof(f.profId) || {}).nome} ocupado (${bate.txt})`}); else out.push({d, inicio:hora, fim});
       }
     }
@@ -1901,7 +1930,10 @@ function vWizard(){
   const steps = ['Aluno e professor', 'Pacote e horário', 'Datas', 'Link'].map((t, i) => `<div class="${i + 1 === st ? 'on' : (i + 1 < st ? 'ok' : '')}">${i + 1} ${t}</div>`).join('');
   let body = '';
   if(st === 1){
-    body = `<label>Nome do aluno</label><input type="text" data-vf="aluno" value="${esc(f.aluno)}" placeholder="Ex.: Maria Silva" autocomplete="off">
+    const conhecidos = vAlunos(), jaTem = conhecidos.find(a => normTxt(a.nome) === normTxt(f.aluno.trim()));
+    body = `<label>Nome do aluno</label><input type="text" data-vf="aluno" list="v-alunos" value="${esc(f.aluno)}" placeholder="Digite ou escolha um aluno que já existe" autocomplete="off">
+      <datalist id="v-alunos">${conhecidos.map(a => `<option value="${esc(a.nome)}">`).join('')}</datalist>
+      ${jaTem ? `<p class="note" style="max-width:none;margin:8px 0 0">Aluno já cadastrado. Professor, dias e horários vêm do último pacote${jaTem.turmaId ? ' e da grade' : ''}; confira no próximo passo.${f.deTurma ? ' Ao criar o pacote, o sistema pergunta se encerra o horário fixo antigo da grade.' : ''}</p>` : (conhecidos.length ? `<div class="chips" style="margin-top:10px">${conhecidos.map((a, i) => `<button class="chip" data-a="v-pf-pick" data-i="${i}">${esc(a.nome)}</button>`).join('')}</div>` : '')}
       <label>WhatsApp do aluno (opcional)</label><input type="tel" data-vf="tel" value="${esc(f.tel)}" placeholder="(11) 99999-9999" autocomplete="off">
       <label>Professor</label><div class="chips">${activeProfs().map(x => `<button class="chip ${x.id === f.profId ? 'on' : ''}" data-a="v-pf-prof" data-p="${x.id}">${avatar(x, 22)}${esc(x.nome)}</button>`).join('')}</div>
       <div class="vnav"><button class="vb dk" data-a="v-pf-next">Continuar${ico('seta')}</button><button class="cancel" data-a="v-pf-cancel">Cancelar</button></div>`;
@@ -2039,6 +2071,8 @@ async function vipClick(a, el, e){
   /* ---- assistente ---- */
   if(a === 'v-pf-cancel'){ S.pf = null; return render(); }
   if(a === 'v-pf-back'){ S.pf.step--; return render(); }
+  if(a === 'v-npt'){ const t = S.turmas.find(x => x.id === el.dataset.id), al = t && vAlunos().find(x => x.turmaId === t.id); if(!al) return; S.pf = pfNovo({step:2}); pfAplica(S.pf, al); S.pf.ini = hojeStr() > addDays(hojeStr(), 0) ? hojeStr() : addDays(hojeStr(), 1); S.pc = null; render(); return window.scrollTo({top:0}); }
+  if(a === 'v-pf-pick'){ const a2 = vAlunos()[+el.dataset.i]; if(a2){ pfAplica(S.pf, a2); S.pf.step = 2; return render(); } return; }
   if(a === 'v-pf-prof'){ S.pf.profId = el.dataset.p; return render(); }
   if(a === 'v-pf-total'){ S.pf.total = +el.dataset.t; return render(); }
   if(a === 'v-pf-dur'){ S.pf.dur = +el.dataset.n; return render(); }
@@ -2059,8 +2093,11 @@ async function vipClick(a, el, e){
     const ord = f.datas.slice().sort((x, y) => (x.d + x.inicio).localeCompare(y.d + y.inicio));
     const nk = {id:uid(), aluno:f.aluno.trim(), tel:f.tel.trim(), profId:f.profId, total:f.total, dur:f.dur, obs:'', prazo:null, criadoEm:new Date().toISOString(), criadoPor:S.user || '',
       aulas:ord.map((x, i) => ({n:i + 1, data:x.d, inicio:x.inicio, fim:x.fim, cancel:null, nota:'', rep:null}))};
-    S.pk.push(nk); f.done = nk.id; f.step = 4; render(); window.scrollTo({top:0});
-    return persist(() => pkSave(nk), 'Pacote criado');
+    S.pk.push(nk); f.done = nk.id; f.step = 4;
+    const tv = f.deTurma && S.turmas.find(x => x.id === f.deTurma && !x.encerrada), enc = tv && confirm(`Encerrar o horário fixo antigo na grade (${tv.nome})? As aulas passam a vir só do pacote novo. Se continuar com os dois, os horários ficam duplicados.`);
+    if(enc) tv.encerrada = true;
+    render(); window.scrollTo({top:0});
+    return persist(() => Promise.all([pkSave(nk), enc ? S.store.put('turmas', tv) : null]), 'Pacote criado');
   }
   /* ---- cartão da aula ---- */
   if(a === 'v-est' && aula){
@@ -2400,6 +2437,7 @@ function onInput(e){
 
 async function onChange(e){
   const el = e.target;
+  if(el.dataset.vf === 'aluno' && S.pf && S.pf.step === 1){ const a = vAlunos().find(x => normTxt(x.nome) === normTxt(el.value.trim())); S.pf.aluno = el.value; if(a){ pfAplica(S.pf, a); render(); } return; }
   if(el.id === 'seedfile'){
     const f = el.files && el.files[0]; el.value = ''; if(!f) return;
     let d; try{ d = JSON.parse(await f.text()); }catch(_){ return toast('Não consegui ler esse arquivo.', true); }
