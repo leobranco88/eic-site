@@ -43,6 +43,9 @@ input,select{font:inherit;color:inherit}
 /* ---------- shell ---------- */
 #app{display:grid;grid-template-columns:300px 1fr;min-height:100vh}
 aside{border-right:1px solid var(--rule);padding:28px 28px 36px;position:sticky;top:0;height:100vh;display:flex;flex-direction:column;overflow:auto}
+.logo-l{display:block;width:210px;max-width:70%;height:auto;margin:0 0 40px}
+.logo-s{display:block;width:150px;max-width:100%;height:auto;margin:0 0 8px}
+.logo-q{display:block;width:200px;height:auto;margin:0 auto 22px}
 .brand{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink2);font-weight:600}
 .brand b{color:var(--coral)}
 nav.tabs{display:flex;flex-wrap:wrap;gap:8px 12px;font-size:13px;margin:22px 0 34px;border-bottom:1px solid var(--rule)}
@@ -542,6 +545,7 @@ button.vt:hover{outline:2px solid var(--ink);outline-offset:1px}
   </div>
   <div class="l-right">
     <form id="lform" autocomplete="on">
+      <img class="logo-l" src="/images/logo-eic.png" alt="EIC · Escola de Idiomas e Cultura">
       <label for="le">E-mail</label>
       <input id="le" type="email" autocomplete="username" required>
       <label for="lp">Senha</label>
@@ -559,7 +563,8 @@ button.vt:hover{outline:2px solid var(--ink);outline-offset:1px}
 <div id="app" hidden>
   <div id="pres" class="pres" tabindex="0"></div>
   <aside>
-    <div class="brand"><b>EIC</b> · Horas dos professores</div>
+    <img class="logo-s" src="/images/logo-eic.png" alt="EIC · Escola de Idiomas e Cultura">
+    <div class="brand">Horas dos professores</div>
     <nav class="tabs">
       <button data-a="tab" data-v="dia">Dia</button>
       <button data-a="tab" data-v="turmas">Turmas</button>
@@ -577,6 +582,7 @@ button.vt:hover{outline:2px solid var(--ink);outline-offset:1px}
   <main id="main"></main>
 </div>
 <input type="file" id="foto" accept="image/*" hidden>
+<input type="file" id="seedfile" accept=".json,application/json" hidden>
 <input type="file" id="kfile" accept=".xls,.html,.htm,.csv,text/html" hidden>
 <div id="modal"></div>
 <div id="toast"></div>
@@ -1255,7 +1261,7 @@ function renderTurmas(){
       <button class="ghost" data-a="tnova">+ Nova turma</button></div></div>
     ${S.imp ? importPanel() : ''}
     ${S.tf ? turmaForm() : ''}
-    ${ativas.map(x => turmaRow(x.t)).join('') || (S.tf || S.imp ? '' : '<div class="empty"><h2>Nenhuma turma ainda</h2><p>Cadastre a primeira turma: nome, professor, dias e horários. As aulas dela passam a aparecer no fechamento do dia.</p></div>')}
+    ${ativas.map(x => turmaRow(x.t)).join('') || (S.tf || S.imp ? '' : `<div class="empty"><h2>Nenhuma turma ainda</h2><p>Cadastre a primeira turma: nome, professor, dias e horários. As aulas dela passam a aparecer no fechamento do dia.</p>${!S.turmas.length && !S.profs.length ? '<p style="margin-top:18px">Tem o arquivo de dados iniciais? Ele traz professores, turmas, feriados e férias de uma vez.</p><button class="btn-main" style="margin-top:10px" data-a="seedpick">Carregar dados iniciais</button>' : ''}</div>`)}
     ${enc.length ? `<div class="idle" style="margin-top:36px"><h3>Encerradas</h3>${enc.map(x => turmaRow(x.t)).join('')}</div>` : ''}`;
 }
 
@@ -2212,6 +2218,7 @@ async function onClick(e){
     const p = {id:uid(), nome, ativo:true}; S.profs.push(p); S.selProf = p.id; render();
     persist(() => S.store.put('profs', p), 'Professor cadastrado');
   }
+  else if(a === 'seedpick') $('#seedfile').click();
   else if(a === 'fotopick') $('#foto').click();
   else if(a === 'fotodel'){ const p = prof(S.selProf); delete p.foto; render(); persist(() => S.store.put('profs', p), 'Foto removida'); }
   else if(a === 'toggleprof'){
@@ -2301,6 +2308,16 @@ function onInput(e){
 
 async function onChange(e){
   const el = e.target;
+  if(el.id === 'seedfile'){
+    const f = el.files && el.files[0]; el.value = ''; if(!f) return;
+    let d; try{ d = JSON.parse(await f.text()); }catch(_){ return toast('Não consegui ler esse arquivo.', true); }
+    if(!d || !Array.isArray(d.profs) || !Array.isArray(d.turmas)) return toast('Esse arquivo não parece ser o de dados iniciais.', true);
+    if(S.profs.length || S.turmas.length) return toast('O sistema já tem dados. A carga inicial só vale para um sistema vazio.', true);
+    const cal = Array.isArray(d.cal) ? d.cal : [], cl = x => JSON.parse(JSON.stringify(x));
+    d.profs.forEach(x => S.profs.push(x)); d.turmas.forEach(x => S.turmas.push(x)); cal.forEach(x => S.cal.push(x));
+    render();
+    return persist(() => Promise.all([...d.profs.map(x => S.store.put('profs', cl(x))), ...d.turmas.map(x => S.store.put('turmas', cl(x))), ...cal.map(x => S.store.put('cal', cl(x)))]), `${d.turmas.length} turmas, ${d.profs.length} professores e ${cal.length} datas do calendário carregados`);
+  }
   if(el.dataset.vd !== undefined && S.pf){
     const x = S.pf.datas[+el.dataset.vd]; if(!el.value) return;
     x[el.dataset.vk] = el.value; if(el.dataset.vk === 'd') await ensureMonth(el.value.slice(0,7));
@@ -2388,7 +2405,7 @@ function renderPres(){
 function renderQuem(){
   const agora = Date.now(), ativos = new Set(S.pres.filter(x => x.em && agora - Date.parse(x.em) < PRES_MS).map(x => x.id)), salvo = localStorage.getItem(S.store.meKey);
   const add = S.quemAdd || !S.eq.length;
-  $('#quem').innerHTML = `<div class="br"><b>EIC</b> · Horas dos professores</div><h1>Quem está usando?</h1>
+  $('#quem').innerHTML = `<img class="logo-q" src="/images/logo-eic.png" alt="EIC · Escola de Idiomas e Cultura"><div class="br">Horas dos professores</div><h1>Quem está usando?</h1>
     <p class="qs">${S.eq.length ? 'Escolha seu nome para entrar. Quem já está no sistema aparece com o ponto verde.' : 'Ainda não há ninguém cadastrado. Adicione o primeiro nome da equipe.'}</p>
     <div class="qg">${S.eq.map(x => `<div class="qp ${ativos.has(x.id) ? 'use' : ''} ${salvo === x.id ? 'on' : ''}"><button class="qa" data-a="q-pick" data-id="${x.id}" style="${tint(x.id)}" aria-label="Entrar como ${esc(x.nome)}">${esc(initials(x.nome))}</button><div class="qn">${esc(x.nome)}</div><small>${ativos.has(x.id) ? 'usando agora' : (salvo === x.id ? 'neste computador' : '&nbsp;')}</small>${S.quemEdit ? `<button class="qx" data-a="q-del" data-id="${x.id}" aria-label="Remover ${esc(x.nome)}">×</button>` : ''}</div>`).join('')}
       <div class="qp"><button class="qa add" data-a="q-new" aria-label="Adicionar pessoa">+</button><div class="qn">Adicionar pessoa</div><small>&nbsp;</small></div></div>
