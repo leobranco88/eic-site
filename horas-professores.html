@@ -528,6 +528,11 @@ button.vt:hover{outline:2px solid var(--ink);outline-offset:1px}
 .cpff{display:grid;grid-template-columns:150px 1fr 1.4fr;gap:12px;align-items:end}
 .cpff label{font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink2);font-weight:600;display:block;margin-bottom:4px}
 .cpff input,.cpff select{width:100%;padding:8px 10px;border:1px solid var(--rule);background:#fff;border-radius:2px;font:inherit;font-size:14px}
+.cprel{display:flex;align-items:center;flex-wrap:wrap;gap:8px;padding:6px 0 12px 46px;border-bottom:1px solid var(--rule);margin-top:-6px}
+.cprel>span{font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink3);font-weight:600;margin-right:4px}
+.cprb{border:1px solid var(--rule);background:#fff;padding:5px 11px;font-size:13px;color:var(--ink2)}
+.cprb:hover{border-color:var(--ink)}
+.cprb.on{border-color:var(--c-dada);color:var(--c-dada);font-weight:600}
 .cpbt{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap}
 .cpbt button{font-size:13px;font-weight:600;padding:9px 14px;border:1px solid var(--ink);border-radius:2px}.cpbt button.p{background:var(--coral);border-color:var(--coral);color:#fff}.cpbt button.g{border-color:var(--c-canc);color:var(--c-canc)}
 .cplg{font-size:13.5px}.cplg div{display:grid;grid-template-columns:80px 1fr;gap:10px;padding:8px 0;border-top:1px solid var(--rule)}.cplg em{font-style:normal;color:var(--ink2)}
@@ -1084,7 +1089,8 @@ function cpModelo(t){
 }
 const cpNo = x => ({ok:'ok', pulado:'pu', pulo:'pu', sem:'pu', atraso:'at', prox:'pr', fut:''}[x.st]);
 const cpGlifo = x => ({ok:'✓', pulado:'×', pulo:'?', sem:'?', atraso:'!'}[x.st] || x.k);
-const cpSub = x => x.st === 'ok' ? 'aplicado ' + fmtData(x.r.data).slice(0,5) : x.st === 'pulado' ? 'não foi aplicado' : (x.st === 'pulo' || x.st === 'sem') ? 'sem registro' : x.st === 'atraso' ? 'devia ser até ' + fmtData(x.prazo).slice(0,5) : x.prazo ? 'previsto ' + fmtData(x.prazo).slice(0,5) : 'sem previsão';
+const relSt = r => !r || !r.rel || !r.rel.criado ? 'pend' : r.rel.enviado ? 'env' : 'cri';
+const cpSub = x => x.st === 'ok' ? 'aplicado ' + fmtData(x.r.data).slice(0,5) + ' · ' + ({pend:'relat. pendente', cri:'relat. criado', env:'relat. enviado'})[relSt(x.r)] : x.st === 'pulado' ? 'não foi aplicado' : (x.st === 'pulo' || x.st === 'sem') ? 'sem registro' : x.st === 'atraso' ? 'devia ser até ' + fmtData(x.prazo).slice(0,5) : x.prazo ? 'previsto ' + fmtData(x.prazo).slice(0,5) : 'sem previsão';
 function cpBadge(){ const b = $('#cpbadge'); if(!b) return; const n = S.profs.length ? cpTurmas().filter(t => cpModelo(t).nivel === 'a').length : 0; b.textContent = n || ''; }
 function renderCp(){
   $('#side').innerHTML = `<div class="bigday" style="font-size:96px">CP</div><div class="wk">checkpoints</div><div class="mo">a cada 2 unidades</div>
@@ -1097,6 +1103,7 @@ function renderCp(){
   const lista = fil === 'at' ? qa : fil === 'todas' ? todas : todas.filter(m => m.t.profId === fil);
   const fim = todas.filter(m => m.terminou);
   const semHist = qa.filter(m => m.lista.some(x => x.st === 'sem')).length;
+  const relPend = todas.flatMap(m => m.lista.filter(x => x.st === 'ok' && relSt(x.r) !== 'env').map(x => ({m, x})));
   const pulos = qa.flatMap(m => m.lista.filter(x => x.st === 'pulo').map(x => ({m, x}))).slice(0, 4);
   const linha = m => {
     const pf = prof(m.t.profId), st = turmaStats(m.t);
@@ -1108,9 +1115,16 @@ function renderCp(){
     <div class="cpsum"><div class="a"><b>${qa.length}</b><span>Atrasados ou pulados</span></div><div class="p"><b>${qp.length}</b><span>Chegando nas próximas 2 semanas</span></div><div class="o"><b>${qo.length}</b><span>Em dia</span></div></div>
     ${fim.length ? `<div class="cpal" style="background:#E6EEF8;border-left-color:var(--c-sub)"><b>${fim.length === 1 ? '1 turma terminou' : fim.length + ' turmas terminaram'} o módulo:</b> ${fim.slice(0, 4).map(m => `<button class="nm" style="display:inline;font-weight:600;text-decoration:underline" data-a="cp-t" data-id="${m.t.id}">${esc(m.t.nome)}</button>`).join(', ')}. Confira os checkpoints, encerre o módulo e edite a turma para o próximo.</div>` : ''}
     ${semHist ? `<div class="cpal" style="background:#FBEFD5;border-left-color:var(--pend)"><b>${semHist} ${semHist === 1 ? 'turma ainda não tem' : 'turmas ainda não têm'} o histórico dos checkpoints anteriores.</b> Abra cada dossiê e marque o que já foi aplicado, para o controle começar certo.</div>` : ''}
+    ${relPend.length ? `<div class="cpal" style="background:#FBEFD5;border-left-color:var(--pend)"><b>${relPend.length} ${relPend.length === 1 ? 'relatório' : 'relatórios'} de checkpoint ${relPend.length === 1 ? 'ainda não foi' : 'ainda não foram'} criado${relPend.length === 1 ? '' : 's'} ou enviado${relPend.length === 1 ? '' : 's'}:</b> ${relPend.slice(0, 5).map(({m, x}) => `<button class="nm" style="display:inline;font-weight:600;text-decoration:underline" data-a="cp-t" data-id="${m.t.id}" data-k="${x.k}">${esc(m.t.nome)} CP ${x.k}</button> (${relSt(x.r) === 'pend' ? 'falta criar' : 'falta enviar'})`).join(', ')}${relPend.length > 5 ? ` e mais ${relPend.length - 5}` : ''}.</div>` : ''}
     ${pulos.map(({m, x}) => `<div class="cpal"><b>${esc(m.t.nome)}</b> tem checkpoint posterior registrado, mas o CP ${x.k} não. Pode ter sido pulado.</div>`).join('')}
     <div class="cff" style="flex-wrap:wrap"><button class="chip${fil === 'at' ? ' on' : ''}" data-a="cp-fil" data-f="at">Precisam de atenção ${qa.length}</button><button class="chip${fil === 'todas' ? ' on' : ''}" data-a="cp-fil" data-f="todas">Todas as turmas ${todas.length}</button>${profs.map(p => `<button class="chip${fil === p.id ? ' on' : ''}" data-a="cp-fil" data-f="${p.id}">${esc(p.nome)}</button>`).join('')}</div>
     ${lista.map(linha).join('') || '<div class="empty"><h2>Tudo em dia</h2><p>Nenhuma turma precisa de atenção agora.</p></div>'}`;
+}
+function relBloco(x){
+  const rel = x.r.rel || {}, b = (w, lab, d) => d
+    ? `<button class="cprb on" data-a="cp-rel" data-k="${x.k}" data-w="${w}" title="Clique para desmarcar">✓ ${lab} em ${fmtData(d)}</button>`
+    : `<button class="cprb" data-a="cp-rel" data-k="${x.k}" data-w="${w}">Marcar como ${lab.toLowerCase()}</button>`;
+  return `<div class="cprel"><span>Relatório</span>${b('c', 'Criado', rel.criado)}${b('e', 'Enviado', rel.enviado)}</div>`;
 }
 function renderCpDossie(t){
   const m = cpModelo(t), pf = prof(t.profId), st = turmaStats(t), doc = m.doc, sel = S.cpK;
@@ -1129,7 +1143,7 @@ function renderCpDossie(t){
       <div><label>Quem aplicou</label><select id="cp-q">${activeProfs().map(p => `<option value="${p.id}" ${(x.r && x.r.profId ? x.r.profId : t.profId) === p.id ? 'selected' : ''}>${esc(p.nome)}</option>`).join('')}</select></div>
       <div><label>Observação</label><input type="text" id="cp-o" placeholder="Opcional" value="${esc(x.r ? x.r.obs || '' : '')}"></div></div>
       <div class="cpbt"><button class="p" data-a="cp-ap" data-k="${x.k}">Foi aplicado</button><button class="g" data-a="cp-pu" data-k="${x.k}">Não foi aplicado, está pulado</button>${x.r ? `<button data-a="cp-undo" data-k="${x.k}">Remover o registro</button>` : ''}<button data-a="cp-k" data-k="${x.k}">Fechar</button></div></div>` : '';
-    return `<button class="cpr ${cpNo(x)}" data-a="cp-k" data-k="${x.k}"><div class="cpic">${cpGlifo(x)}</div><div><b>CP ${x.k} · Unidades ${2*x.k-1} e ${2*x.k}</b><span class="d">${det}</span></div><span class="tg">${rotulo[x.st]}</span></button>${form}`;
+    return `<button class="cpr ${cpNo(x)}" data-a="cp-k" data-k="${x.k}"><div class="cpic">${cpGlifo(x)}</div><div><b>CP ${x.k} · Unidades ${2*x.k-1} e ${2*x.k}</b><span class="d">${det}</span></div><span class="tg">${rotulo[x.st]}</span></button>${x.st === 'ok' ? relBloco(x) : ''}${form}`;
   }).join('');
   const log = (doc.log || []).slice().sort((a, b) => b.em.localeCompare(a.em));
   $('#main').innerHTML = `<div class="cpd"><button class="bk" data-a="cp-voltar">← Todas as turmas</button>
@@ -2188,9 +2202,17 @@ async function onClick(e){
     if(a === 'cp-ap'){
       const d = $('#cp-d').value; if(!d) return toast('Informe a data em que o checkpoint foi aplicado.', true);
       if(d > hojeStr()) return toast('A data não pode ser no futuro.', true);
-      return cpSalva(t, k, {...base, status:'aplicado', data:d, profId:q}, `CP ${k} registrado como aplicado em ${fmtData(d)}${pn ? ' por ' + pn : ''}`);
+      const velho = ((S.cp[t.id] || {}).cps || {})[k]; return cpSalva(t, k, {...base, status:'aplicado', data:d, profId:q, ...(velho && velho.rel ? {rel:velho.rel} : {})}, `CP ${k} registrado como aplicado em ${fmtData(d)}${pn ? ' por ' + pn : ''}`);
     }
     return cpSalva(t, k, {...base, status:'pulado', data:null, profId:q}, `CP ${k} marcado como não aplicado (pulado)`);
+  }
+  else if(a === 'cp-rel'){
+    const t = S.turmas.find(x => x.id === S.cpT), k = +el.dataset.k, w = el.dataset.w, r0 = ((S.cp[t.id] || {}).cps || {})[k]; if(!r0) return;
+    const r = JSON.parse(JSON.stringify(r0)), rel = r.rel || {}, hj = hojeStr();
+    if(w === 'c'){ if(rel.criado){ delete rel.criado; delete rel.enviado; } else rel.criado = hj; }
+    else { if(rel.enviado) delete rel.enviado; else { rel.enviado = hj; if(!rel.criado) rel.criado = hj; } }
+    r.rel = rel; const txt = w === 'c' ? (rel.criado ? `Relatório do CP ${k} criado` : `Relatório do CP ${k} desmarcado`) : (rel.enviado ? `Relatório do CP ${k} enviado` : `Envio do relatório do CP ${k} desmarcado`);
+    const dk = S.cpK; await cpSalva(t, k, r, txt); S.cpK = dk; render();
   }
   else if(a === 'cp-undo'){ const t = S.turmas.find(x => x.id === S.cpT); cpSalva(t, +el.dataset.k, null, `Registro do CP ${el.dataset.k} removido`); }
   else if(a === 'cp-enc'){
