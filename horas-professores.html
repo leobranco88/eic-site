@@ -59,7 +59,7 @@ nav.tabs button.on{color:var(--ink);font-weight:600;border-left-color:var(--cora
 nav.tabs button.on .ni{color:var(--coral)}
 .menutg{display:none;align-items:center;gap:10px;width:100%;margin-top:18px;padding:10px 12px;background:var(--ink);color:#fff;font-size:14px;font-weight:600;border-radius:2px;text-align:left}
 .menutg:hover{background:#2a2a2a}.menutg .ni{display:inline-flex;width:18px;height:18px}.menutg svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
-.menutg .mtl{flex:1}.menutg .mta{font-weight:400;font-size:12px;opacity:.8}.menutg .mtc{transition:transform .15s}
+.menutg .mtl{flex:1}.menutg .mt-f,.menutg .mta{display:none}aside.mc-off .menutg .mt-f,aside.mc-off .menutg .mta{display:inline}aside.mc-off .menutg .mt-a{display:none}.menutg:focus{outline:none}.menutg:focus-visible{outline:2px solid var(--coral);outline-offset:2px}.menutg .mta{font-weight:400;font-size:12px;opacity:.8}.menutg .mtc{transition:transform .15s}
 aside.mc-off .menutg .mtc{transform:rotate(180deg)}
 @media (min-width:901px){
  .menutg{display:flex}
@@ -631,7 +631,7 @@ button.vt:hover{outline:2px solid var(--ink);outline-offset:1px}
   <aside>
     <img class="logo-s" src="/images/logo-eic.png" alt="EIC · Escola de Idiomas e Cultura">
     <div class="brand">Horas dos professores</div>
-    <button class="menutg" data-a="menu-t" aria-expanded="true" aria-controls="menunav"><i class="ni" data-i="menu"></i><span class="mtl">Menu</span><span class="mta" id="menuatual"></span><i class="ni mtc" data-i="chevup"></i></button>
+    <button class="menutg" data-a="menu-t" aria-expanded="true" aria-controls="menunav"><i class="ni" data-i="menu"></i><span class="mtl"><span class="mt-a">Recolher menu</span><span class="mt-f">Menu</span></span><span class="mta" id="menuatual"></span><i class="ni mtc" data-i="chevup"></i></button>
     <nav class="tabs" id="menunav" aria-label="Seções">
       <div class="ng">Rotina</div>
       <button data-a="tab" data-v="dia"><i class="ni" data-i="dia"></i>Dia</button>
