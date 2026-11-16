@@ -175,6 +175,9 @@ main{padding:36px 48px 80px;max-width:1040px}
 .t-tools{display:flex;gap:18px;padding:10px 0 4px;font-size:13px}
 .t-tools button{color:var(--ink2);text-decoration:underline;text-underline-offset:3px}
 .t-tools button:hover{color:var(--coral)}
+.t-tools button.xadd{display:inline-flex;align-items:center;gap:6px;color:var(--coral);text-decoration:none;font-weight:500;font-size:14px}.t-tools button.xadd .ico{font-size:17px}.t-tools button.xadd:hover{text-decoration:underline;text-underline-offset:3px}
+.allc{display:flex;align-items:center;gap:14px;border:1px dashed var(--rule);padding:12px 16px}.allc>.ico{font-size:24px;color:var(--coral)}.allc div{flex:1}.allc b{display:block;font-size:15px;font-weight:600}.allc span{font-size:13px;color:var(--ink2)}.allc .ghost{border:1px solid var(--ink);padding:8px 14px;border-radius:2px;font-weight:500;font-size:14px;display:inline-flex;align-items:center;gap:6px}.allc .ghost .ico{font-size:16px}
+@media (max-width:700px){.allc{flex-wrap:wrap}}
 .row{display:grid;grid-template-columns:118px 1fr auto;gap:16px;align-items:center;padding:13px 0;border-bottom:1px solid var(--rule2)}
 .row .time{font-family:var(--mono);font-size:14px;color:var(--ink2)}
 .row .what{font-weight:500}
@@ -897,7 +900,7 @@ function renderDia(){
   let html = S.wrap && !fechado(S.date) ? wrapPanel(model) : '';
   const sa = diaSemAula(S.date);
   if(sa) html += `<div class="semaula"><b>Sem aula:</b> ${esc(sa.nome)}${sa.ate && sa.ate !== sa.de ? ` <span>(${fmtData(sa.de)} a ${fmtData(sa.ate)})</span>` : ''}. As aulas da grade não aparecem neste dia.</div>`;
-  if(S.profs.length) html += S.openAll ? allForm() : `<div class="allbar"><button class="ghost" data-a="aopen">+ Atividade para todos (reunião, evento…)</button></div>`;
+  if(S.profs.length) html += S.openAll ? allForm() : `<div class="allbar"><div class="allc">${ico('grupo')}<div><b>Atividade para todos</b><span>Reunião, evento ou treinamento que conta para toda a equipe</span></div><button class="ghost" data-a="aopen">${ico('mais')}Adicionar</button></div></div>`;
   if(!S.profs.length){
     html = `<div class="empty"><h2>Comece cadastrando os professores</h2><p>Abra a aba Professores, adicione cada um e monte a grade semanal. Depois disso, o fechamento do dia aparece aqui.</p></div>`;
   } else if(!withContent.length && !S.openExtra && !sa){
@@ -974,7 +977,7 @@ function teacherBlock(m){
     </div>
     <div class="t-tools">
       ${m.pending ? `<button data-a="alldone" data-p="${p.id}">Marcar as ${m.pending} pendentes como dadas</button>` : ''}
-      <button data-a="xopen" data-p="${p.id}">+ Atividade extra</button>
+      <button class="xadd" data-a="xopen" data-p="${p.id}">${ico('mais')}Atividade extra</button>
     </div>
     ${m.slots.map(slotRow).join('')}
     ${m.covers.map(r => `<div class="row cover"><div class="time">${r.inicio}–${r.fim}</div><div class="what"><span style="display:inline-flex;align-items:center;gap:8px">${ico('substituida')}Cobriu ${esc(prof(r.profId)?.nome || '')}</span><small>${esc(r.titulo)}</small></div><div class="mono" style="color:var(--ink2)">${fmtH(r.minutos)}</div></div>`).join('')}
