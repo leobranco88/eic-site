@@ -124,6 +124,7 @@ i.ok{background:var(--c-dada)}.cal-k i.cl{width:9px;height:9px;border-radius:1px
 .cdy{height:26px;font-size:11.5px;font-family:var(--mono);color:var(--ink);border-radius:2px;padding:0}.cdy:hover{outline:1px solid var(--ink)}.cdy.dom{color:var(--ink3)}
 .cdy.ev{background:var(--c);color:#fff}.cdy.hoje{outline:2px solid var(--ink);font-weight:700}
 .clista{margin-top:18px}.cev{display:flex;align-items:center;gap:10px;padding:7px 0;border-bottom:1px solid var(--rule2);font-size:14px}.cev .cd8{font-family:var(--mono);font-size:13px;color:var(--ink2);min-width:112px}.cev .cnm{flex:1}
+.tfind{position:relative;margin:4px 0 18px}.tfind .lupa{position:absolute;left:14px;top:12px;color:var(--ink3)}.tfind .lupa .ico{width:20px;height:20px}.tfind input{width:100%;padding:11px 14px 11px 44px;border:1px solid var(--ink);font-size:16px;background:#fff}.tfind input:focus{outline:0;border-color:var(--coral)}
 .ag-find{position:relative;margin-bottom:26px}
 .ag-find .lupa{position:absolute;left:16px;top:17px;color:var(--ink3)}.ag-find .lupa .ico{width:20px;height:20px}
 .ag-find input{width:100%;border:1px solid var(--ink);border-radius:2px;padding:15px 16px 15px 46px;font-size:18px;background:var(--paper)}
@@ -549,6 +550,12 @@ button.vt:hover{outline:2px solid var(--ink);outline-offset:1px}
 .cprb{border:1px solid var(--rule);background:#fff;padding:5px 11px;font-size:13px;color:var(--ink2)}
 .cprb:hover{border-color:var(--ink)}
 .cprb.on{border-color:var(--c-dada);color:var(--c-dada);font-weight:600}
+#main .vgh{display:flex;align-items:center;gap:10px;font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink2);margin:26px 0 8px;font-weight:600}
+#main .vgh span{background:var(--sheet);padding:1px 8px;border-radius:9px;color:var(--ink)}
+#main .vgr{display:grid;grid-template-columns:1fr auto auto;gap:16px;align-items:center;padding:12px 0;border-bottom:1px solid var(--rule)}
+#main .vgn b{display:block;font-size:15px}#main .vgn small{color:var(--ink2);font-size:13px}
+#main .vgp{display:flex;align-items:center;gap:8px;font-size:14px;font-weight:500}
+@media (max-width:900px){#main .vgr{grid-template-columns:1fr}}
 #main .vhs{display:grid;gap:8px;max-width:340px}
 #main .vh{display:grid;grid-template-columns:110px 1fr;align-items:center;gap:12px;border-bottom:1px solid var(--rule);padding-bottom:8px}
 #main .vh .vhd{font-weight:600}
@@ -1291,11 +1298,16 @@ function turmaForm(){
     </div></div>`;
 }
 
+function turmaLista(){
+  const q = normTxt(S.tq || '').trim(), todas = S.turmas.map(t => ({t, st:turmaStats(t)}));
+  const ok = x => (!S.fProf || x.t.profId === S.fProf) && (!q || q.split(/\s+/).every(w => normTxt([x.t.nome, x.t.curso, (prof(x.t.profId) || {}).nome].join(' ')).includes(w)));
+  const ativas = todas.filter(x => !x.t.encerrada && ok(x)), enc = todas.filter(x => x.t.encerrada && ok(x));
+  ativas.sort((a,b) => (b.st.lag - a.st.lag) || a.t.nome.localeCompare(b.t.nome,'pt-BR'));
+  const vazio = !todas.length ? (S.tf || S.imp ? '' : `<div class="empty"><h2>Nenhuma turma ainda</h2><p>Cadastre a primeira turma: nome, professor, dias e horários. As aulas dela passam a aparecer no fechamento do dia.</p>${!S.turmas.length && !S.profs.length ? '<p style="margin-top:18px">Tem o arquivo de dados iniciais? Ele traz professores, turmas, feriados e férias de uma vez.</p><button class="btn-main" style="margin-top:10px" data-a="seedpick">Carregar dados iniciais</button>' : ''}</div>`) : (q || S.fProf ? `<div class="empty"><h2>Nenhuma turma encontrada</h2><p>Tente outro nome ou limpe a busca.</p></div>` : '');
+  return ativas.map(x => turmaRow(x.t)).join('') + (ativas.length ? '' : vazio) + (enc.length ? `<div class="idle" style="margin-top:36px"><h3>Encerradas</h3>${enc.map(x => turmaRow(x.t)).join('')}</div>` : '');
+}
 function renderTurmas(){
   const todas = S.turmas.map(t => ({t, st:turmaStats(t)}));
-  const ativas = todas.filter(x => !x.t.encerrada && (!S.fProf || x.t.profId === S.fProf));
-  const enc = todas.filter(x => x.t.encerrada && (!S.fProf || x.t.profId === S.fProf));
-  ativas.sort((a,b) => (b.st.lag - a.st.lag) || a.t.nome.localeCompare(b.t.nome,'pt-BR'));
   const hoje = hojeStr(), em30 = addDays(hoje, 30);
   const emAnd = todas.filter(x => !x.t.encerrada && !x.st.futura && !x.st.concluida).length;
   const atras = todas.filter(x => !x.t.encerrada && !x.st.concluida && x.st.lag > 0).length;
@@ -1311,8 +1323,8 @@ function renderTurmas(){
       <button class="ghost" data-a="tnova">+ Nova turma</button></div></div>
     ${S.imp ? importPanel() : ''}
     ${S.tf ? turmaForm() : ''}
-    ${ativas.map(x => turmaRow(x.t)).join('') || (S.tf || S.imp ? '' : `<div class="empty"><h2>Nenhuma turma ainda</h2><p>Cadastre a primeira turma: nome, professor, dias e horários. As aulas dela passam a aparecer no fechamento do dia.</p>${!S.turmas.length && !S.profs.length ? '<p style="margin-top:18px">Tem o arquivo de dados iniciais? Ele traz professores, turmas, feriados e férias de uma vez.</p><button class="btn-main" style="margin-top:10px" data-a="seedpick">Carregar dados iniciais</button>' : ''}</div>`)}
-    ${enc.length ? `<div class="idle" style="margin-top:36px"><h3>Encerradas</h3>${enc.map(x => turmaRow(x.t)).join('')}</div>` : ''}`;
+    ${S.turmas.length > 1 ? `<div class="tfind"><span class="lupa">${ico('lupa')}</span><input type="text" id="t-q" autocomplete="off" placeholder="Buscar turma, aluno ou professor" value="${esc(S.tq || '')}"></div>` : ''}
+    <div id="tlist">${turmaLista()}</div>`;
 }
 
 /* ---------- importação do Kaits ---------- */
@@ -1818,6 +1830,15 @@ function vRow(k){
       <div class="vsum">${sub}${r.atras ? ` · <b style="color:#8A5200">${r.atras} para conferir no painel do dia</b>` : ''}</div>
     <div class="vacts">${pri}<button class="vb" data-a="v-link" data-k="${k.id}">${ico('whats')}Enviar link</button><button class="vb" data-a="v-edit" data-k="${k.id}">${ico('lapis')}Editar</button><button class="vb red" data-a="v-del" data-k="${k.id}" aria-label="Excluir pacote" title="Excluir pacote">${ico('lixo')}</button></div></div></div>`;
 }
+const vipGrade = () => S.turmas.filter(t => t.tipo === 'vip' && !t.encerrada);
+function vGradeLista(){
+  const q = normTxt(S.pkq || '').trim(), l = vipGrade().filter(t => !q || q.split(/\s+/).every(w => normTxt(t.nome + ' ' + ((prof(t.profId) || {}).nome || '')).includes(w)))
+    .sort((a, b) => a.nome.localeCompare(b.nome, 'pt-BR'));
+  if(!l.length) return '';
+  const row = t => { const st = turmaStats(t), p = prof(t.profId), hor = [...(t.horarios || [])].sort((a, b) => a.dia - b.dia).map(h => `${diaCurto(h.dia)} ${h.inicio}–${h.fim}`).join(' · ');
+    return `<div class="vgr"><div class="vgn"><b>${esc(t.nome)}</b><small>${esc(hor)}${st.total ? ` · ${st.dadas} de ${st.total} aulas dadas` : ` · ${st.dadas} aulas dadas`}</small></div><div class="vgp">${p ? avatar(p, 26) + esc(p.nome) : ''}</div><button class="vb" data-a="tedit" data-id="${t.id}">${ico('lapis')}Editar</button></div>`; };
+  return `<h5 class="vgh">VIPs na grade da escola <span>${l.length}</span></h5><p class="note" style="max-width:none;margin:0 0 6px">Alunos VIP com horário fixo na grade. Em Editar você atualiza o pacote (aulas previstas e quantas já foram dadas), o professor e os horários.</p>${l.map(row).join('')}`;
+}
 function vLista(){
   const f = S.pkf || 'and', q = normTxt(S.pkq || '').trim();
   let l = S.pk.map(k => ({k, r:pkResumo(k)})).filter(x => !q || normTxt(x.k.aluno).includes(q));
@@ -1826,9 +1847,10 @@ function vLista(){
   if(!l.length) return `<div class="empty" style="padding:44px 0"><h2 style="font-size:26px">${S.pk.length ? 'Nenhum pacote nesta lista.' : 'Nenhum pacote ainda.'}</h2><p>${S.pk.length ? 'Troque o filtro acima ou limpe a busca.' : 'Crie o primeiro pacote de 4 ou 8 aulas. As datas já saem sugeridas, sem cair em feriado nem em horário ocupado.'}</p></div>`;
   return l.map(x => vRow(x.k)).join('');
 }
+function vTudo(){ const g = (S.pkf || 'and') === 'and' ? vGradeLista() : ''; const l = vLista(); return g ? g + (S.pk.length || S.pkq ? '<h5 class="vgh">Pacotes</h5>' + l : '') : l; }
 function renderVip(){
   const all = S.pk.map(k => ({k, r:pkResumo(k)})), f = S.pkf || 'and';
-  const c = {and:all.filter(x => x.r.rest > 0).length, pend:all.filter(x => x.r.pend > 0).length, term:all.filter(x => x.r.term).length, conc:all.filter(x => x.r.rest === 0).length};
+  const c = {and:all.filter(x => x.r.rest > 0).length + vipGrade().length, pend:all.filter(x => x.r.pend > 0).length, term:all.filter(x => x.r.term).length, conc:all.filter(x => x.r.rest === 0).length};
   $('#side').innerHTML = `<p class="note" style="margin-top:6px">Pacotes de 4 ou 8 aulas. Cada aula do pacote aparece no painel do Dia e ocupa o horário do professor.</p>
     <button class="vb dk" data-a="v-novo" style="margin-top:16px;padding:11px 16px">${ico('mais')}Novo pacote</button>
     <div class="tally"><div><span>Em andamento</span> <b>${c.and}</b></div><div><span>Reposição pendente</span> <b>${c.pend}</b></div><div><span>Terminando</span> <b>${c.term}</b></div><div><span>Concluídos</span> <b>${c.conc}</b></div></div>
@@ -1838,7 +1860,8 @@ function renderVip(){
   const fl = (id, label, ic) => `<button class="chip ${f === id ? 'on' : ''}" data-a="v-f" data-f="${id}">${ico(ic)}${label} <b>${c[id]}</b></button>`;
   $('#main').innerHTML = `<div class="pagehead"><h2>Pacotes VIP</h2><div class="r"><button class="vb dk" data-a="v-novo">${ico('mais')}Novo pacote</button></div></div>
     <div class="vflt">${fl('and', 'Em andamento', 'reuniao')}${fl('pend', 'Reposição pendente', 'substituida')}${fl('term', 'Terminando', 'ampulheta')}${fl('conc', 'Concluídos', 'dada')}<input type="text" id="v-q" placeholder="Buscar aluno" value="${esc(S.pkq || '')}" autocomplete="off"></div>
-    <div id="vlist">${vLista()}</div>`;
+    ${S.tf ? turmaForm() : ''}
+    <div id="vlist">${vTudo()}</div>`;
 }
 
 /* ---------- novo pacote ---------- */
@@ -2132,7 +2155,7 @@ async function onClick(e){
   if(a.startsWith('v-')) return vipClick(a, el, e);
   if(S.view === 'dia' && ['status','motivo','alldone','xopen','xsave','xdel','excl','desfaz','aopen','asave'].includes(a) && fechado(S.date)) return toast('Dia fechado. Reabra para editar.', true);
   if(el.tagName === 'SELECT') return;
-  if(a === 'tab'){ S.view = el.dataset.v; S.openExtra = null; S.openAll = false; if(S.view==='mes' || S.view==='conf'){ S.cfConf = null; await ensureMonth(S.month); } if(S.view==='cp'){ S.cpT = null; S.cpK = null; await ensureRange(); } if(S.view==='turmas') await ensureRange(); if(S.view==='vip'){ S.pf = null; S.pc = null; await vipLoad(); } if(S.view==='agenda'){ await agCarrega(); S.ag.ini = segunda(S.date); S.ag.qd = S.date; await agCarrega(); } render(); }
+  if(a === 'tab'){ S.view = el.dataset.v; S.openExtra = null; S.openAll = false; if(S.view==='mes' || S.view==='conf'){ S.cfConf = null; await ensureMonth(S.month); } if(S.view==='cp'){ S.cpT = null; S.cpK = null; await ensureRange(); } if(S.view==='turmas') await ensureRange(); if(S.view==='vip'){ S.pf = null; S.pc = null; S.tf = null; await vipLoad(); } if(S.view==='agenda'){ await agCarrega(); S.ag.ini = segunda(hojeStr()); S.ag.qd = hojeStr(); await agCarrega(); } render(); }
   else if(a === 'logout'){ if(S.demo) location.href = location.pathname; else firebase.auth().signOut(); }
   else if(a === 'day') await goDate(ymd(new Date(parse(S.date).getTime() + el.dataset.n*864e5)));
   else if(a === 'today') await goDate(ymd(new Date()));
@@ -2271,6 +2294,7 @@ async function onClick(e){
     persist(() => S.store.put('extras', x));
     toastUndo(x.status === 'dada' ? 'Aula marcada como dada' : 'Aula cancelada, não conta como hora', async () => { x.status = antes; render(); await persist(() => S.store.put('extras', x)); });
   }
+  else if(a === 'v-turma'){ const t = S.turmas.find(x => x.id === el.dataset.id); S.view = 'turmas'; S.tq = t ? t.nome : ''; S.fProf = ''; await ensureRange(); render(); window.scrollTo({top:0}); }
   else if(a === 'xdel'){
     const x = S.extras[el.dataset.id]; if(!x) return;
     delete S.extras[x.id]; render(); persist(() => S.store.del('extras', x.id));
@@ -2364,7 +2388,8 @@ function onInput(e){
   if(el.dataset.vh !== undefined && S.pf){ S.pf.hs[+el.dataset.vh] = el.value; return; }
   if(el.dataset.vf !== undefined && S.pf){ S.pf[el.dataset.vf] = el.value; return; }
   if(el.dataset.vc !== undefined && S.pc){ (S.pc.tmp = S.pc.tmp || {})[el.dataset.vc] = el.value; return; }
-  if(el.id === 'v-q'){ S.pkq = el.value; const l = $('#vlist'); if(l) l.innerHTML = vLista(); return; }
+  if(el.id === 't-q'){ S.tq = el.value; const l = $('#tlist'); if(l) l.innerHTML = turmaLista(); return; }
+  if(el.id === 'v-q'){ S.pkq = el.value; const l = $('#vlist'); if(l) l.innerHTML = vTudo(); return; }
   if(el.id === 'ag-busca'){ S.ag.q = el.value; if(S.ag.pk) S.ag.pk = {d:'', h:'', m:'00'}; agBuscaHtml().then(h => { const r = $('#ag-res'); if(r) r.innerHTML = h; }); return; }
   if(!S.tf) return;
   if(el.dataset.f){ S.tf[el.dataset.f] = el.value; }
