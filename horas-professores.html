@@ -446,6 +446,7 @@ button.vt:hover{outline:2px solid var(--ink);outline-offset:1px}
 .vdone{background:#E5F2EA;border-left:3px solid var(--c-dada);padding:14px 16px;margin-bottom:6px;font-size:14.5px}
 #modal:empty{display:none}
 .mwrap{position:fixed;inset:0;z-index:50;background:rgba(22,22,26,.5);overflow:auto;display:flex;justify-content:center;align-items:flex-start;padding:5vh 16px}
+.mc.wide{max-width:640px}.mc .vtiles{margin:0}.mc .pacb{padding:14px 20px 4px}.mc .pacs{font-size:13px;color:var(--ink2);margin:0 0 12px}.mc .pacp{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px}.mc .pachint{font-size:12.5px;color:var(--ink3);margin:10px 0 4px}
 .mc{background:var(--paper);width:100%;max-width:500px;border:1px solid var(--ink);border-radius:2px;margin-bottom:5vh}
 .mc .mh{display:flex;justify-content:space-between;gap:14px;padding:18px 20px 14px;border-bottom:1px solid var(--rule)}
 .mc .mh small{font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink2);font-weight:600}
@@ -569,6 +570,7 @@ button.vt:hover{outline:2px solid var(--ink);outline-offset:1px}
 @media (max-width:900px){.pcd{min-height:64px}.pcl.ot{display:none}}
 #main .vgb{display:flex;gap:6px}
 #main .vgr{display:grid;grid-template-columns:1fr auto auto;gap:16px;align-items:center;padding:12px 0;border-bottom:1px solid var(--rule)}
+#main .vgname{all:unset;cursor:pointer;display:block}#main .vgname:hover b{text-decoration:underline;text-decoration-color:var(--coral);text-underline-offset:3px}#main .vgname:focus-visible{outline:2px solid var(--coral);outline-offset:2px}
 #main .vgn b{display:block;font-size:15px}#main .vgn small{color:var(--ink2);font-size:13px}
 #main .vgp{display:flex;align-items:center;gap:8px;font-size:14px;font-weight:500}
 @media (max-width:900px){#main .vgr{grid-template-columns:1fr}}
@@ -1805,9 +1807,11 @@ function vLink(k){
     let s = e.st; if(e.st === 'cancelada') s = 'pendente'; if(e.atras) s = 'agendada';
     return {n:a.n, s, d:cur.data || null, h:cur.inicio || null, r:e.rep && e.st !== 'cancelada' ? 1 : 0};
   });
-  const o = {v:1, a:pnome(k), p:(prof(k.profId) || {}).nome || '', t:k.total, u:hojeStr(), l:L};
-  const b = btoa(unescape(encodeURIComponent(JSON.stringify(o)))).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
-  return (/^https?:/.test(location.protocol) ? location.origin + '/pacote-vip' : 'pacote-vip.html') + '#' + b;
+  const E0 = Date.UTC(2020, 0, 1), dd = d => d ? Math.round((Date.UTC(+d.slice(0, 4), +d.slice(5, 7) - 1, +d.slice(8, 10)) - E0) / 864e5).toString(36).padStart(3, '0') : '-';
+  const SC = {dada:'d', agendada:'a', pendente:'p', perdida:'x', amarcar:'m'};
+  const tk = L.map(x => { const c = SC[x.s] || 'm'; return (x.r ? c.toUpperCase() : c) + dd(x.d) + (x.d && x.h ? Math.round(toMin(x.h) / 5).toString(36).padStart(2, '0') : ''); }).join(',');
+  const h = ['2', pnome(k), (prof(k.profId) || {}).nome || '', k.total, dd(hojeStr()), tk].map((v, i) => i < 3 ? encodeURIComponent(v) : v).join('/');
+  return (/^https?:/.test(location.protocol) ? location.origin + '/pacote-vip' : 'pacote-vip.html') + '#' + h;
 }
 function vMsg(k, a, tipo){
   const nome = pnome(k), link = vLink(k);
@@ -1852,7 +1856,7 @@ function vGradeLista(){
     .sort((a, b) => a.nome.localeCompare(b.nome, 'pt-BR'));
   if(!l.length) return '';
   const row = t => { const st = turmaStats(t), p = prof(t.profId), hor = [...(t.horarios || [])].sort((a, b) => a.dia - b.dia).map(h => `${diaCurto(h.dia)} ${h.inicio}–${h.fim}`).join(' · ');
-    return `<div class="vgr"><div class="vgn"><b>${esc(t.nome)}</b><small>${esc(hor)}${st.total ? ` · ${st.dadas} de ${st.total} aulas dadas` : ` · ${st.dadas} aulas dadas`}</small></div><div class="vgp">${p ? avatar(p, 26) + esc(p.nome) : ''}</div><div class="vgb"><button class="vb" data-a="v-npt" data-id="${t.id}">${ico('mais')}Novo pacote</button><button class="vb" data-a="tedit" data-id="${t.id}">${ico('lapis')}Editar</button></div></div>`; };
+    return `<div class="vgr"><div class="vgn"><button class="vgname" data-a="v-pac" data-id="${t.id}" title="Abrir pacote e aulas"><b>${esc(t.nome)}</b></button><small>${esc(hor)}${st.total ? ` · ${st.dadas} de ${st.total} aulas dadas` : ` · ${st.dadas} aulas dadas`}</small></div><div class="vgp">${p ? avatar(p, 26) + esc(p.nome) : ''}</div><div class="vgb"><button class="vb" data-a="v-npt" data-id="${t.id}">${ico('mais')}Novo pacote</button><button class="vb" data-a="tedit" data-id="${t.id}">${ico('lapis')}Editar</button></div></div>`; };
   return `<h5 class="vgh">VIPs na grade da escola <span>${l.length}</span></h5><p class="note" style="max-width:none;margin:0 0 6px">Alunos VIP com horário fixo na grade. Em Editar você atualiza o pacote (aulas previstas e quantas já foram dadas), o professor e os horários.</p>${l.map(row).join('')}`;
 }
 function vLista(){
@@ -2071,13 +2075,36 @@ function vEdit(){
     <label>Observação do pacote</label><textarea data-vc="obs">${esc(t.obs)}</textarea></div>
     <div class="mf"><button class="vb" data-a="v-copy" data-k="${k.id}">Copiar link do aluno</button><button class="vb dk" data-a="v-ed-ok" data-k="${k.id}">${ico('disco')}Salvar</button></div>`;
 }
+function pcFecha(){ const f = S.pc && S.pc.from; S.pc = f && pkOf(f) ? {mode:'pac', k:f} : null; }
+function pkDaGrade(turmaId){
+  const al = vAlunos().find(x => x.turmaId === turmaId); if(!al) return [];
+  return S.pk.filter(k => normTxt(k.aluno) === normTxt(al.nome)).sort((a, b) => (pkResumo(b).rest > 0) - (pkResumo(a).rest > 0) || String(b.criadoEm || '').localeCompare(String(a.criadoEm || '')));
+}
+function vPac(){
+  const k = pkOf(S.pc.k); if(!k) return '';
+  const r = pkResumo(k), p = prof(k.profId), irmaos = S.pk.filter(x => normTxt(x.aluno) === normTxt(k.aluno));
+  const sub = [r.dada ? `${r.dada} ${r.dada === 1 ? 'dada' : 'dadas'}` : '', r.pend ? `${r.pend} aguardando reposição` : '', r.perdida ? `${r.perdida} ${r.perdida === 1 ? 'perdida' : 'perdidas'}` : '', r.atras ? `${r.atras} para conferir` : '', r.agend ? `${r.agend} ${r.agend === 1 ? 'agendada' : 'agendadas'}` : ''].filter(Boolean).join(' · ');
+  return `<div class="mh"><div style="display:flex;gap:12px;align-items:center">${avatar({nome:k.aluno}, 44)}<div><h3>${esc(k.aluno)}</h3><p>com ${esc(p ? p.nome : '?')}${pkDiaHora(k) ? ' · ' + esc(pkDiaHora(k)) : ''}</p></div></div><button class="icon-x" data-a="v-x" aria-label="Fechar">×</button></div>
+    <div class="pacb">${irmaos.length > 1 ? `<div class="pacp">${irmaos.map(x => `<button class="chip ${x.id === k.id ? 'on' : ''}" data-a="v-pac-k" data-k="${x.id}">Pacote de ${x.total}${pkResumo(x).rest === 0 ? ' · concluído' : ''}</button>`).join('')}</div>` : ''}
+      <p class="pacs"><b>Pacote de ${k.total} aulas</b>${sub ? ' · ' + sub : ''}</p>
+      <div class="vtiles">${k.aulas.map(a => vTile(k, a)).join('')}</div>
+      <p class="pachint">Clique numa aula para dar baixa, cancelar, mudar a data ou avisar o aluno.</p></div>
+    <div class="mf"><div style="display:flex;gap:8px;flex-wrap:wrap"><button class="vb pri" data-a="v-link" data-k="${k.id}">${ico('whats')}Enviar link ao aluno</button><button class="vb" data-a="v-copy" data-k="${k.id}">Copiar link</button></div><div style="display:flex;gap:8px"><button class="vb" data-a="v-edit" data-k="${k.id}">${ico('lapis')}Editar pacote</button></div></div>`;
+}
+function vSem(){
+  const t = S.turmas.find(x => x.id === S.pc.turmaId); if(!t) return '';
+  const al = vAlunos().find(x => x.turmaId === t.id), st = turmaStats(t), p = prof(t.profId);
+  return `<div class="mh"><div style="display:flex;gap:12px;align-items:center">${avatar({nome:al ? al.nome : t.nome}, 44)}<div><h3>${esc(al ? al.nome : t.nome)}</h3><p>${p ? 'com ' + esc(p.nome) : ''} · ${st.dadas} aulas dadas na grade</p></div></div><button class="icon-x" data-a="v-x" aria-label="Fechar">×</button></div>
+    <div class="pacb"><p class="pacs" style="font-size:14px;color:var(--ink)">Esse aluno ainda não tem um pacote cadastrado. Com o pacote você dá baixa em cada aula aqui e envia o link do calendário ao aluno.</p></div>
+    <div class="mf"><span></span><button class="vb pri" data-a="v-npt" data-id="${t.id}">${ico('mais')}Criar pacote</button></div>`;
+}
 function renderModal(){
   const m = $('#modal'); if(!m) return;
   if(!S.pc){ m.innerHTML = ''; document.body.style.overflow = ''; return; }
-  const h = S.pc.mode === 'pick' ? vPick() : S.pc.mode === 'edit' ? vEdit() : vCard();
+  const h = S.pc.mode === 'pick' ? vPick() : S.pc.mode === 'edit' ? vEdit() : S.pc.mode === 'pac' ? vPac() : S.pc.mode === 'sem' ? vSem() : vCard();
   if(!h){ S.pc = null; m.innerHTML = ''; return; }
   const keep = m.querySelector('.mwrap'), top = keep ? keep.scrollTop : 0;
-  m.innerHTML = `<div class="mwrap" data-a="v-fechar"><div class="mc" role="dialog" aria-modal="true">${h}</div></div>`;
+  m.innerHTML = `<div class="mwrap" data-a="v-fechar"><div class="mc ${S.pc.mode === 'pac' || S.pc.mode === 'sem' ? 'wide' : ''}" role="dialog" aria-modal="true">${h}</div></div>`;
   m.firstChild.scrollTop = top; document.body.style.overflow = 'hidden';
 }
 
@@ -2085,11 +2112,13 @@ async function vipClick(a, el, e){
   const k = el.dataset.k ? pkOf(el.dataset.k) : (S.pc ? pkOf(S.pc.k) : null), n = el.dataset.n ? +el.dataset.n : (S.pc && S.pc.n);
   const aula = k && n ? k.aulas.find(x => x.n === n) : null;
   const salva = msg => persist(() => pkSave(k), msg);
-  if(a === 'v-fechar'){ if(e.target !== el) return; S.pc = null; return render(); }
-  if(a === 'v-x'){ S.pc = null; return render(); }
+  if(a === 'v-fechar'){ if(e.target !== el) return; pcFecha(); return render(); }
+  if(a === 'v-x'){ pcFecha(); return render(); }
+  if(a === 'v-pac'){ const l = pkDaGrade(el.dataset.id); S.pc = l.length ? {mode:'pac', k:l[0].id} : {mode:'sem', turmaId:el.dataset.id}; return render(); }
+  if(a === 'v-pac-k'){ S.pc = {mode:'pac', k:el.dataset.k}; return render(); }
   if(a === 'v-f'){ S.pkf = el.dataset.f; return render(); }
   if(a === 'v-novo'){ S.pf = pfNovo(); S.pc = null; render(); return window.scrollTo({top:0}); }
-  if(a === 'v-aula'){ S.pc = {mode:'card', k:k.id, n:aula.n}; return render(); }
+  if(a === 'v-aula'){ const fr = S.pc && S.pc.mode === 'pac' ? k.id : null; S.pc = {mode:'card', k:k.id, n:aula.n, from:fr}; return render(); }
   if(a === 'v-ir'){ S.view = 'vip'; S.pf = null; await vipLoad(); S.pc = {mode:'card', k:el.dataset.k, n:+el.dataset.n}; return render(); }
   if(a === 'v-link'){ waOpen(k, vMsg(k)); return; }
   if(a === 'v-copy'){ try { await navigator.clipboard.writeText(vLink(k)); toast('Link copiado. É só colar no WhatsApp.'); } catch(_) { toast('Não consegui copiar. Use o botão do WhatsApp.', true); } return; }
@@ -2097,12 +2126,12 @@ async function vipClick(a, el, e){
     const idx = S.pk.indexOf(k); S.pk.splice(idx, 1); render(); persist(() => S.store.del('pk', k.id));
     return toastUndo(`Pacote de ${k.aluno} excluído`, async () => { S.pk.splice(idx, 0, k); render(); await persist(() => pkSave(k)); });
   }
-  if(a === 'v-edit'){ S.pc = {mode:'edit', k:k.id, tmp:{aluno:k.aluno, tel:k.tel || '', profId:k.profId, obs:k.obs || ''}}; return render(); }
+  if(a === 'v-edit'){ S.pc = {mode:'edit', k:k.id, from:S.pc && S.pc.mode === 'pac' ? k.id : null, tmp:{aluno:k.aluno, tel:k.tel || '', profId:k.profId, obs:k.obs || ''}}; return render(); }
   if(a === 'v-ed-prof'){ S.pc.tmp.profId = el.dataset.p; return render(); }
   if(a === 'v-ed-ok'){
     const t = S.pc.tmp; if(!t.aluno.trim()) return toast('O pacote precisa de um nome de aluno.', true);
     const antes = k.profId; k.aluno = t.aluno.trim(); k.tel = t.tel.trim(); k.profId = t.profId; k.obs = t.obs.trim();
-    S.pc = null; render(); return salva('Pacote atualizado');
+    pcFecha(); render(); return salva('Pacote atualizado');
   }
   if(a === 'v-renovar'){
     const ult = k.aulas.map(x => x.data).filter(Boolean).sort().pop() || hojeStr(), dias = [...new Set(k.aulas.filter(x => x.data).map(x => parse(x.data).getDay()))];
@@ -2184,7 +2213,7 @@ async function vipClick(a, el, e){
   if(a === 'v-dir' && aula){ aula.cancel.direito = el.dataset.v; render(); return salva(); }
   if(a === 'v-salvar' && aula){
     const t = S.pc.tmp; if(t && t.nota !== undefined) aula.nota = t.nota.trim();
-    S.pc = null; render(); return salva('Aula salva');
+    pcFecha(); render(); return salva('Aula salva');
   }
   if(a === 'v-avisar' && aula){
     const e = pkEstado(k, aula); waOpen(k, e.rep && e.st === 'agendada' ? vMsg(k, aula, 'rep') : (e.o ? vMsg(k, aula, 'canc') : (aula.data ? vMsg(k, aula, 'move') : vMsg(k)))); return;
@@ -2192,11 +2221,11 @@ async function vipClick(a, el, e){
   /* ---- escolha de horário ---- */
   if((a === 'v-rep' || a === 'v-pick') && aula){
     const e = pkEstado(k, aula), kind = (e.st === 'cancelada' || (e.o && e.st === 'agendada')) ? 'rep' : 'move';
-    S.pc = {mode:'pick', k:k.id, n:aula.n, kind, sel:null, mais:14, od:'', wa:!!k.tel};
+    S.pc = {mode:'pick', k:k.id, n:aula.n, kind, sel:null, mais:14, od:'', wa:!!k.tel, from:S.pc && S.pc.from};
     await loadRange(hojeStr(), addDays(hojeStr(), 14)); if(kind === 'rep'){ const pz = pkPrazo(k); if(pz && pz > hojeStr()) await loadRange(hojeStr(), pz < addDays(hojeStr(), 14) ? pz : addDays(hojeStr(), 14)); }
     return render();
   }
-  if(a === 'v-pk-voltar'){ S.pc = {mode:'card', k:S.pc.k, n:S.pc.n}; return render(); }
+  if(a === 'v-pk-voltar'){ S.pc = {mode:'card', k:S.pc.k, n:S.pc.n, from:S.pc.from}; return render(); }
   if(a === 'v-pk-h'){ S.pc.sel = {d:el.dataset.d, h:el.dataset.h}; return render(); }
   if(a === 'v-pk-wa'){ S.pc.wa = !S.pc.wa; return render(); }
   if(a === 'v-pk-mais'){ S.pc.mais += 14; await loadRange(hojeStr(), addDays(hojeStr(), S.pc.mais)); return render(); }
@@ -2206,7 +2235,7 @@ async function vipClick(a, el, e){
     if(c.kind === 'rep') au.rep = {data:sel.d, inicio:sel.h, fim}; else { au.data = sel.d; au.inicio = sel.h; au.fim = fim; }
     const url = c.wa ? waUrl(kk, vMsg(kk, au, c.kind === 'rep' ? 'rep' : 'move')) : null;
     if(url) window.open(url, '_blank', 'noopener');
-    S.pc = null; render();
+    S.pc = c.from && pkOf(c.from) ? {mode:'pac', k:c.from} : null; render();
     return persist(() => pkSave(kk), c.kind === 'rep' ? `Reposição marcada para ${dmy(sel.d)} às ${sel.h}` : `Aula ${au.n} marcada para ${dmy(sel.d)} às ${sel.h}`);
   }
 }
@@ -2642,7 +2671,7 @@ async function start(){
 document.addEventListener('click', onClick);
 document.addEventListener('change', onChange);
 document.addEventListener('input', onInput);
-document.addEventListener('keydown', e => { if(e.key === 'Escape' && S.pc){ S.pc = null; render(); } if(e.key === 'Enter' && e.target.id === 'q-nome') quemClick('q-add', e.target); });
+document.addEventListener('keydown', e => { if(e.key === 'Escape' && S.pc){ pcFecha(); render(); } if(e.key === 'Enter' && e.target.id === 'q-nome') quemClick('q-add', e.target); });
 
 function startDemo(){
   S.demo = true; S.user = 'Demonstração'; S.store = LocalStore(); $('#demo').hidden = false; $('#whoami').textContent = 'Demonstração';
