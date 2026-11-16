@@ -552,6 +552,21 @@ button.vt:hover{outline:2px solid var(--ink);outline-offset:1px}
 .cprb.on{border-color:var(--c-dada);color:var(--c-dada);font-weight:600}
 #main .vgh{display:flex;align-items:center;gap:10px;font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink2);margin:26px 0 8px;font-weight:600}
 #main .vgh span{background:var(--sheet);padding:1px 8px;border-radius:9px;color:var(--ink)}
+#main .pcw{z-index:60}
+.pcp{background:var(--paper);width:100%;max-width:900px;border:1px solid var(--ink);border-radius:14px;padding:18px 20px;margin-bottom:5vh}
+.pch{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}.pch h3{margin:0;font-size:26px}.pch .vb{margin-left:6px;padding:6px 12px}
+.pcg{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));border-top:1px solid var(--rule);border-left:1px solid var(--rule)}
+.pcw7{font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink3);padding:6px 8px;border-right:1px solid var(--rule);border-bottom:1px solid var(--rule)}
+.pcd{min-height:84px;padding:5px 6px;border-right:1px solid var(--rule);border-bottom:1px solid var(--rule);cursor:pointer;font-size:13px;display:flex;flex-direction:column;gap:2px;overflow:hidden}
+.pcd:hover{background:var(--sheet)}.pcd.out{color:var(--ink3)}.pcd.ini{outline:2px solid var(--coral);outline-offset:-2px}
+.pcd.pcb{background:repeating-linear-gradient(135deg,transparent 0 5px,var(--rule) 5px 6px)}
+.pcd .hj{background:var(--coral);color:#fff;border-radius:50%;width:22px;height:22px;display:inline-flex;align-items:center;justify-content:center;font-weight:600}
+.pcl{display:block;font-size:11px;line-height:1.25;padding:2px 5px;border-radius:3px;text-align:left;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pcl.me{background:#E6EEF8;color:#0C447C;font-weight:600;width:100%}.pcl.me.sel{outline:2px solid var(--coral);background:#fff}.pcl.me.bad{background:#FBE5E2;color:var(--c-canc)}
+.pcl.ot{background:#E3F0E8;color:#27500A}.pcl.bl{color:var(--ink2);padding-left:0}
+.pcl7{display:flex;gap:16px;flex-wrap:wrap;font-size:12px;color:var(--ink2);margin:12px 0 4px}.pcl7 i{display:inline-block;width:10px;height:10px;margin-right:5px;vertical-align:-1px;border-radius:2px}.pcl7 i.hat{background:repeating-linear-gradient(135deg,transparent 0 3px,var(--ink3) 3px 4px)}
+.pcf{display:flex;justify-content:space-between;align-items:center;gap:14px;margin-top:10px;font-size:14px}
+@media (max-width:900px){.pcd{min-height:64px}.pcl.ot{display:none}}
 #main .vgb{display:flex;gap:6px}
 #main .vgr{display:grid;grid-template-columns:1fr auto auto;gap:16px;align-items:center;padding:12px 0;border-bottom:1px solid var(--rule)}
 #main .vgn b{display:block;font-size:15px}#main .vgn small{color:var(--ink2);font-size:13px}
@@ -1894,6 +1909,13 @@ function pfAplica(f, a){
   Object.assign(f, {aluno:a.nome, profId:a.profId || f.profId, dias:a.dias.slice(), hs:Object.assign({}, a.hs), dur:a.dur || 60, deTurma:a.turmaId || null});
   if(a.tel && !f.tel) f.tel = a.tel;
 }
+function pfPrev(f){
+  if(!f.ini) return '';
+  if(!f.dias.length) return 'Escolha os dias da semana para ver quando cai a primeira aula.';
+  let d = f.ini; for(let i = 0; i < 14 && !f.dias.includes(parse(d).getDay()); i++) d = addDays(d, 1);
+  const dm = x => `${diaCurto(parse(x).getDay())} ${fmtData(x).slice(0, 5)}`, nomes = f.dias.map(x => DIAS[x].replace('-feira', '').toLowerCase()).join(' e ');
+  return d === f.ini ? `A primeira aula cai em ${dm(d)}.` : `Começando em ${dm(f.ini)}, a primeira aula cai em ${dm(d)}, porque os dias do pacote são ${nomes}. Para uma aula antes disso, volte a data ou marque outro dia.`;
+}
 function pfNovo(base){
   const leo = activeProfs().find(p => /^le[oó]$/i.test(p.nome)) || activeProfs()[0];
   return Object.assign({step:1, aluno:'', tel:'', profId:leo ? leo.id : '', total:8, dias:[], hs:{}, dur:60, ini:addDays(hojeStr(), 1), datas:null, pulos:[], edit:null, done:null}, base || {});
@@ -1942,7 +1964,7 @@ function vWizard(){
       <label>Dias da semana</label><div class="chips">${[1, 2, 3, 4, 5, 6].map(d => `<button class="chip ${f.dias.includes(d) ? 'on' : ''}" data-a="v-pf-dia" data-d="${d}">${DIAS[d].replace('-feira', '')}</button>`).join('')}</div>
       <label>Horário de cada dia</label>${f.dias.length ? `<div class="vhs">${f.dias.map(d => `<div class="vh"><span class="vhd">${DIAS[d].replace('-feira', '')}</span><input type="time" data-vh="${d}" value="${f.hs[d] || ''}" aria-label="Horário de ${DIAS[d]}"></div>`).join('')}</div><p class="note" style="margin:8px 0 0">Cada dia pode ter um horário diferente. Ex.: segunda às 19:00 e quarta ao meio-dia.</p>` : '<p class="note" style="margin:0">Escolha os dias acima para definir o horário de cada um.</p>'}
       <label>Duração da aula</label><div class="chips">${[45, 60, 90].map(n => `<button class="chip ${f.dur === n ? 'on' : ''}" data-a="v-pf-dur" data-n="${n}">${n} min</button>`).join('')}</div>
-      <label>Primeira aula a partir de</label><input type="date" data-vf="ini" value="${f.ini}" style="max-width:200px">
+      <label>Primeira aula a partir de</label><div style="display:flex;gap:10px;align-items:center"><input type="date" data-vf="ini" value="${f.ini}" style="max-width:200px"><button class="vb" data-a="v-pfc" data-m="ini">${ico('calendario')}Ver no calendário</button></div><p class="note" id="pf-prev" style="max-width:none;margin:8px 0 0">${esc(pfPrev(f))}</p>
       <div class="vnav"><button class="vb dk" data-a="v-pf-next">Sugerir as datas${ico('seta')}</button><button class="cancel" data-a="v-pf-back">Voltar</button></div>`;
   } else if(st === 3){
     const itens = f.datas.map((x, i) => ({t:'ok', x, i})).concat(f.pulos.map(p2 => ({t:'sk', x:p2}))).sort((a, b) => a.x.d.localeCompare(b.x.d));
@@ -1950,7 +1972,7 @@ function vWizard(){
     const cards = itens.map(it => {
       if(it.t === 'sk') return `<div class="vdc sk"><small>Pulada</small><b>${diaCurto(parse(it.x.d).getDay())} ${dmy(it.x.d)}</b><span>${esc(it.x.motivo)}</span></div>`;
       n++; const c = pfCheck(f, it.i), ed = f.edit === it.i;
-      return `<div class="vdc ${c.ok ? '' : 'bad'}"><small>Aula ${n}</small>${ed ? `<input type="date" data-vd="${it.i}" data-vk="d" value="${it.x.d}"><input type="time" data-vd="${it.i}" data-vk="inicio" value="${it.x.inicio}">` : `<b>${diaCurto(parse(it.x.d).getDay())} ${dmy(it.x.d)}</b><small style="margin-top:2px">${it.x.inicio} às ${it.x.fim}</small>`}<span>${esc(c.msg)}</span><button class="tm-edit" data-a="v-pf-edit" data-i="${it.i}">${ed ? 'Pronto' : 'Trocar data'}</button></div>`;
+      return `<div class="vdc ${c.ok ? '' : 'bad'}"><small>Aula ${n}</small>${ed ? `<input type="date" data-vd="${it.i}" data-vk="d" value="${it.x.d}"><input type="time" data-vd="${it.i}" data-vk="inicio" value="${it.x.inicio}">` : `<b>${diaCurto(parse(it.x.d).getDay())} ${dmy(it.x.d)}</b><small style="margin-top:2px">${it.x.inicio} às ${it.x.fim}</small>`}<span>${esc(c.msg)}</span><button class="tm-edit" data-a="v-pfc" data-m="datas" data-i="${it.i}">Trocar data</button><button class="tm-edit" data-a="v-pf-edit" data-i="${it.i}" style="margin-left:10px">${ed ? 'Pronto' : 'Ajustar hora'}</button></div>`;
     }).join('');
     const bad = f.datas.some((x, i) => !pfCheck(f, i).ok);
     body = `<p class="note" style="max-width:none;margin-top:0"><b>${esc(f.aluno)}</b> com ${esc(p ? p.nome : '')} · pacote de ${f.total} aulas · ${f.dias.map(d => diaCurto(d) + ' às ' + f.hs[d]).join(' e ')}. Feriados, férias e horários ocupados do professor foram pulados.</p>
@@ -1964,7 +1986,26 @@ function vWizard(){
       <div class="vlink">${esc(vLink(k))}</div>
       <div class="vnav"><button class="vb pri" data-a="v-link" data-k="${k.id}">${ico('whats')}Enviar pelo WhatsApp</button><button class="vb" data-a="v-copy" data-k="${k.id}">Copiar link</button><button class="cancel" data-a="v-pf-cancel">Ir para a lista</button></div>` : '';
   }
-  return `<div class="pagehead"><h2>Novo pacote</h2></div><div class="vsteps">${steps}</div><div class="vf">${body}</div>`;
+  return `<div class="pagehead"><h2>Novo pacote</h2></div><div class="vsteps">${steps}</div><div class="vf">${body}</div>${f.cal ? pfCalHtml(f) : ''}`;
+}
+function pfCalHtml(f){
+  const c = f.cal, [y, m] = c.ym.split('-').map(Number), hoje = hojeStr(), first = new Date(y, m - 1, 1), start = new Date(y, m - 1, 1 - first.getDay());
+  const sel = c.sel != null ? f.datas && f.datas[c.sel] : null, ordem = (f.datas || []).map((x, i) => ({x, i})).sort((a, b) => (a.x.d + a.x.inicio).localeCompare(b.x.d + b.x.inicio)), num = new Map(ordem.map((o, n) => [o.i, n + 1]));
+  let cells = '';
+  for(let i = 0; i < 42; i++){
+    const dt = new Date(start.getFullYear(), start.getMonth(), start.getDate() + i), d = ymd(dt), fora = dt.getMonth() !== m - 1;
+    if(i >= 35 && fora) break;
+    const sa = diaSemAula(d), meus = (f.datas || []).map((x, idx) => ({x, idx})).filter(o => o.x.d === d);
+    const outros = c.mode === 'datas' || true ? ocupado(f.profId, d, f.deTurma) : [];
+    const mk = meus.map(o => `<button class="pcl me ${c.sel === o.idx ? 'sel' : ''} ${pfCheck(f, o.idx).ok ? '' : 'bad'}" data-a="v-pfc-a" data-i="${o.idx}">${o.x.inicio.replace(':00', 'h')} · Aula ${num.get(o.idx)}</button>`).join('');
+    const ot = outros.slice(0, 2).map(o => `<span class="pcl ot" title="${esc(o.txt)}">${o.ini.replace(':00', 'h')} ${esc(o.txt.replace(/^(vip\s*[-·]?\s*)/i, '').slice(0, 14))}</span>`).join('') + (outros.length > 2 ? `<span class="pcl ot">+${outros.length - 2}</span>` : '');
+    cells += `<div class="pcd ${fora ? 'out' : ''} ${sa ? 'pcb' : ''} ${d === f.ini && c.mode === 'ini' ? 'ini' : ''}" data-a="v-pfc-d" data-d="${d}"><span class="${d === hoje ? 'hj' : ''}">${dt.getDate()}</span>${sa ? `<span class="pcl bl">${esc(String(sa.nome).slice(0, 18))}</span>` : ''}${mk}${ot}</div>`;
+  }
+  const dica = c.mode === 'ini' ? 'Clique no dia em que o pacote começa.' : (sel ? `Aula ${num.get(c.sel)} selecionada. Clique no novo dia.` : 'Clique numa aula azul para escolher e depois no novo dia.');
+  return `<div class="mwrap pcw" data-a="v-pfc-x"><div class="pcp" role="dialog" aria-modal="true"><div class="pch"><h3>${MESES[m - 1][0].toUpperCase() + MESES[m - 1].slice(1)} de ${y}</h3><div><button class="vb" data-a="v-pfc-n" data-n="-1" aria-label="Mês anterior">‹</button><button class="vb" data-a="v-pfc-n" data-n="0">Hoje</button><button class="vb" data-a="v-pfc-n" data-n="1" aria-label="Próximo mês">›</button></div></div>
+    <div class="pcg">${['dom','seg','ter','qua','qui','sex','sáb'].map(x => `<div class="pcw7">${x}</div>`).join('')}${cells}</div>
+    <div class="pcl7"><span><i style="background:#E6EEF8"></i>Aulas deste pacote</span><span><i style="background:#E3F0E8"></i>Outras aulas do professor</span><span><i class="hat"></i>Feriado ou férias</span></div>
+    <div class="pcf"><span>${dica}</span><button class="vb dk" data-a="v-pfc-x" data-close="1">Fechar</button></div></div></div>`;
 }
 
 /* ---------- janela da aula (cartão, escolha de horário, edição) ---------- */
@@ -2072,6 +2113,17 @@ async function vipClick(a, el, e){
   if(a === 'v-pf-cancel'){ S.pf = null; return render(); }
   if(a === 'v-pf-back'){ S.pf.step--; return render(); }
   if(a === 'v-npt'){ const t = S.turmas.find(x => x.id === el.dataset.id), al = t && vAlunos().find(x => x.turmaId === t.id); if(!al) return; S.pf = pfNovo({step:2}); pfAplica(S.pf, al); S.pf.ini = hojeStr() > addDays(hojeStr(), 0) ? hojeStr() : addDays(hojeStr(), 1); S.pc = null; render(); return window.scrollTo({top:0}); }
+  if(a === 'v-pfc'){ const f = S.pf, i = el.dataset.i !== undefined ? +el.dataset.i : null, d0 = el.dataset.m === 'ini' ? f.ini : (i != null && f.datas[i] ? f.datas[i].d : (f.datas && f.datas[0] ? f.datas[0].d : f.ini)); await ensureMonth((d0 || hojeStr()).slice(0, 7)); f.cal = {mode:el.dataset.m, ym:(d0 || hojeStr()).slice(0, 7), sel:i}; return render(); }
+  if(a === 'v-pfc-x'){ if(el.classList.contains('mwrap') && e.target !== el) return; S.pf.cal = null; return render(); }
+  if(a === 'v-pfc-n'){ const c = S.pf.cal, n = +el.dataset.n, [y, m] = (n ? c.ym : hojeStr().slice(0, 7)).split('-').map(Number), dt = new Date(y, m - 1 + n, 1); c.ym = `${dt.getFullYear()}-${pad(dt.getMonth() + 1)}`; await ensureMonth(c.ym); return render(); }
+  if(a === 'v-pfc-a'){ const c = S.pf.cal; c.sel = c.sel === +el.dataset.i ? null : +el.dataset.i; return render(); }
+  if(a === 'v-pfc-d'){
+    const f = S.pf, c = f.cal, d = el.dataset.d;
+    if(c.mode === 'ini'){ f.ini = d; f.cal = null; return render(); }
+    if(c.sel == null) return toast('Clique primeiro numa aula azul para escolher qual mover.', true);
+    const x = f.datas[c.sel]; await ensureMonth(d.slice(0, 7)); x.d = d; x.fim = fmtMin(toMin(x.inicio) + f.dur);
+    f.datas.sort((a2, b2) => (a2.d + a2.inicio).localeCompare(b2.d + b2.inicio)); c.sel = null; return render();
+  }
   if(a === 'v-pf-pick'){ const a2 = vAlunos()[+el.dataset.i]; if(a2){ pfAplica(S.pf, a2); S.pf.step = 2; return render(); } return; }
   if(a === 'v-pf-prof'){ S.pf.profId = el.dataset.p; return render(); }
   if(a === 'v-pf-total'){ S.pf.total = +el.dataset.t; return render(); }
@@ -2423,7 +2475,7 @@ async function onClick(e){
 function onInput(e){
   const el = e.target;
   if(el.dataset.vh !== undefined && S.pf){ S.pf.hs[+el.dataset.vh] = el.value; return; }
-  if(el.dataset.vf !== undefined && S.pf){ S.pf[el.dataset.vf] = el.value; return; }
+  if(el.dataset.vf !== undefined && S.pf){ S.pf[el.dataset.vf] = el.value; if(el.dataset.vf === 'ini'){ const pv = $('#pf-prev'); if(pv) pv.textContent = pfPrev(S.pf); } return; }
   if(el.dataset.vc !== undefined && S.pc){ (S.pc.tmp = S.pc.tmp || {})[el.dataset.vc] = el.value; return; }
   if(el.id === 't-q'){ S.tq = el.value; const l = $('#tlist'); if(l) l.innerHTML = turmaLista(); return; }
   if(el.id === 'v-q'){ S.pkq = el.value; const l = $('#vlist'); if(l) l.innerHTML = vTudo(); return; }
